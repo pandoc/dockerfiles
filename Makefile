@@ -20,4 +20,4 @@ show-args:
 	@printf "pandoc_commit=%s\n" $(PANDOC_COMMIT)
 	@printf "pandoc_citeproc_commit=%s\n" $(PANDOC_CITEPROC_COMMIT)
 
-.PHONY: show-args
+.PHONY: alpine show-args
