@@ -10,7 +10,7 @@ endif
 
 alpine:
 	docker build \
-	    --tag tarleb/alpine-pandoc:$(PANDOC_VERSION) \
+	    --tag pandoc/core:$(PANDOC_VERSION) \
 	    --build-arg pandoc_commit=$(PANDOC_COMMIT) \
 	    --build-arg pandoc_citeproc_commit=$(PANDOC_CITEPROC_COMMIT) \
 	    alpine
