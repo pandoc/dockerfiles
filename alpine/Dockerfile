@@ -46,11 +46,8 @@ RUN strip /usr/bin/pandoc /usr/bin/pandoc-citeproc
 
 FROM alpine AS alpine-pandoc
 LABEL maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
-
-# We are not using the system-wide installed Lua, allow HsLua to find
-# system (alpine) Lua libraries.
-ENV LUA_PATH "/usr/share/lua/5.3/?.lua;;"
-ENV LUA_CPATH "/usr/lib/lua/5.3/?.so;;"
+LABEL org.pandoc.author "John MacFarlane"
+LABEL org.pandoc.version "$pandoc_commit"
 
 COPY --from=alpine-pandoc-build /usr/bin/pandoc* /usr/bin/
 RUN apk update \
