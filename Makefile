@@ -16,8 +16,8 @@ show-args:
 	@printf "pandoc_commit=%s\n" $(PANDOC_COMMIT)
 	@printf "pandoc_citeproc_commit=%s\n" $(PANDOC_CITEPROC_COMMIT)
 
-.PHONY: alpine-base alpine-tex
-alpine-base:
+.PHONY: alpine alpine-tex
+alpine:
 	docker build \
 	    --tag pandoc/core:$(PANDOC_VERSION) \
 	    --build-arg pandoc_commit=$(PANDOC_COMMIT) \
