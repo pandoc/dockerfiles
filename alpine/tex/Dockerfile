@@ -17,10 +17,23 @@ FROM pandoc/core:${base_tag}
 # 2. Install `libsrvg`, pandoc uses `rsvg-convert` for working with svg images.
 #
 # NOTE: to maintainers, please keep this listing alphabetical.
-RUN apk --no-cache add librsvg \
-                       texlive \
-                       texlive-dvi \
-                       texlive-luatex \
-                       texlive-xetex \
-                       texmf-dist-most \
-                       xdvik
+RUN apk --no-cache add \
+        gnupg \
+        gzip \
+        librsvg \
+        perl \
+        tar \
+        wget
+
+ENV PATH "/usr/local/texlive/2018/bin/x86_64-linuxmusl:${PATH}"
+
+WORKDIR /root
+COPY texlive.profile /root/texlive.profile
+RUN wget http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
+RUN mkdir -p install-tl \
+  && cd install-tl \
+  && tar --strip-components 1 -zvxf ../install-tl-unx.tar.gz \
+  && ./install-tl --profile=/root/texlive.profile
+RUN tlmgr install lm-math
+
+WORKDIR /data
