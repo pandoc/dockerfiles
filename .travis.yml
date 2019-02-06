@@ -1,0 +1,80 @@
+# Need sudo to build and push the docker images.
+sudo: true
+dist: trusty
+
+# TODO: un-comment this when things seem to be working.
+# Builds are only run from the master branch.
+# branches:
+#   only:
+#   - master
+
+docker_build_script: &build_script
+  script:
+  # yaml gets upset using a colon for docker image tags, store in variable.
+  - colon="$(echo Ogo= | base64 --decode)"
+  - |
+    # TODO: TRAVIS_EVENT_TYPE, maybe check if == "cron" || == "api" for manual build?
+    #       need to test this and make sure api is the manual build button in website.
+    #       https://docs.travis-ci.com/user/environment-variables
+    # See: https://docs.travis-ci.com/user/cron-jobs/#detecting-builds-triggered-by-cron
+    if [ "$TRAVIS_EVENT_TYPE" == "cron" ]; then
+      version="edge"
+    else
+      # See if this commit message asks for specifically `release=X.Y`
+      release_tag="$(echo "$TRAVIS_COMMIT_MESSAGE" | grep -o 'release=[0-9]\.[0-9]')"
+      if [ -z "$release_tag" ]; then
+        # Trigger new builds whenever things make it to master branch of
+        # pandoc/dockerfiles.
+        #
+        # TODO: or maybe only re-build things if a Dockerfile has changed?
+        #       git diff --name-only HEAD~1 | grep -c Dockerfile
+        version="edge"
+      else
+        # `release_tag` is of form `release=X.Y`, we just want X.Y
+        version="$(echo "$release_tag" | cut -d = -f 2)"
+      fi
+    fi
+
+    # Setup `repository` variable for where to pull / push a given image.  See
+    # rules defined in README.
+    if [ "$MAKE_TARGET" == "alpine" ]; then
+      repository="core"
+    elif [ "$MAKE_TARGET" == "alpine-latex" ]; then
+      repository="latex"
+    else
+      repository="$MAKE_TARGET"
+    fi
+
+    # Build the specified docker image.
+    PANDOC_VERSION="$version" make $MAKE_TARGET
+  - docker images
+  - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+  # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  # TODO: remove/fix this before merging !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  - docker tag pandoc/$repository$colon$version svenevs/$repository$colon$version
+  # ^^^ delete!!
+  # vvv this just becomes pandoc line, tags should already be good from Makefile
+  # NOTE: use `travis_wait` for docker push, otherwise the latex images may not
+  # produce enough output and Travis will think the build has stalled.
+  # - travis_wait 30 docker push svenevs/$repository$colon$version
+  # If specific pandoc release tag, make sure to update `latest` tag.
+  - |
+    if [ "$version" != "edge" ]; then
+      latest="latest"  # a bashism (used after $colon, space not allowed)
+      docker tag pandoc/$repository$colon$version pandoc/$repository$colon$latest
+      # vvv delete!!!
+      docker tag pandoc/$repository$colon$latest svenevs/$repository$colon$latest
+      # ^^^ delete
+      # vvv change to push to pandoc
+      # travis_wait 30 docker push svenevs/$repository$colon$latest
+    fi
+  # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+jobs:
+  include:
+    - stage: Build Alpine Core Image
+      env: MAKE_TARGET="alpine"
+      <<: *build_script
+    - stage: Build Alpine Latex Image
+      env: MAKE_TARGET="alpine-latex"
+      <<: *build_script
