@@ -39,7 +39,7 @@ RUN cabal --version \
            --flag embed_data_files \
            --flag bibutils \
            --constraint 'hslua +system-lua +pkg-config' \
-           --ghc-options '-O2 -optc-Os -optl=-pthread -fPIC -j +RTS -A128m -n2m -RTS' \
+           --ghc-options '-O1 -optc-Os -optl=-pthread -fPIC -j +RTS -A128m -n2m -RTS' \
            . pandoc-citeproc \
   && cabal new-build . pandoc-citeproc \
   && find dist-newstyle -name 'pandoc*' -type f -perm +400 -exec cp '{}' /usr/bin/ ';'
