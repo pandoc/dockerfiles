@@ -1,4 +1,4 @@
-ARG base_tag="master"
+ARG base_tag="edge"
 FROM pandoc/core:${base_tag}
 
 # 1. Install `texlive-full` package, except for `texlive-doc`.  Run

@@ -16,16 +16,16 @@ show-args:
 	@printf "pandoc_commit=%s\n" $(PANDOC_COMMIT)
 	@printf "pandoc_citeproc_commit=%s\n" $(PANDOC_CITEPROC_COMMIT)
 
-.PHONY: alpine alpine-tex
+.PHONY: alpine alpine-latex
 alpine:
 	docker build \
 	    --tag pandoc/core:$(PANDOC_VERSION) \
 	    --build-arg pandoc_commit=$(PANDOC_COMMIT) \
 	    --build-arg pandoc_citeproc_commit=$(PANDOC_CITEPROC_COMMIT) \
 	    alpine/
-alpine-tex:
+alpine-latex:
 	docker build \
-	    --tag pandoc/alpine-tex:$(PANDOC_VERSION) \
+	    --tag pandoc/latex:$(PANDOC_VERSION) \
 	    --build-arg base_tag=$(PANDOC_VERSION) \
-	    alpine/tex
+	    alpine/latex
 
