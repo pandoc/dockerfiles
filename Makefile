@@ -16,13 +16,22 @@ show-args:
 	@printf "pandoc_commit=%s\n" $(PANDOC_COMMIT)
 	@printf "pandoc_citeproc_commit=%s\n" $(PANDOC_CITEPROC_COMMIT)
 
-.PHONY: alpine alpine-latex
+.PHONY: alpine alpine-latex alpine-core-haskell
+
 alpine:
 	docker build \
 	    --tag pandoc/core:$(PANDOC_VERSION) \
 	    --build-arg pandoc_commit=$(PANDOC_COMMIT) \
 	    --build-arg pandoc_citeproc_commit=$(PANDOC_CITEPROC_COMMIT) \
-	    alpine/
+	    alpine
+
+alpine-core-haskell:
+	docker build \
+	    --tag pandoc/core-builder:$(PANDOC_VERSION) \
+	    --build-arg pandoc_commit=$(PANDOC_COMMIT) \
+	    --target=alpine-core-haskell \
+	    alpine
+
 alpine-latex:
 	docker build \
 	    --tag pandoc/latex:$(PANDOC_VERSION) \

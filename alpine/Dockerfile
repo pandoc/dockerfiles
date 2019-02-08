@@ -1,48 +1,83 @@
-FROM alpine AS alpine-pandoc-haskell
+FROM alpine AS alpine-core-haskell
 
-RUN apk update \
-  && apk add \
-         alpine-sdk \
-         bash \
-         ca-certificates \
-         cabal \
-         fakeroot \
-         ghc \
-         git \
-         gmp-dev \
-         lua5.3-dev \
-         pkgconfig \
-         zlib-dev
+RUN apk --no-cache add \
+        alpine-sdk \
+        bash \
+        ca-certificates \
+        cabal \
+        fakeroot \
+        ghc \
+        git \
+        gmp-dev \
+        icu \
+        icu-dev \
+        lua5.3-dev \
+        pkgconfig \
+        zlib-dev
+
+WORKDIR /root/.config
+COPY cabal.config /root/.cabal/config
 
 RUN cabal update \
   && cabal install cabal-install \
   && cp $HOME/.cabal/bin/cabal /usr/bin/
 
-FROM alpine-pandoc-haskell AS alpine-pandoc-build
+ARG pandoc_commit=master
+
+# Install pandoc dependencies. New-style cabal commands make it difficult
+# to cache build dependencies, which is why we fall back to v1 builds.
+WORKDIR /usr/src/
+RUN git clone --branch=$pandoc_commit --depth=1 --quiet \
+        https://github.com/jgm/pandoc \
+  && cd pandoc \
+  && cabal v1-install \
+           --only-dependencies \
+           --constraint 'hslua +system-lua +pkg-config' \
+           --flag embed_data_files \
+  && cd .. \
+  && rm -rf pandoc
+
+# If we clone pandoc-citeproc and install its dependencies, then this
+# will also install pandoc. That'd take a long time, and would
+# ultimately be futile, as we'll be reinstalling pandoc later anyway.
+# That's why we manually install missing dependencies. Yes I know, I
+# don't like it either.
+RUN cabal v1-install \
+          hs-bibutils \
+          setenv\<0.2 \
+          text-icu \
+          xml-conduit\<1.9 \
+          yaml
+
+
+FROM alpine-core-haskell AS alpine-pandoc-build
 ARG pandoc_commit=master
 ARG pandoc_citeproc_commit=master
 
 WORKDIR /usr/src/
 RUN git clone --branch=$pandoc_commit --depth=1 --quiet \
-        https://github.com/jgm/pandoc
-RUN git clone --branch=$pandoc_citeproc_commit --depth=1 --quiet \
-        https://github.com/jgm/pandoc-citeproc
+        https://github.com/jgm/pandoc \
+  && cd pandoc \
+  && cabal v1-configure \
+           --flag embed_data_files \
+           --constraint 'hslua +system-lua +pkg-config' \
+  && cabal v1-build \
+  && cabal v1-copy \
+  && cabal v1-register \
+  && cd ..
 
-WORKDIR /usr/src/pandoc
-# NOTE: --ghc-options -j +RTS -A128m -n2m -RTS, see:
-# https://rybczak.net/2016/03/26/how-to-reduce-compilation-times-of-haskell-projects/
-RUN cabal --version \
-  && ghc --version \
-  && cabal new-update \
-  && cabal new-clean \
-  && cabal new-configure \
+RUN git clone --branch=$pandoc_citeproc_commit --depth=1 --quiet \
+        https://github.com/jgm/pandoc-citeproc \
+  && cd pandoc-citeproc \
+  && cabal v1-configure \
            --flag embed_data_files \
            --flag bibutils \
-           --constraint 'hslua +system-lua +pkg-config' \
-           --ghc-options '-O1 -optc-Os -optl=-pthread -fPIC -j +RTS -A128m -n2m -RTS' \
-           . pandoc-citeproc \
-  && cabal new-build . pandoc-citeproc \
-  && find dist-newstyle -name 'pandoc*' -type f -perm +400 -exec cp '{}' /usr/bin/ ';'
+  && cabal v1-build \
+  && cabal v1-copy \
+  && cabal v1-register \
+  && cd ..
+
+RUN find /root/.cabal/bin -name 'pandoc*' -type f -perm +400 -exec cp '{}' /usr/bin/ ';'
 
 RUN strip /usr/bin/pandoc /usr/bin/pandoc-citeproc
 
@@ -60,6 +95,7 @@ COPY --from=alpine-pandoc-build /usr/bin/pandoc* /usr/bin/
 RUN apk update \
   && apk add \
          gmp \
+         icu \
          libffi \
          lua5.3
 
