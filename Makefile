@@ -29,3 +29,6 @@ alpine-latex:
 	    --build-arg base_tag=$(PANDOC_VERSION) \
 	    alpine/latex
 
+.PHONY: lint
+lint:
+	shellcheck $(shell find . -name "*.sh")
