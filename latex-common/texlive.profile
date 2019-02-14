@@ -2,13 +2,13 @@
 # It will NOT be updated and reflects only the
 # installation profile at installation time.
 selected_scheme scheme-small
-TEXDIR /usr/local/texlive/2018
-TEXMFCONFIG ~/.texlive2018/texmf-config
-TEXMFHOME ~/texmf
-TEXMFLOCAL /usr/local/texlive/texmf-local
-TEXMFSYSCONFIG /usr/local/texlive/2018/texmf-config
-TEXMFSYSVAR /usr/local/texlive/2018/texmf-var
-TEXMFVAR ~/.texlive2018/texmf-var
+TEXDIR         /opt/texlive/texdir
+TEXMFLOCAL     /opt/texlive/texmf-local
+TEXMFSYSVAR    /opt/texlive/texdir/texmf-var
+TEXMFSYSCONFIG /opt/texlive/texdir/texmf-config
+TEXMFVAR       ~/.texlive/texmf-var
+TEXMFCONFIG    ~/.texlive/texmf-config
+TEXMFHOME      ~/texmf
 binary_x86_64-linuxmusl 1
 instopt_adjustpath 0
 instopt_adjustrepo 1
