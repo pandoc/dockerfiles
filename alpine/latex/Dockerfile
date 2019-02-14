@@ -23,4 +23,7 @@ RUN apk --no-cache add librsvg \
                        texlive-luatex \
                        texlive-xetex \
                        texmf-dist-most \
-                       xdvik
+                       xdvik \
+                       | grep 'Installing'
+# NOTE: `grep 'Installing'` is to suppress latex post-install scripts from
+# flooding the CI buffer.
