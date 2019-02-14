@@ -28,7 +28,7 @@ RUN apk --no-cache add \
 ENV PATH "/usr/local/texlive/2018/bin/x86_64-linuxmusl:${PATH}"
 
 WORKDIR /root
-COPY texlive.profile /root/texlive.profile
+COPY latex-common/texlive.profile /root/texlive.profile
 RUN wget http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
 RUN mkdir -p install-tl \
   && cd install-tl \
