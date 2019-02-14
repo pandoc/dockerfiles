@@ -46,7 +46,8 @@ tlmgr install xetex       \
               mathspec    \
               upquote     \
               microtype   \
-              csquotes
+              csquotes    \
+              lualatex-math
 
 # Make sure all reference backend options are installed
 tlmgr install natbib   \
