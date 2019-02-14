@@ -1,4 +1,5 @@
-# pandoc Dockerfiles
+pandoc Dockerfiles
+================================================================================
 
 This repo contains a collection of Dockerfiles to build various
 pandoc container images.
@@ -13,7 +14,8 @@ pandoc container images.
     - [Managing new Pandoc Releases](#managing-new-pandoc-releases)
 - [License](#license)
 
-# Available Images
+Available Images
+================================================================================
 
 Docker images hosted here have a "core" version and a "latex" version:
 
@@ -37,20 +39,24 @@ From there, the tagging scheme is either `X.Y`, `latest`, or `edge`.
   stack on the first of the month.  However, changes to the `master` branch of
   this repository may also result in the `edge` tag being updated sooner.
 
-## Current `latest` Tag
+Current `latest` Tag
+--------------------------------------------------------------------------------
 
 The current `latest` tag for all images points to `pandoc` version `2.6`.
 
-## Alpine Linux
+Alpine Linux
+--------------------------------------------------------------------------------
 
 - Core image: [`pandoc/core`](https://cloud.docker.com/u/pandoc/repository/docker/pandoc/core)
     - To build locally: `make alpine`
 - Latex image: [`pandoc/latex`](https://cloud.docker.com/u/pandoc/repository/docker/pandoc/latex)
     - To build locally: `make alpine-latex`
 
-# Maintenance Notes
+Maintenance Notes
+================================================================================
 
-## Adding a new Image Stack
+Adding a new Image Stack
+--------------------------------------------------------------------------------
 
 Suppose users desire a new image stack using a different base image.  To make
 the requirements clearer, assume the desire is to have a new image stack based
@@ -107,18 +113,19 @@ off `ubuntu`.
 
    **You should not need to edit anything else in this file!**
 7. Update this file (README.md) to include a listing of this new image stack.
-   Create a new h2 heading (`## Ubuntu Linux` in this example) underneath
-   `# All Image Stacks` heading.  Please keep this alphabetical.  Please also
-   make sure to create a hyperlink under the `**Contents**` listing at the top
-   of this file for browsing convenience.
+   Create a new h2 heading (`Ubuntu Linux` in this example) underneath
+   `All Image Stacks` heading.  Please keep this alphabetical.  Please also make
+   sure to create a hyperlink under the `**Contents**` listing at the top of
+   this file for browsing convenience.
 8. Open a Pull Request for review!
 
-## Managing new Pandoc Releases
+Managing new Pandoc Releases
+--------------------------------------------------------------------------------
 
 When `pandoc` has a new official release, the following steps must be performed
 in this exact order:
 
-1. Create a pull request from a branch.  Edit the ``## Current `latest` Tag``
+1. Create a pull request from a branch.  Edit the ``Current `latest` Tag``
    section to include the new `pandoc` release number.  Suppose
    we are releasing image stacks for `pandoc` version 9.8:
 
@@ -139,7 +146,8 @@ in this exact order:
    time that `docker push` is performed is when a commit hits the `master`
    branch of this repository.
 
-# License
+License
+================================================================================
 
 Code in this repository is licensed under the
 [GNU General Public License Version 2](LICENSE).
