@@ -35,6 +35,26 @@ tlmgr install amsfonts     \
               babel
 
 ################################################################################
+# Install extra packages for XeTex, LuaTex, and BibLaTex.                      #
+################################################################################
+tlmgr install xetex       \
+              luatex      \
+              fontspec    \
+              polyglossia \
+              xecjk       \
+              bidi        \
+              mathspec    \
+              upquote     \
+              microtype   \
+              csquotes
+
+# Make sure all reference backend options are installed
+tlmgr install natbib   \
+              biblatex \
+              bibtex   \
+              biber
+
+################################################################################
 # Trim down (possibly large amounts of) installed artifacts such as docs.      #
 ################################################################################
 rm -rf ./install-tl                        \
