@@ -32,3 +32,14 @@ alpine-latex:
 .PHONY: lint
 lint:
 	shellcheck $(shell find . -name "*.sh")
+
+.PHONY: test test-%
+test:
+	PANDOC_VERSION=$(PANDOC_VERSION) make -C test
+
+test-%:
+	PANDOC_VERSION=$(PANDOC_VERSION) make -C test test-$*
+
+.PHONY: clean
+clean:
+	make -C test clean
