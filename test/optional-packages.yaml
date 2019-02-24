@@ -1,0 +1,9 @@
+---
+header-includes:
+- \usepackage{upquote}
+- \usepackage{microtype}
+- \usepackage{parskip}
+- \usepackage{xurl}
+- \usepackage{bookmark}
+- \usepackage{footnotehyper}
+---
