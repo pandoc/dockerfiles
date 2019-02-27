@@ -47,7 +47,7 @@ The current `latest` tag for all images points to `pandoc` version `2.6`.
 Alpine Linux
 --------------------------------------------------------------------------------
 
-- Core image: [`pandoc/core`](https://hub.docker.com/r/pandoc/latex/)
+- Core image: [`pandoc/core`](https://hub.docker.com/r/pandoc/core/)
     - To build locally: `make alpine`
 - Latex image: [`pandoc/latex`](https://hub.docker.com/r/pandoc/latex/)
     - To build locally: `make alpine-latex`
