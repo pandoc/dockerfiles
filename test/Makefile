@@ -1,5 +1,18 @@
+# Two primary targets are defined by this Makefile:
+#
+# 1. test-core: test a core base image
+# 2. test-latex: test a latex image
+#
+# The IMAGE variable is required to be defined in order to `docker run` the
+# various tests.  The parent Makefile test targets define this, or alternatively
+#
+# 1. IMAGE=pandoc/image:tag make test-core
+# 2. IMAGE=pandoc/image:tag make test-latex
+ifndef IMAGE
+$(error IMAGE variable must be set to docker image to test)
+endif
+
 test_files_path := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
-PANDOC_VERSION ?= latest
 
 .PHONY: test
 test: test-core test-latex
@@ -10,7 +23,7 @@ test: test-core test-latex
 # | |__| (_) | | |  __/
 #  \____\___/|_|  \___|
 #
-CORE_CMD = docker run --rm -it -v $(test_files_path):/data pandoc/core:$(PANDOC_VERSION)
+CORE_CMD = docker run --rm -it -v $(test_files_path):/data $(IMAGE)
 OUTPUT_FORMATS=markdown epub docx latex html
 
 .PHONY: test-core example-to-%
@@ -27,7 +40,7 @@ example-to-%: example.native
 #
 LATEX_CMD = docker run --rm -it \
 	-v $(test_files_path):/data \
-	pandoc/latex:$(PANDOC_VERSION) \
+	$(IMAGE) \
 	--fail-if-warnings
 
 .PHONY: test-latex

@@ -16,7 +16,10 @@ show-args:
 	@printf "pandoc_commit=%s\n" $(PANDOC_COMMIT)
 	@printf "pandoc_citeproc_commit=%s\n" $(PANDOC_CITEPROC_COMMIT)
 
-.PHONY: alpine alpine-latex
+################################################################################
+# Alpine images and tests                                                      #
+################################################################################
+.PHONY: alpine alpine-latex test-alpine test-alpine-latex
 alpine:
 	docker build \
 	    --tag pandoc/core:$(PANDOC_VERSION) \
@@ -28,18 +31,20 @@ alpine-latex:
 	    --tag pandoc/latex:$(PANDOC_VERSION) \
 	    --build-arg base_tag=$(PANDOC_VERSION) \
 	    alpine/latex
+test-alpine: IMAGE ?= pandoc/core:$(PANDOC_VERSION)
+test-alpine:
+	IMAGE=$(IMAGE) make -C test test-core
+test-alpine-latex: IMAGE ?= pandoc/latex:$(PANDOC_VERSION)
+test-alpine-latex:
+	IMAGE=$(IMAGE) make -C test test-latex
 
+################################################################################
+# Developer targets                                                            #
+################################################################################
 .PHONY: lint
 lint:
 	shellcheck $(shell find . -name "*.sh")
 
-.PHONY: test test-%
-test:
-	PANDOC_VERSION=$(PANDOC_VERSION) make -C test
-
-test-%:
-	PANDOC_VERSION=$(PANDOC_VERSION) make -C test test-$*
-
 .PHONY: clean
 clean:
-	make -C test clean
+	IMAGE=none make -C test clean
