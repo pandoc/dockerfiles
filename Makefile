@@ -2,11 +2,10 @@ PANDOC_VERSION ?= edge
 
 ifeq ($(PANDOC_VERSION),edge)
 PANDOC_COMMIT          ?= master
-PANDOC_CITEPROC_COMMIT ?= master
 else
 PANDOC_COMMIT          ?= $(PANDOC_VERSION)
-PANDOC_CITEPROC_COMMIT ?= 0.15.0.1
 endif
+include pandoc-citeproc-version.inc.mk
 
 # Keep this target first so that `make` with no arguments will print this rather
 # than potentially engaging in expensive builds.
