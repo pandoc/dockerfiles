@@ -332,7 +332,6 @@ Pandoc (Meta {unMeta = fromList [("author",MetaList [MetaInlines [Str "John",Spa
  [[Plain [Str "I",Space,Str "hat:",Space,Str "\206"]]
  ,[Plain [Str "o",Space,Str "umlaut:",Space,Str "\246"]]
  ,[Plain [Str "section:",Space,Str "\167"]]
- ,[Plain [Str "set",Space,Str "membership:",Space,Str "\8712"]]
  ,[Plain [Str "copyright:",Space,Str "\169"]]]
 ,Para [Str "AT&T",Space,Str "has",Space,Str "an",Space,Str "ampersand",Space,Str "in",Space,Str "their",Space,Str "name."]
 ,Para [Str "AT&T",Space,Str "is",Space,Str "another",Space,Str "way",Space,Str "to",Space,Str "write",Space,Str "it."]

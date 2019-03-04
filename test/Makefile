@@ -26,10 +26,10 @@ test: test-core test-latex
 CORE_CMD = docker run --rm -it -v $(test_files_path):/data $(IMAGE)
 OUTPUT_FORMATS=markdown epub docx latex html
 
-.PHONY: test-core example-to-%
-test-core: $(foreach format,$(OUTPUT_FORMATS), example-to-$(format))
+.PHONY: test-core testsuite-to-%
+test-core: $(foreach format,$(OUTPUT_FORMATS), testsuite-to-$(format))
 
-example-to-%: example.native
+testsuite-to-%: testsuite.native
 	$(CORE_CMD) $< --output=/dev/null --to=$*
 
 #  _         _____   __  __
@@ -44,11 +44,11 @@ LATEX_CMD = docker run --rm -it \
 	--fail-if-warnings
 
 .PHONY: test-latex
-test-latex: output/example.pdf output/french.pdf output/german.pdf \
+test-latex: output/testsuite.pdf output/french.pdf output/german.pdf \
 		output/lorem-geometry.pdf output/lorem-optional-packages.pdf \
 		output/test-beamer.pdf
 
-output/example.pdf: example.native
+output/testsuite.pdf: testsuite.native
 	$(LATEX_CMD) $< \
 	    --output=$@ \
 	    --pdf-engine=xelatex
