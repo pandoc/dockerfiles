@@ -26,12 +26,18 @@ test: test-core test-latex
 CORE_CMD = docker run --rm -it -v $(test_files_path):/data $(IMAGE)
 OUTPUT_FORMATS=markdown epub docx latex html
 
-.PHONY: test-core testsuite-to-%
-test-core: $(foreach format,$(OUTPUT_FORMATS), testsuite-to-$(format))
+.PHONY: test-core testsuite-to-% test-bib-conversion
+test-core: test-bib-conversion \
+		$(foreach format,$(OUTPUT_FORMATS), testsuite-to-$(format))
 
 testsuite-to-%: testsuite.native
 	@# Pure HTML cannot represent fractions, use supported math rendering method.
 	$(CORE_CMD) $< --output=/dev/null --to=$* --mathml
+
+test-bib-conversion: example.bib
+	docker run --rm -it -v $(test_files_path):/data \
+	    --entrypoint=/usr/bin/pandoc-citeproc $(IMAGE) \
+	    --bib2yaml $< > /dev/null
 
 #  _         _____   __  __
 # | |    __ |_   _|__\ \/ /
