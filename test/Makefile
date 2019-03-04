@@ -30,7 +30,8 @@ OUTPUT_FORMATS=markdown epub docx latex html
 test-core: $(foreach format,$(OUTPUT_FORMATS), testsuite-to-$(format))
 
 testsuite-to-%: testsuite.native
-	$(CORE_CMD) $< --output=/dev/null --to=$*
+	@# Pure HTML cannot represent fractions, use supported math rendering method.
+	$(CORE_CMD) $< --output=/dev/null --to=$* --mathml
 
 #  _         _____   __  __
 # | |    __ |_   _|__\ \/ /
