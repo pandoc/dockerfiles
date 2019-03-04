@@ -146,13 +146,6 @@ in this exact order:
    time that `docker push` is performed is when a commit hits the `master`
    branch of this repository.
 
-GitHub Actions
-================================================================================
-You can use the `pandoc/latex` image directly on GitHub actions to convert
-documents on every commit using the
-[pandoc GitHub action](https://github.com/maxheld83/pandoc).
-
-
 License
 ================================================================================
 
