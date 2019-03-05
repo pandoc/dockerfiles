@@ -78,7 +78,26 @@ off `ubuntu`.
    [`alpine/latex/Dockerfile`](alpine/latex/Dockerfile) as a reference for what
    dependencies should be installed in addition to latex.
 5. Add an `ubuntu-latex` target to the `Makefile`.
-6. Now that your image stack has been defined (and tested!), update the CircleCI
+6. Add testing targets `test-ubuntu` and `test-ubuntu-latex`.  You should be
+   able to copy-paste the existing `test-alpine` and `test-alpine-latex` targets
+   and rename the [target-specific variable value][tsvv] for `IMAGE`:
+
+   ```make
+   # update default ---> |-----------------------------|
+   test-ubuntu: IMAGE ?= pandoc/ubuntu:$(PANDOC_VERSION)
+   test-ubuntu: # vvv invokation line is the same as alpine tests
+   	IMAGE=$(IMAGE) make -C test test-core
+   ```
+
+   This means that `make test-ubuntu` will invoke the `test-core` target in the
+   [`test/Makefile`](test/Makefile), using the image `pandoc/ubuntu:edge`.
+   The target specific value is helpful for developers to be able to run the
+   tests against an alternative image, e.g.,
+   `IMAGE=test/ubuntu:edge make test-ubuntu`.  **Note that the testing targets
+   must be the `core` and `latex` targets with `test-` preprended**.  The CI
+   tests run `make test-<< parameters.core_target >>` and
+   `make test-<< parameters.latex_target >>` (see next item).
+7. Now that your image stack has been defined (and tested!), update the CircleCI
    [`.circleci/config.yml`](.circleci/config.yml) file to add a new build stack.
    Specifically, search for `alpine_stack: &alpine_stack`.  An example `diff`
    for this `ubuntu` stack could look like this:
@@ -112,12 +131,14 @@ off `ubuntu`.
    ```
 
    **You should not need to edit anything else in this file!**
-7. Update this file (README.md) to include a listing of this new image stack.
+8. Update this file (README.md) to include a listing of this new image stack.
    Create a new h2 heading (`Ubuntu Linux` in this example) underneath
    `All Image Stacks` heading.  Please keep this alphabetical.  Please also make
    sure to create a hyperlink under the `**Contents**` listing at the top of
    this file for browsing convenience.
-8. Open a Pull Request for review!
+9. Open a Pull Request for review!
+
+[tsvv]: https://www.gnu.org/software/make/manual/html_node/Target_002dspecific.html
 
 Managing new Pandoc Releases
 --------------------------------------------------------------------------------

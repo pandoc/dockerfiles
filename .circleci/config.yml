@@ -4,7 +4,7 @@ jobs:
   lint:
     machine: true
     steps:
-      - run: sudo apt-get install shellcheck python-flake8
+      - run: sudo apt-get install shellcheck
       - checkout
       - run: make lint
   # Builds a docker image stack (see workflows below).  If getting merged to the
@@ -38,12 +38,18 @@ jobs:
           no_output_timeout: 1h
           command: |
             ./.circleci/build_image.sh << parameters.core_target >>
+      # Test core image
+      - run:
+          command: 'make test-<< parameters.core_target >>'
       # After that is complete, now build the latex image.
       - run:
           # Set a 1 hour time limit.  Build/push may get silent during parts.
           no_output_timeout: 1h
           command: |
             ./.circleci/build_image.sh << parameters.latex_target >>
+      # Test latex image
+      - run:
+          command: 'make test-<< parameters.latex_target >>'
 
 # We need to be able to distinguish cron jobs, something that CircleCI does not
 # currently support in their default environment variables.  Defining all image
