@@ -89,7 +89,7 @@ Basic Usage
   Let's say you have a `README.md` in your working directory that you'd like to convert to HTML.
   
   ```
-  docker run --volume "`pwd`":"`pwd`" --workdir "`pwd`" pandoc/latex:2.6 README.md
+  docker run --volume "`pwd`:/data" --workdir "data" pandoc/latex:2.6 README.md
   ```
   
   The `--volume` flag maps some directory on *your machine* (lefthand side of the colons) to some directory *in the container* (righthand side), so that you have your source files available for pandoc to convert.
@@ -136,14 +136,14 @@ You only have to do this once for each script file.
 You can then run the completed script file in a pandoc docker container like so:
 
 ```
-docker run --volume "`pwd`":"`pwd`" --workdir "`pwd`" --entrypoint "`pwd`"/script.sh pandoc/latex:2.6
+docker run --volume "`pwd`:/data" --workdir "data" --entrypoint "`pwd`"/script.sh pandoc/latex:2.6
 ```
 
 Notice that the above `script.sh` *did* specify `pandoc`, and you can't just omit it as in the simpler command above.
 This is because the `--entrypoint` flag *overrides* the `ENTRYPOINT` field in the docker file (`pandoc`, in our case), so you must include the command.
 
 
-GitHub actions
+GitHub Actions
 --------------------------------------------------------------------------------
 
 By encapsulating the compute environment, Docker can make it easier to run dependency-heavy software on your local machine, but it was designed to run in the cloud.
