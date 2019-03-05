@@ -7,6 +7,15 @@ PANDOC_COMMIT          ?= $(PANDOC_VERSION)
 endif
 include pandoc-citeproc-version.inc.mk
 
+# Used to specify the build context path for Docker.  Note that we are
+# specifying the repository root so that we can
+#
+#     COPY latex-common/texlive.profile /root
+#
+# for example.  If writing a COPY statement in *ANY* Dockerfile, just know that
+# it is from the repository root.
+makefile_dir := $(dir $(realpath Makefile))
+
 # Keep this target first so that `make` with no arguments will print this rather
 # than potentially engaging in expensive builds.
 .PHONY: show-args
@@ -24,12 +33,12 @@ alpine:
 	    --tag pandoc/core:$(PANDOC_VERSION) \
 	    --build-arg pandoc_commit=$(PANDOC_COMMIT) \
 	    --build-arg pandoc_citeproc_commit=$(PANDOC_CITEPROC_COMMIT) \
-	    alpine/
+	    -f $(makefile_dir)/alpine/Dockerfile $(makefile_dir)
 alpine-latex:
 	docker build \
 	    --tag pandoc/latex:$(PANDOC_VERSION) \
 	    --build-arg base_tag=$(PANDOC_VERSION) \
-	    alpine/latex
+	    -f $(makefile_dir)/alpine/latex/Dockerfile $(makefile_dir)
 test-alpine: IMAGE ?= pandoc/core:$(PANDOC_VERSION)
 test-alpine:
 	IMAGE=$(IMAGE) make -C test test-core
