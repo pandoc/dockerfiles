@@ -73,13 +73,13 @@ Basic Usage
    computer with a rudimentary graphical user interface (GUI). You can also run
    this command in the command-line interface (CLI):
 
-   ```
+   ```sh
    open -a Docker
    ```
 
 3. Open a shell and navigate to wherever the files are that you want to convert.
 
-   ```
+   ```sh
    cd path/to/source/dir
    ```
 
@@ -91,7 +91,7 @@ Basic Usage
    Let's say you have a `README.md` in your working directory that you'd like to
    convert to HTML.
 
-   ```
+   ```sh
    docker run -v "`pwd`:/data" -w "data" pandoc/latex:2.6 README.md
    ```
 
@@ -126,7 +126,7 @@ command line can get a little unwieldy. To get a better handle of long pandoc
 commands, you can store them in a script file, a simple text file with an `*.sh`
 extension such as
 
-```
+```sh
 #!/bin/sh
 pandoc README.md
 ```
@@ -144,7 +144,7 @@ manual](https://linux.die.net/man/1/ash).
 Once you have stored this script, you must make it executable by running the
 following command on it (this may apply only to UNIX-type systems):
 
-```
+```sh
 chmod +x script.sh
 ```
 
@@ -152,8 +152,8 @@ You only have to do this once for each script file.
 
 You can then run the completed script file in a pandoc docker container like so:
 
-```
-docker run -v "`pwd`:/data" -w "data" --entrypoint "`pwd`"/script.sh pandoc/latex:2.6
+```sh
+docker run -v "`pwd`:/data" -w "data" --entrypoint "`pwd`/script.sh" pandoc/latex:2.6
 ```
 
 Notice that the above `script.sh` *did* specify `pandoc`, and you can't just
