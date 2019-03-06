@@ -131,8 +131,7 @@ extension such as
 pandoc README.md
 ```
 
-The first line, known as the
-[*shebang*](https://stackoverflow.com/questions/7366775/what-does-the-line-bin-sh-mean-in-a-unix-shell-script)
+The first line, known as the [*shebang*](https://stackoverflow.com/q/7366775)
 tells the container that the following commands are to be executed as shell
 commands. In our case, we really don't use a lot of shell magic, we just call
 pandoc in the second line (though you can get fancier, if you like). Notice that
