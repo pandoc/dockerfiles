@@ -64,58 +64,59 @@ machines, but smaller and cleverer. You can use these images to convert document
 wherever you can run docker images, without having to worry about pandoc or its
 dependencies. The images bring along everything they need to get the job done.
 
-Basic Usage 
+Basic Usage
 --------------------------------------------------------------------------------
 
 1. Install [Docker](https://www.docker.com) if you don't have it already.
 
 2. Start up Docker. Usually you will have an application called "Docker" on your
-computer with a rudimentary graphical user interface (GUI). You can also run
-this command in the command-line interface (CLI):
+   computer with a rudimentary graphical user interface (GUI). You can also run
+   this command in the command-line interface (CLI):
 
-  ```
-  open -a Docker
-  ```
+   ```
+   open -a Docker
+   ```
 
 3. Open a shell and navigate to wherever the files are that you want to convert.
 
-  ```
-  cd path/to/source/dir
-  ```
+   ```
+   cd path/to/source/dir
+   ```
 
-  You can always run `pwd` to check whether you're in the right place.
+   You can always run `pwd` to check whether you're in the right place.
 
 4. [Run docker](https://docs.docker.com/engine/reference/run/) by entering the
-below commands in your favorite shell.
+   below commands in your favorite shell.
 
-  Let's say you have a `README.md` in your working directory that you'd like to
-  convert to HTML.
+   Let's say you have a `README.md` in your working directory that you'd like to
+   convert to HTML.
 
-  ```
-  docker run -v "`pwd`:/data" -w "data" pandoc/latex:2.6 README.md
-  ```
+   ```
+   docker run -v "`pwd`:/data" -w "data" pandoc/latex:2.6 README.md
+   ```
 
-  The `--volume` flag maps some directory on *your machine* (lefthand side of
-  the colons) to some directory *in the container* (righthand side), so that you
-  have your source files available for pandoc to convert. `pwd` is quoted to
-  protect against spaces in filenames.
+   The `--volume` flag maps some directory on *your machine* (lefthand side of
+   the colons) to some directory *in the container* (righthand side), so that
+   you have your source files available for pandoc to convert. `pwd` is quoted
+   to protect against spaces in filenames.
 
-  `--workdir`, just to keep things easy, sets the working directory *inside*
-  your container to the directory you just mapped to. If `pwd` doesn't work for
-  you, you can also specify absolute paths either side of the colons.
+   `--workdir`, just to keep things easy, sets the working directory *inside*
+   your container to the directory you just mapped to. If `pwd` doesn't work for
+   you, you can also specify absolute paths either side of the colons.
 
-  `pandoc/latex:2.6` declares the image that you're going to run. It's always a
-  good idea to hardcode the version, lest future releases break your code.
+   `pandoc/latex:2.6` declares the image that you're going to run. It's always a
+   good idea to hardcode the version, lest future releases break your code.
 
-  It may look weird to you that you can just add `README.md` at the end of this
-  line, but that's just because the `pandoc/latex:2.6` will simply prepend
-  `pandoc` in front of anything you write after `pandoc/latex:2.6` (this is
-  known as the `ENTRYPOINT` field of the Dockerfile). So what you're really
-  running here is `pandoc README.md`, which is a valid pandoc command.
+   It may look weird to you that you can just add `README.md` at the end of this
+   line, but that's just because the `pandoc/latex:2.6` will simply prepend
+   `pandoc` in front of anything you write after `pandoc/latex:2.6` (this is
+   known as the `ENTRYPOINT` field of the Dockerfile). So what you're really
+   running here is `pandoc README.md`, which is a valid pandoc command.
 
-  If you don't have the current docker image on your computer yet, the
-  downloading and unpacking is going to take a while. It'll be (much) faster the
-  next time. You don't have to worry about where/how Docker keeps these images.
+   If you don't have the current docker image on your computer yet, the
+   downloading and unpacking is going to take a while. It'll be (much) faster
+   the next time. You don't have to worry about where/how Docker keeps these
+   images.
 
 Pandoc Scripts
 --------------------------------------------------------------------------------
@@ -152,8 +153,8 @@ You only have to do this once for each script file.
 
 You can then run the completed script file in a pandoc docker container like so:
 
-``` 
-docker run -v "`pwd`:/data" -w "data" --entrypoint "`pwd`"/script.sh pandoc/latex:2.6 
+```
+docker run -v "`pwd`:/data" -w "data" --entrypoint "`pwd`"/script.sh pandoc/latex:2.6
 ```
 
 Notice that the above `script.sh` *did* specify `pandoc`, and you can't just
@@ -161,7 +162,7 @@ omit it as in the simpler command above. This is because the `--entrypoint` flag
 *overrides* the `ENTRYPOINT` field in the docker file (`pandoc`, in our case),
 so you must include the command.
 
-GitHub Actions 
+GitHub Actions
 --------------------------------------------------------------------------------
 
 By encapsulating the compute environment, Docker can make it easier to run
