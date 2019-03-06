@@ -19,9 +19,16 @@ RUN apk --no-cache add \
 # `-linuxmusl` -----------------> vvvvvvvvvvvvvvvv
 ENV PATH="/opt/texlive/texdir/bin/x86_64-linuxmusl:${PATH}"
 WORKDIR /root
+
 COPY latex-common/texlive.profile /root/texlive.profile
 COPY latex-common/install-texlive.sh /root/install-texlive.sh
 RUN /root/install-texlive.sh
-RUN rm -f /root/texlive.profile /root/install-texlive.sh
+
+COPY latex-common/install-tex-packages.sh /root/install-tex-packages.sh
+RUN /root/install-tex-packages.sh
+
+RUN rm -f /root/texlive.profile \
+          /root/install-texlive.sh \
+          /root/install-tex-packages.sh
 
 WORKDIR /data
