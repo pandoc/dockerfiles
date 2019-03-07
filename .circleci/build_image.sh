@@ -19,16 +19,14 @@ if [[ "$target" == "nonexistent" ]]; then
     exit 0
 fi
 
-# Determine PANDOC_VERSION for Makefile based on commit message.  We are looking
-# for if the string `release=X.Y` exists, if so then that is what we are going
-# to build.  Otherwise, build the `master` branch (which is the `edge` image).
-# NOTE: cron jobs always build the :edge tag.
-release_tag="$(git log --pretty="%s" -1 | grep -o 'release=[0-9]\.[0-9]')"
-if [[ "$CIRCLE_CRON_JOB" == "true" ]] || [[ -z "$release_tag" ]]; then
-    version="edge"
-else
-    version="$(echo "$release_tag" | cut -d = -f 2)"
+# Get the version tag to build for this commit message.
+this_file_dir="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+version_script="$this_file_dir/version_for_commit_message.sh"
+if ! [[ -x "$version_script" ]]; then
+   echo "CRITICAL: $version_script was not found..." >&2
+   exit 1
 fi
+version="$("$version_script")"
 
 # Build the docker image.  Make script exit with valid code (stop CI if fail).
 PANDOC_VERSION="$version" make "$target" || exit 1
