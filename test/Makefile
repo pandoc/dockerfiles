@@ -53,7 +53,7 @@ LATEX_CMD = docker run --rm -it \
 .PHONY: test-latex
 test-latex: output/testsuite.pdf output/french.pdf output/german.pdf \
 		output/lorem-geometry.pdf output/lorem-optional-packages.pdf \
-		output/test-beamer.pdf
+		output/test-beamer.pdf output/test-natbib.pdf output/test-biblatex.pdf
 
 output/testsuite.pdf: testsuite.native
 	$(LATEX_CMD) $< \
@@ -88,6 +88,33 @@ output/test-beamer.pdf: test-beamer.md example.bib
 	    --to=beamer \
 	    --bibliography=example.bib \
 	    --pdf-engine=xelatex
+
+output/test-natbib.pdf: test-beamer.md example.bib
+	$(LATEX_CMD) $< \
+	    --natbib \
+	    --output=$@ \
+	    --bibliography=example.bib \
+	    --pdf-engine=xelatex
+
+output/test-biblatex.tex: test-beamer.md
+	$(LATEX_CMD) $< \
+	    --biblatex \
+	    --standalone \
+	    --bibliography=example.bib \
+	    --output=$@
+
+output/example.bib: example.bib
+	cp $< $@
+
+output/baboon.png: baboon.png
+	cp $< $@
+
+output/test-biblatex.pdf: output/test-biblatex.tex output/example.bib \
+		output/baboon.png
+	docker run --rm -it -v $(test_files_path):/data \
+	    --entrypoint=/data/pdf-via-biblatex.sh \
+	    $(IMAGE) \
+	    $(notdir $(basename $<))
 
 #   ____ _
 #  / ___| | ___  __ _ _ __

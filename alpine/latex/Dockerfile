@@ -4,6 +4,7 @@ FROM pandoc/core:${base_tag}
 # NOTE: `libsrvg`, pandoc uses `rsvg-convert` for working with svg images.
 # NOTE: to maintainers, please keep this listing alphabetical.
 RUN apk --no-cache add \
+        biber \
         freetype \
         fontconfig \
         gnupg \
