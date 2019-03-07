@@ -92,17 +92,13 @@ Basic Usage
    convert to HTML.
 
    ```sh
-   docker run -v "`pwd`:/data" -w "data" pandoc/latex:2.6 README.md
+   docker run --volume "`pwd`:/data" pandoc/latex:2.6 README.md
    ```
 
    The `--volume` flag maps some directory on *your machine* (lefthand side of
    the colons) to some directory *in the container* (righthand side), so that
    you have your source files available for pandoc to convert. `pwd` is quoted
    to protect against spaces in filenames.
-
-   `--workdir`, just to keep things easy, sets the working directory *inside*
-   your container to the directory you just mapped to. If `pwd` doesn't work for
-   you, you can also specify absolute paths either side of the colons.
 
    `pandoc/latex:2.6` declares the image that you're going to run. It's always a
    good idea to hardcode the version, lest future releases break your code.
@@ -153,7 +149,7 @@ You only have to do this once for each script file.
 You can then run the completed script file in a pandoc docker container like so:
 
 ```sh
-docker run -v "`pwd`:/data" -w "data" --entrypoint "`pwd`/script.sh" pandoc/latex:2.6
+docker run --volume "`pwd`:/data" --entrypoint "`pwd`/script.sh" pandoc/latex:2.6
 ```
 
 Notice that the above `script.sh` *did* specify `pandoc`, and you can't just
