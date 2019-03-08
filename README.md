@@ -2,7 +2,7 @@ pandoc Dockerfiles
 ================================================================================
 
 This repo contains a collection of Dockerfiles to build various
-pandoc container images.
+[pandoc](https://pandoc.org/) container images.
 
 **Contents**
 
@@ -46,7 +46,7 @@ From there, the tagging scheme is either `X.Y`, `latest`, or `edge`.
 Current `latest` Tag
 --------------------------------------------------------------------------------
 
-The current `latest` tag for all images points to `pandoc` version `2.6`.
+The current `latest` tag for all images points to `pandoc` version `2.7`.
 
 Alpine Linux
 --------------------------------------------------------------------------------
@@ -58,6 +58,10 @@ Alpine Linux
 
 Usage
 ================================================================================
+
+> **Note**: this section describes how to use the docker images.  Please refer
+> to the [`pandoc` manual](https://pandoc.org/MANUAL.html) for usage information
+> about `pandoc`.
 
 Docker images are pre-provisioned computing environments, similar to virtual
 machines, but smaller and cleverer. You can use these images to convert document
