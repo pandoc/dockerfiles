@@ -5,7 +5,6 @@ PANDOC_COMMIT          ?= master
 else
 PANDOC_COMMIT          ?= $(PANDOC_VERSION)
 endif
-include pandoc-citeproc-version.inc.mk
 
 # Used to specify the build context path for Docker.  Note that we are
 # specifying the repository root so that we can
@@ -22,7 +21,6 @@ makefile_dir := $(dir $(realpath Makefile))
 show-args:
 	@printf "PANDOC_VERSION (i.e. image version tag): %s\n" $(PANDOC_VERSION)
 	@printf "pandoc_commit=%s\n" $(PANDOC_COMMIT)
-	@printf "pandoc_citeproc_commit=%s\n" $(PANDOC_CITEPROC_COMMIT)
 
 ################################################################################
 # Alpine images and tests                                                      #
@@ -32,7 +30,6 @@ alpine:
 	docker build \
 	    --tag pandoc/core:$(PANDOC_VERSION) \
 	    --build-arg pandoc_commit=$(PANDOC_COMMIT) \
-	    --build-arg pandoc_citeproc_commit=$(PANDOC_CITEPROC_COMMIT) \
 	    -f $(makefile_dir)/alpine/Dockerfile $(makefile_dir)
 alpine-latex:
 	docker build \

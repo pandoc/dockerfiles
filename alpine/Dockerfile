@@ -20,13 +20,10 @@ RUN cabal update \
 
 FROM alpine-pandoc-haskell AS alpine-pandoc-build
 ARG pandoc_commit=master
-ARG pandoc_citeproc_commit=master
 
 WORKDIR /usr/src/
 RUN git clone --branch=$pandoc_commit --depth=1 --quiet \
         https://github.com/jgm/pandoc
-RUN git clone --branch=$pandoc_citeproc_commit --depth=1 --quiet \
-        https://github.com/jgm/pandoc-citeproc
 
 WORKDIR /usr/src/pandoc
 # NOTE: --ghc-options -j +RTS -A128m -n2m -RTS, see:
@@ -49,12 +46,10 @@ RUN strip /usr/bin/pandoc /usr/bin/pandoc-citeproc
 
 FROM alpine AS alpine-pandoc
 ARG pandoc_commit=master
-ARG pandoc_citeproc_commit=master
 LABEL maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
 LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
 LABEL org.pandoc.author "John MacFarlane"
 LABEL org.pandoc.version "$pandoc_commit"
-LABEL org.pandoc.pandoc-citeproc.version "$pandoc_citeproc_commit"
 
 COPY --from=alpine-pandoc-build /usr/bin/pandoc* /usr/bin/
 RUN apk update \
