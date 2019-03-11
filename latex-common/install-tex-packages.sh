@@ -19,6 +19,7 @@ tlmgr install amsfonts \
               listings \
               lm \
               lm-math \
+              logreq \
               oberdiek \
               setspace \
               tools \
