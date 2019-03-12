@@ -26,7 +26,8 @@ WORKDIR /usr/src/
 RUN git clone --branch=$pandoc_commit --depth=1 --quiet \
         https://github.com/jgm/pandoc
 RUN git clone --branch=$pandoc_citeproc_commit --depth=1 --quiet \
-        https://github.com/jgm/pandoc-citeproc
+        https://github.com/jgm/pandoc-citeproc \
+        pandoc/pandoc-citeproc
 
 WORKDIR /usr/src/pandoc
 # NOTE: --ghc-options -j +RTS -A128m -n2m -RTS, see:
