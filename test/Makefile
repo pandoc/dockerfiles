@@ -26,8 +26,8 @@ test: test-core test-latex
 CORE_CMD = docker run --rm -it -v $(test_files_path):/data $(IMAGE)
 OUTPUT_FORMATS=markdown epub docx latex html
 
-.PHONY: test-core testsuite-to-% test-bib-conversion
-test-core: test-bib-conversion \
+.PHONY: test-core testsuite-to-% test-bib-conversion test-lua
+test-core: test-bib-conversion test-lua \
 		$(foreach format,$(OUTPUT_FORMATS), testsuite-to-$(format))
 
 testsuite-to-%: testsuite.native
@@ -38,6 +38,10 @@ test-bib-conversion: example.bib
 	docker run --rm -it -v $(test_files_path):/data \
 	    --entrypoint=/usr/bin/pandoc-citeproc $(IMAGE) \
 	    --bib2yaml $< > /dev/null
+
+test-lua: test-lua.sh
+	docker run --rm -it -v $(test_files_path):/data \
+	    --entrypoint=/data/test-lua.sh $(IMAGE)
 
 #  _         _____   __  __
 # | |    __ |_   _|__\ \/ /
