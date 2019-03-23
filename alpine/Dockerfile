@@ -59,5 +59,4 @@ RUN apk update \
          lua5.3
 
 WORKDIR /data
-VOLUME ["/data"]
 ENTRYPOINT ["pandoc"]
