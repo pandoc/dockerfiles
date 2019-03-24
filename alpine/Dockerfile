@@ -1,7 +1,6 @@
-FROM alpine AS alpine-pandoc-haskell
+FROM alpine AS pandoc-builder
 
-RUN apk update \
-  && apk add \
+RUN apk --no-cache add \
          alpine-sdk \
          bash \
          ca-certificates \
@@ -14,20 +13,19 @@ RUN apk update \
          pkgconfig \
          zlib-dev
 
+# Install newer cabal-install version
+COPY cabal.root.config /root/.cabal/config
 RUN cabal update \
   && cabal install cabal-install \
-  && cp $HOME/.cabal/bin/cabal /usr/bin/
+  && mv /root/.cabal/bin/cabal /usr/local/bin/cabal
 
-FROM alpine-pandoc-haskell AS alpine-pandoc-build
+# Get sources
 ARG pandoc_commit=master
-
-WORKDIR /usr/src/
 RUN git clone --branch=$pandoc_commit --depth=1 --quiet \
-        https://github.com/jgm/pandoc
+        https://github.com/jgm/pandoc /usr/src/pandoc
 
+# Install Haskell dependencies
 WORKDIR /usr/src/pandoc
-# NOTE: --ghc-options -j +RTS -A128m -n2m -RTS, see:
-# https://rybczak.net/2016/03/26/how-to-reduce-compilation-times-of-haskell-projects/
 RUN cabal --version \
   && ghc --version \
   && cabal new-update \
@@ -36,12 +34,15 @@ RUN cabal --version \
            --flag embed_data_files \
            --flag bibutils \
            --constraint 'hslua +system-lua +pkg-config' \
-           --ghc-options '-O1 -optc-Os -optl=-pthread -fPIC -j +RTS -A128m -n2m -RTS' \
+           --enable-tests \
            . pandoc-citeproc \
-  && cabal new-build . pandoc-citeproc \
-  && find dist-newstyle -name 'pandoc*' -type f -perm +400 -exec cp '{}' /usr/bin/ ';'
+  && cabal new-build . pandoc-citeproc
 
-RUN strip /usr/bin/pandoc /usr/bin/pandoc-citeproc
+FROM pandoc-builder AS pandoc-binaries
+RUN find dist-newstyle \
+         -name 'pandoc*' -type f -perm +400 \
+         -exec cp '{}' /usr/bin/ ';' \
+  && strip /usr/bin/pandoc /usr/bin/pandoc-citeproc
 
 
 FROM alpine AS alpine-pandoc
@@ -51,9 +52,8 @@ LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
 LABEL org.pandoc.author "John MacFarlane"
 LABEL org.pandoc.version "$pandoc_commit"
 
-COPY --from=alpine-pandoc-build /usr/bin/pandoc* /usr/bin/
-RUN apk update \
-  && apk add \
+COPY --from=pandoc-binaries /usr/bin/pandoc* /usr/bin/
+RUN apk add --no-cache \
          gmp \
          libffi \
          lua5.3 \
