@@ -56,7 +56,8 @@ RUN apk update \
   && apk add \
          gmp \
          libffi \
-         lua5.3
+         lua5.3 \
+         lua5.3-lpeg
 
 WORKDIR /data
 ENTRYPOINT ["pandoc"]
