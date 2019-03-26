@@ -98,13 +98,18 @@ Basic Usage
    convert to HTML.
 
    ```sh
-   docker run --volume "`pwd`:/data" pandoc/latex:2.6 README.md
+   docker run --volume "`pwd`:/data" --user `id -u`:`id -g` pandoc/latex:2.6 README.md
    ```
 
    The `--volume` flag maps some directory on *your machine* (lefthand side of
    the colons) to some directory *in the container* (righthand side), so that
    you have your source files available for pandoc to convert. `pwd` is quoted
    to protect against spaces in filenames.
+
+   Ownership of the output file is determined by the user executing pandoc *in
+   the container*. This will generally be a user different from the local user.
+   It is hence a good idea to specify for docker the user and group IDs to use
+   via the `--user` flag.
 
    `pandoc/latex:2.6` declares the image that you're going to run. It's always a
    good idea to hardcode the version, lest future releases break your code.
