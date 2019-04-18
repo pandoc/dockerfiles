@@ -32,10 +32,12 @@ Docker images hosted here have a "core" version and a "latex" version:
   _might_ use, and any libraries needed by these packages (such as image
   libraries needed by the latex graphics packages).
 
-From there, the tagging scheme is either `X.Y`, `latest`, or `edge`.
+From there, the tagging scheme is either `X.Y`, `X.Y.Z`, `latest`, or `edge`.
 
-- `X.Y`: an official `pandoc` release (e.g., `2.6`).  Once an `X.Y` tag is
-  pushed, it will not be re-built (unless there is a problem).
+- `X.Y` or `X.Y.Z`: an official `pandoc` release (e.g., `2.6`).  Once an `X.Y`
+  tag is pushed, it will not be re-built (unless there is a problem).  Pandoc
+  releases versions such as `2.7` or `2.7.1` (there is no `2.7.0`), which is
+  where the optional `.Z` comes from.
 - `latest`: the `latest` tag points to the most recent `X.Y` release.  For
   example, if tags `2.5` and `2.6` were available online, `latest` would be the
   same image as `2.6`.
@@ -48,7 +50,7 @@ From there, the tagging scheme is either `X.Y`, `latest`, or `edge`.
 Current `latest` Tag
 --------------------------------------------------------------------------------
 
-The current `latest` tag for all images points to `pandoc` version `2.7`.
+The current `latest` tag for all images points to `pandoc` version `2.7.1`.
 
 Alpine Linux
 --------------------------------------------------------------------------------
@@ -299,14 +301,18 @@ in this exact order:
    $ git push -u origin release/9.8
    ```
 
-   The important part is the commit message.  The build script looks for exactly
-   `release=[0-9]\.[0-9]` in the message, and if found performs the additional
-   tagging to `:latest`.  So the diff does not really matter, just the message.
+   The important part is the commit message.  The
+   [`.circleci/version_for_commit_message.sh`][vfcm] script will check the
+   commit message for `release=X.Y` / `release=X.Y.Z`, and if found performs the
+   additional tagging to `:latest`.  So the diff does not really matter, just
+   the message.
 
    Create a pull request first to make sure all image stacks build as expected.
 2. Assuming the pull request build succeeds, merge to `master` branch.  The only
    time that `docker push` is performed is when a commit hits the `master`
    branch of this repository.
+
+[vfcm]: .circleci/version_for_commit_message.sh
 
 License
 ================================================================================
