@@ -11,7 +11,8 @@ RUN apk --no-cache add \
         librsvg \
         perl \
         tar \
-        wget
+        wget \
+        xz
 
 # DANGER: this will vary for different distributions, particularly the
 # `linuxmusl` suffix.  Alpine linux is a musl libc based distribution, for other
