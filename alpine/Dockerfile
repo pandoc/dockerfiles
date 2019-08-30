@@ -53,6 +53,7 @@ LABEL org.pandoc.author "John MacFarlane"
 LABEL org.pandoc.version "$pandoc_commit"
 
 COPY --from=pandoc-binaries /usr/bin/pandoc* /usr/bin/
+COPY common/docker-entrypoint.sh /usr/local/bin
 RUN apk add --no-cache \
          gmp \
          libffi \
@@ -60,4 +61,4 @@ RUN apk add --no-cache \
          lua5.3-lpeg
 
 WORKDIR /data
-ENTRYPOINT ["pandoc"]
+ENTRYPOINT ["docker-entrypoint.sh"]
