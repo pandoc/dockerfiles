@@ -5,7 +5,7 @@ if [ "$#" -ne 1 ]; then
     exit 1
 fi
 
-set -euxo pipefail
+set -eux
 
 # Define cabal project to build.
 mkdir -p /usr/src
@@ -17,7 +17,7 @@ git clone --branch="$pandoc_commit" \
           --depth=1 \
           https://github.com/jgm/pandoc \
           /usr/src/pandoc
-# >>>>>>>>>>> v slash required to tell cabal to use the folder!
+# >>>>>>>>>>>>> v slash required to tell cabal to use the folder!
 echo "    pandoc/" >> /usr/src/cabal.project
 
 # 3. Clone specific branch of pandoc-crossref if `master` build.  Otherwise, use
@@ -27,7 +27,7 @@ if [ "$pandoc_commit" = "master" ]; then
               --depth=1 \
               https://github.com/lierdakil/pandoc-crossref \
               /usr/src/pandoc-crossref
-    # >>>>>>>>>>>>>>>>>>>> v slash required to tell cabal to use this folder!
+    # >>>>>>>>>>>>>>>>>>>>>> v slash required to tell cabal to use this folder!
     echo "    pandoc-crossref/" >> /usr/src/cabal.project
 fi
 
