@@ -4,6 +4,7 @@ jobs:
   lint:
     docker:
       - image: koalaman/shellcheck:stable
+        entrypoint: /bin/sh
     steps:
       - checkout
       - run: make lint
