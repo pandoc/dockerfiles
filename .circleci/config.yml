@@ -2,9 +2,9 @@ version: 2.1
 jobs:
   # Any linting checks that can be performed go here.
   lint:
-    machine: true
+    docker:
+      - image: koalaman/shellcheck:stable
     steps:
-      - run: sudo apt-get install shellcheck
       - checkout
       - run: make lint
   # Builds a docker image stack (see workflows below).  If getting merged to the
