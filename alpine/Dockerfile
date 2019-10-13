@@ -15,44 +15,44 @@ RUN apk --no-cache add \
 
 # Install newer cabal-install version
 COPY cabal.root.config /root/.cabal/config
-RUN cabal update \
-  && cabal install cabal-install \
-  && mv /root/.cabal/bin/cabal /usr/local/bin/cabal
+RUN cabal v2-update \
+    && cabal v2-install cabal-install
+# Make the new `cabal` available for the remainder of the build.
+ENV PATH="/root/.cabal/bin:${PATH}"
 
-# Get sources
+# Get sources and build /usr/src/cabal.project file.
 ARG pandoc_commit=master
-RUN git clone --branch=$pandoc_commit --depth=1 --quiet \
-        https://github.com/jgm/pandoc /usr/src/pandoc
+WORKDIR /usr/src
+COPY common/define_cabal_project_and_gather_sources.sh .
 
-# Install Haskell dependencies
-WORKDIR /usr/src/pandoc
-RUN cabal --version \
-  && ghc --version \
-  && cabal new-update \
-  && cabal new-clean \
-  && cabal new-configure \
-           --flag embed_data_files \
-           --flag bibutils \
-           --constraint 'hslua +system-lua +pkg-config' \
-           --enable-tests \
-           . pandoc-citeproc \
-  && cabal new-build . pandoc-citeproc
+# NOTE: make calling script is kept with building / installing, otherwise Docker
+# will cache things and we don't want that in this scenario.
+# NOTE: this will be cabal 3+, meaning `v2-cmd` / `new-cmd` are now just `cmd`.
+RUN ./define_cabal_project_and_gather_sources.sh ${pandoc_commit} \
+    && cabal --version \
+    && ghc --version \
+    && cabal update \
+    && cabal install \
+             pandoc pandoc-citeproc pandoc-crossref \
+             --installdir=/root/.cabal/bin \
+             --install-method=copy \
+             --flag embed_data_files \
+             --flag bibutils \
+             --constraint 'hslua +system-lua +pkg-config'
 
 FROM pandoc-builder AS pandoc-binaries
-RUN find dist-newstyle \
-         -name 'pandoc*' -type f -perm +400 \
-         -exec cp '{}' /usr/bin/ ';' \
-  && strip /usr/bin/pandoc /usr/bin/pandoc-citeproc
-
+# Build artifacts we seek are in /root/.cabal/bin.
+RUN cp /root/.cabal/bin/pandoc* /usr/local/bin/ && strip /usr/local/bin/pandoc*
 
 FROM alpine AS alpine-pandoc
 ARG pandoc_commit=master
+
 LABEL maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
 LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
 LABEL org.pandoc.author "John MacFarlane"
 LABEL org.pandoc.version "$pandoc_commit"
 
-COPY --from=pandoc-binaries /usr/bin/pandoc* /usr/bin/
+COPY --from=pandoc-binaries /usr/local/bin/pandoc* /usr/local/bin/
 RUN apk add --no-cache \
          gmp \
          libffi \

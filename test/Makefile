@@ -27,7 +27,7 @@ CORE_CMD = docker run --rm -it -v $(test_files_path):/data $(IMAGE)
 OUTPUT_FORMATS=markdown epub docx latex html
 
 .PHONY: test-core testsuite-to-% test-bib-conversion test-lua
-test-core: test-bib-conversion test-lua \
+test-core: test-bib-conversion test-lua test-crossref \
 		$(foreach format,$(OUTPUT_FORMATS), testsuite-to-$(format))
 
 testsuite-to-%: testsuite.native
@@ -42,6 +42,12 @@ test-bib-conversion: example.bib
 test-lua: testsuite.native lpeg-test.lua
 	docker run --rm -it -v $(test_files_path):/data $(IMAGE) \
 	    --lua-filter=lpeg-test.lua --to=json --output=/dev/null $<
+
+# TODO: create an actual test case
+test-crossref:
+	docker run --rm -it -v $(test_files_path):/data \
+	    --entrypoint=/bin/sh $(IMAGE) \
+	    pandoc-crossref --version
 
 #  _         _____   __  __
 # | |    __ |_   _|__\ \/ /
