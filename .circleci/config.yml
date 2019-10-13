@@ -2,12 +2,14 @@ version: 2.1
 jobs:
   # Any linting checks that can be performed go here.
   lint:
-    docker:
-      - image: koalaman/shellcheck:stable
-        entrypoint: /bin/sh
+    machine: true
     steps:
       - checkout
-      - run: make lint
+      - run: |
+          curl -LO https://storage.googleapis.com/shellcheck/shellcheck-stable.linux.x86_64.tar.xz
+          tar -xf shellcheck-stable.linux.x86_64.tar.xz
+          export PATH="$PWD/shellcheck-stable:$PATH"
+          make lint
   # Builds a docker image stack (see workflows below).  If getting merged to the
   # master branch then the built image(s) will also be pushed to docker hub.
   build_stack:
