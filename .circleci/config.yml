@@ -4,9 +4,14 @@ jobs:
   lint:
     machine: true
     steps:
-      - run: sudo apt-get install shellcheck
       - checkout
-      - run: make lint
+      - run:
+          name: Download and Run ShellCheck
+          command: |
+            curl -LO https://storage.googleapis.com/shellcheck/shellcheck-stable.linux.x86_64.tar.xz
+            tar -xf shellcheck-stable.linux.x86_64.tar.xz
+            export PATH="$PWD/shellcheck-stable:$PATH"
+            make lint
   # Builds a docker image stack (see workflows below).  If getting merged to the
   # master branch then the built image(s) will also be pushed to docker hub.
   build_stack:
