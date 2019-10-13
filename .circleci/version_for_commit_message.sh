@@ -7,7 +7,7 @@
 # DANGER: never use a commit message like "time to release=2.7.1." with a
 #         trailing `.`.  `2.7.1.` will not be a valid tag on the pandoc repo.
 # NOTE: cron jobs always build the :edge tag.
-release_tag="$(git log --pretty="%s" -1 | grep -Eo 'release=[0-9\.]+')"
+release_tag="$(git log --pretty="%B" -1 | grep -Eo 'release=[0-9\.]+')"
 if [[ "$CIRCLE_CRON_JOB" == "true" ]] || [[ -z "$release_tag" ]]; then
     version="edge"
 else
