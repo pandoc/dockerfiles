@@ -11,33 +11,36 @@ set -eux
 mkdir -p /usr/src
 echo "packages:" > /usr/src/cabal.project
 
-# 1. Clone pandoc.
+# 1. Clone pandoc.  Want to be able to clone specific branches, tags, and
+#    commits (helpful for bisecting build problems).
 pandoc_commit="$1"
-git clone --branch="$pandoc_commit" \
-          --depth=1 \
-          https://github.com/jgm/pandoc \
-          /usr/src/pandoc
-# >>>>>>>>>>>>> v slash required to tell cabal to use the folder!
+git clone https://github.com/jgm/pandoc /usr/src/pandoc
+old_pwd="$PWD"  # pushd / popd not available on alpine
+cd /usr/src/pandoc
+git checkout "$pandoc_commit"  # cannot clone specific commit, only branch / tag
+cd "$old_pwd"
+# >>>>>>>>>>>>> v slash required for cabal to use the folder!
 echo "    pandoc/" >> /usr/src/cabal.project
 
-# 3. Clone specific branch of pandoc-crossref if `master` build.  Otherwise, use
-#    hackage to obtain for stable releases.  (Thanks @lierdakil <3)
-if [ "$pandoc_commit" = "master" ]; then
+# 3. Clone specific branch of pandoc-crossref if non-release-tag build.
+#    Otherwise, use hackage to obtain for stable releases.  Does not work for
+#    branches with `.` in them, `pandoc` has few of these though.
+#    (Thanks @lierdakil for `pandoc_master` branch <3)
+tag="$(echo "$pandoc_commit" | awk '{c=0} /^[0-9\.]+$/ {c++} END {print c}')"
+if [ "$tag" = "0" ]; then
     git clone --branch=pandoc_master \
               --depth=1 \
               https://github.com/lierdakil/pandoc-crossref \
               /usr/src/pandoc-crossref
-    # >>>>>>>>>>>>>>>>>>>>>> v slash required to tell cabal to use this folder!
+    # >>>>>>>>>>>>>>>>>>>>>> v slash required for cabal to use the folder!
     echo "    pandoc-crossref/" >> /usr/src/cabal.project
 fi
 
 # 3. Gather specific pandoc-citeproc information from cloned pandoc.
 echo "" >> /usr/src/cabal.project
-# We are grabbing `source-repository-package` from pandoc:
+# Acquire `source-repository-package` definitions from pandoc:
 #     https://github.com/jgm/pandoc/blob/master/cabal.project
-# This awk call assumes pandoc-citeproc is the first "source-repository-package"
-# and exits after it sees the next source-repository-package declaration.
-awk '/source-repository-package/,/^$/{c += $0 == "source-repository-package"; if (c > 1) exit; print}' \
+awk '/^\S/{P=0}/^source-repository-package$/{P=1}(P){print}' \
     /usr/src/pandoc/cabal.project >> /usr/src/cabal.project
 
 # Dump to console (for debugging purposes via CI).
