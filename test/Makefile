@@ -47,7 +47,7 @@ test-lua: testsuite.native lpeg-test.lua
 test-crossref:
 	docker run --rm -it -v $(test_files_path):/data \
 	    --entrypoint=/bin/sh $(IMAGE) \
-	    pandoc-crossref --version
+	    -c 'pandoc-crossref --version'
 
 #  _         _____   __  __
 # | |    __ |_   _|__\ \/ /
