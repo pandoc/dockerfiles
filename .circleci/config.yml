@@ -41,10 +41,12 @@ jobs:
       - run:
           # Set a 1 hour time limit.  Build/push may get silent during parts.
           no_output_timeout: 1h
+          name: Build << parameters.core_target >>
           command: |
             ./.circleci/build_image.sh << parameters.core_target >>
       # Test core image
       - run:
+          name: Test << parameters.core_target >>
           command: |
             version="$(./.circleci/version_for_commit_message.sh)"
             PANDOC_VERSION="$version" make test-<< parameters.core_target >>
@@ -52,10 +54,12 @@ jobs:
       - run:
           # Set a 1 hour time limit.  Build/push may get silent during parts.
           no_output_timeout: 1h
+          name: Build << parameters.latex_target >>
           command: |
             ./.circleci/build_image.sh << parameters.latex_target >>
       # Test latex image
       - run:
+          name: Test << parameters.latex_target >>
           command: |
             version="$(./.circleci/version_for_commit_message.sh)"
             PANDOC_VERSION="$version" make test-<< parameters.latex_target >>
@@ -80,11 +84,13 @@ workflows:
     jobs:
       - lint
       - build_stack:
+          name: build_stack-alpine
           <<: *alpine_stack
   monthly:
     # NOTE: make sure all `build_stack` calls here *also* set `cron_job: true`!
     jobs:
       - build_stack:
+          name: build_stack-alpine-CRON
           <<: *alpine_stack
           cron_job: true
     triggers:
