@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Clone specified pandoc ref (commit, tag, branch) into /usr/src/pandoc,
+# generate /usr/src/cabal.project, and potentially clone pandoc-crossref
+# depending on pandoc ref specified in $1.
 if [ "$#" -ne 1 ]; then
     echo "Usage: $0 pandoc_commit_or_branch" >&2
     exit 1
@@ -26,6 +29,9 @@ echo "    pandoc/" >> /usr/src/cabal.project
 #    Otherwise, use hackage to obtain for stable releases.  Does not work for
 #    branches with `.` in them, `pandoc` has few of these though.
 #    (Thanks @lierdakil for `pandoc_master` branch <3)
+# NOTE: commits older than latest `pandoc` release will break.  `pandoc_master`
+#       branch tracks changes to `pandoc-crossref` that will land after next
+#       `pandoc` released.  If older commit needed, comment below / set `tag=1`.
 tag="$(echo "$pandoc_commit" | awk '{c=0} /^[0-9\.]+$/ {c++} END {print c}')"
 if [ "$tag" = "0" ]; then
     git clone --branch=pandoc_master \
