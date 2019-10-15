@@ -24,21 +24,11 @@ ENV PATH="/root/.cabal/bin:${PATH}"
 ARG pandoc_commit=master
 WORKDIR /usr/src
 COPY common/define_cabal_project_and_gather_sources.sh .
+COPY common/build_and_install_executables.sh .
 
-# NOTE: make calling script is kept with building / installing, otherwise Docker
-# will cache things and we don't want that in this scenario.
-# NOTE: this will be cabal 3+, meaning `v2-cmd` / `new-cmd` are now just `cmd`.
+# NOTE: run both in same step to prevent inappropriate caching by docker.
 RUN ./define_cabal_project_and_gather_sources.sh ${pandoc_commit} \
-    && cabal --version \
-    && ghc --version \
-    && cabal update \
-    && cabal install \
-             pandoc pandoc-citeproc pandoc-crossref \
-             --installdir=/root/.cabal/bin \
-             --install-method=copy \
-             --flag embed_data_files \
-             --flag bibutils \
-             --constraint 'hslua +system-lua +pkg-config'
+    && ./build_and_install_executables.sh
 
 FROM pandoc-builder AS pandoc-binaries
 # Build artifacts we seek are in /root/.cabal/bin.
