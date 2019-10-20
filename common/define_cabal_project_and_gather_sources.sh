@@ -26,10 +26,8 @@ cd "$old_pwd"
 echo "    pandoc/" >> /usr/src/cabal.project
 
 ################################################################################
-# HACK:
-# LaTeX 2019 need to bypass: https://github.com/jgm/pandoc/issues/5801
-# We will re-release 2.6 ... 2.7.3 to add pandoc-crossref, this code will not
-# be needed forever.
+# HACK: Needed for versions <= 2.7.3
+# LaTeX 2019+ fails: https://github.com/jgm/pandoc/issues/5801
 #
 # Crude version detection: always make sure to check != $pandoc_commit!
 major="$(echo "$pandoc_commit" | sed 's/^\([0-9]\)\..*$/\1/')"
@@ -49,6 +47,7 @@ if ! [ "$major" = "$pandoc_commit" ]; then
         fi
     fi
 fi
+
 # https://github.com/jgm/pandoc/commit/d9db76dcf40d1930ad15317d76fd2c90d9114801
 # Patch does not apply cleanly to all versions needing patching, just manually
 # patch the relevant section of the writer.
