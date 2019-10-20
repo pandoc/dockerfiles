@@ -54,7 +54,7 @@ fi
 if [ "$do_patch" = "1" ]; then
     cd /usr/src/pandoc
     src='\\\\begin{center}\\\\rule{0\.5\\\\linewidth}{\\\\linethickness}\\\\end{center}'
-    dst='\\begin{center}\\rule{0.5\\linewidth}{0.5pt}\\end{center}'
+    dst='\\\\begin{center}\\\\rule{0.5\\\\linewidth}{0.5pt}\\\\end{center}'
     sed "s/$src/$dst/g" < src/Text/Pandoc/Writers/LaTeX.hs > tmp.hs
     mv tmp.hs src/Text/Pandoc/Writers/LaTeX.hs
     # Display patched changes.
