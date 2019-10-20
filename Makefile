@@ -9,7 +9,7 @@ endif
 # Used to specify the build context path for Docker.  Note that we are
 # specifying the repository root so that we can
 #
-#     COPY latex-common/texlive.profile /root
+#     COPY common/latex/texlive.profile /root
 #
 # for example.  If writing a COPY statement in *ANY* Dockerfile, just know that
 # it is from the repository root.
