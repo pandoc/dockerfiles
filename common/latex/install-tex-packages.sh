@@ -14,8 +14,7 @@ tlmgr install amsfonts \
               geometry \
               graphics \
               hyperref \
-              ifluatex \
-              ifxetex \
+              iftex \
               listings \
               lm \
               lm-math \
