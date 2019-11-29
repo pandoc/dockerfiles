@@ -37,6 +37,7 @@ tlmgr install bidi \
               lualatex-math \
               mathspec \
               microtype \
+              pdftexcmds \
               polyglossia \
               upquote \
               xecjk \
