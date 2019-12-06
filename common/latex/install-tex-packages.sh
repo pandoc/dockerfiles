@@ -54,6 +54,7 @@ tlmgr install biber \
 # These packages were identified by the tests, they are likely dependencies of
 # dependencies that are not encoded well.
 tlmgr install footnotehyper \
+              letltxmacro \
               xurl \
               || exit 1
 
