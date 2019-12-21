@@ -173,26 +173,18 @@ so you must include the command.
 GitHub Actions
 --------------------------------------------------------------------------------
 
-By encapsulating the compute environment, Docker can make it easier to run
-dependency-heavy software on your local machine, but it was designed to run in
-the cloud.
+GitHub Actions is an Infrastructure as a Service (IaaS) from GitHub, that allows
+you to automatically run code on GitHub's servers on every push (or a bunch of
+other GitHub events). For example, you can use GitHub Actions to convert some
+`file.md` in your git source to `file.pdf` (via LaTeX) using pandoc and upload
+ the results to a web host.
 
-Continuous integration and delivery (CI/CD) is a cloud service that may be
-useful for many pandoc users. Perhaps, you're using pandoc convert some markdown
-source document into HTML and deploy the results to a webserver. If the source
-document is under version control (such as git), you might want pandoc to
-convert and deploy *on every commit*. That is what CI/CD does.
+To use pandoc on GitHub Actions, you can leverage the docker images of this
+project.
 
-You can use the above docker images on any number of CI/CD services; many will
-accept arbitrary docker container.
-
-GitHub actions is a relatively new workflow automation feature from the popular
-git host GitHub. Docker containers are especially easy to use on GitHub actions.
-
-GitHub actions can also be packaged, published and reused as "plug-and-play"
-workflows. There is already a [pandoc GitHub
-action](https://github.com/maxheld83/pandoc) that lets you use the pandoc docker
-images inside of GitHub actions.
+To learn more how to use the docker pandoc images in your GitHub Actions
+workflow, see
+[these examples](http://github.com/maxheld83/pandoc-action-example).
 
 
 Maintenance Notes
