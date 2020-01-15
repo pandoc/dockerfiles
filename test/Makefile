@@ -55,17 +55,18 @@ LATEX_CMD = docker run --rm -it \
 	--fail-if-warnings
 
 # Generate list of targets to test all highlighting options available in pandoc.
-highlighters = pygments \
-               kate \
-               monochrome \
-               breezeDark \
-               espresso \
-               zenburn \
-               haddock \
-               tango
+# See: https://pandoc.org/MANUAL.html#option--highlight-style
+styles = pygments \
+         kate \
+         monochrome \
+         breezeDark \
+         espresso \
+         zenburn \
+         haddock \
+         tango
 # Create code-highlight-{pygments,kate,...}.pdf targets names.  List needed now
 # to add to test-latex target.  Rules generated below after test-biblatex.pdf.
-code_targets = $(addsuffix .pdf, $(addprefix output/code-highlight-, $(highlighters)))
+code_targets = $(addsuffix .pdf, $(addprefix output/code-highlight-, $(styles)))
 
 .PHONY: test-latex
 test-latex: output/testsuite.pdf output/french.pdf output/german.pdf \
