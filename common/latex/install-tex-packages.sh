@@ -1,6 +1,6 @@
 #!/bin/sh
 ################################################################################
-# Install pandoc latex pacakges: https://pandoc.org/MANUAL.html#creating-a-pdf #
+# Install pandoc latex packages: https://pandoc.org/MANUAL.html#creating-a-pdf #
 ################################################################################
 # NOTE: search left hand side on CTAN to see for yourself:
 #       graphicx  -> graphics
@@ -26,6 +26,9 @@ tlmgr install amsfonts \
               unicode-math \
               xcolor \
               || exit 1
+
+# Needed for when --highlight-style used with something other than pygments.
+tlmgr install framed || exit 1
 
 ################################################################################
 # Install extra packages for XeTex, LuaTex, and BibLaTex.                      #

@@ -54,10 +54,25 @@ LATEX_CMD = docker run --rm -it \
 	$(IMAGE) \
 	--fail-if-warnings
 
+# Generate list of targets to test all highlighting options available in pandoc.
+# See: https://pandoc.org/MANUAL.html#option--highlight-style
+styles = pygments \
+         kate \
+         monochrome \
+         breezeDark \
+         espresso \
+         zenburn \
+         haddock \
+         tango
+# Create code-highlight-{pygments,kate,...}.pdf targets names.  List needed now
+# to add to test-latex target.  Rules generated below after test-biblatex.pdf.
+code_targets = $(addsuffix .pdf, $(addprefix output/code-highlight-, $(styles)))
+
 .PHONY: test-latex
 test-latex: output/testsuite.pdf output/french.pdf output/german.pdf \
 		output/lorem-geometry.pdf output/lorem-optional-packages.pdf \
-		output/test-beamer.pdf output/test-natbib.pdf output/test-biblatex.pdf
+		output/test-beamer.pdf output/test-natbib.pdf output/test-biblatex.pdf \
+		$(code_targets)
 
 output/testsuite.pdf: testsuite.native
 	$(LATEX_CMD) $< \
@@ -119,6 +134,12 @@ output/test-biblatex.pdf: output/test-biblatex.tex output/example.bib \
 	    --entrypoint=/data/pdf-via-biblatex.sh \
 	    $(IMAGE) \
 	    $(notdir $(basename $<))
+
+# Use every highlighter to make sure all needed packages are installed.
+$(code_targets): output/code-highlight-%.pdf: code-highlight.md
+	$(LATEX_CMD) $< \
+	    --highlight-style=$* \
+	    --output=$@
 
 #   ____ _
 #  / ___| | ___  __ _ _ __
