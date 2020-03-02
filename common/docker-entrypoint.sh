@@ -4,7 +4,7 @@
 
 set -e
 
-if [ "${1#-}" != "${1}" ] || [ -z "$(command -v "${1}")" ]; then
+if [ "${1#-}" != "${1}" ] || [ ! -x "$(command -v "${1}")" ]; then
   set -- pandoc "$@"
 fi
 
