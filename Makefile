@@ -53,3 +53,54 @@ lint:
 .PHONY: clean
 clean:
 	IMAGE=none make -C test clean
+
+# Yearly archiving for tex: https://github.com/pandoc/dockerfiles/issues/43
+# Base image, archive year required args.
+#
+#   BASE_IMAGE: "latex" for alpine, otherwise e.g., "ubuntu-latex"
+#   ARCHIVE_YEAR: "2019" (example).
+#
+# Example: make archive BASE_IMAGE=latex ARCHIVE_YEAR=2019 PANDOC_VERSION=2.6
+# Archives pandoc/latex:2.6 with 2019 tlmgr url, tagging as pandoc/latex:2.6
+# to allow you to repush online.
+BASE_IMAGE :=
+ARCHIVE_YEAR :=
+
+# NOTE: this is an awkward way to check for both of these, but it's late
+# and I'm writing Make...so i'll take what works.
+err_archive = BASE_IMAGE and ARCHIVE_YEAR required arguments
+.PHONY: archive
+ifneq ($(BASE_IMAGE),)
+ifneq ($(ARCHIVE_YEAR),)
+archive:
+	echo yay
+	@# NOTE: it's going to pull e.g., pandoc/latex:tag down during the build
+	@# which we will then basically overwrite.
+	docker build \
+		--tag pandoc/$(BASE_IMAGE)-archived:$(PANDOC_VERSION) \
+		--build-arg base_image=$(BASE_IMAGE) \
+		--build-arg archive_year=$(ARCHIVE_YEAR) \
+		--build-arg base_tag=$(PANDOC_VERSION) \
+	    -f $(makefile_dir)/common/latex/archive/Dockerfile $(makefile_dir)
+	@# Image downloaded and built as ${orig}-archived:${tag}, name swap.
+	docker image tag \
+		pandoc/$(BASE_IMAGE):$(PANDOC_VERSION) \
+		pandoc/$(BASE_IMAGE)-old:$(PANDOC_VERSION)
+	docker image tag \
+		pandoc/$(BASE_IMAGE)-archived:$(PANDOC_VERSION) \
+		pandoc/$(BASE_IMAGE):$(PANDOC_VERSION)
+	@# With names swapped, test tlmgr works to report success or fail.
+	docker build \
+		--tag pandoc/$(BASE_IMAGE)-archive-test:$(PANDOC_VERSION) \
+		--build-arg base_image=$(BASE_IMAGE) \
+		--build-arg archive_year=$(ARCHIVE_YEAR) \
+	    --build-arg base_tag=$(PANDOC_VERSION) \
+		-f $(makefile_dir)/common/latex/archive/test-archive/Dockerfile $(makefile_dir)
+else
+archive:
+	$(error $(err_archive))
+endif
+else
+archive:
+	$(error $(err_archive))
+endif
