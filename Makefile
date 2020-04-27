@@ -73,7 +73,6 @@ err_archive = BASE_IMAGE and ARCHIVE_YEAR required arguments
 ifneq ($(BASE_IMAGE),)
 ifneq ($(ARCHIVE_YEAR),)
 archive:
-	echo yay
 	@# NOTE: it's going to pull e.g., pandoc/latex:tag down during the build
 	@# which we will then basically overwrite.
 	docker build \

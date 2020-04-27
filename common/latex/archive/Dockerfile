@@ -8,7 +8,8 @@ RUN tlmgr option repository ftp://tug.org/historic/systems/texlive/${archive_yea
 
 # Create a synthetic "alias" for tlmgr that just forwards.
 # Cannot create a shell alias (non-interactive executions).
-RUN tlmgr_orig="$(which tlmgr)" && \
+RUN tlmgr --verify-repo=none update --self && \
+    tlmgr_orig="$(which tlmgr)" && \
     mv "$tlmgr_orig" "$tlmgr_orig-actual" && \
     echo '#!/bin/sh' > "$tlmgr_orig" && \
     echo "$tlmgr_orig-actual"' --verify-repo=none $@' >> "$tlmgr_orig" && \
