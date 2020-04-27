@@ -7,6 +7,7 @@ FROM pandoc/${base_image}:${base_tag}
 # if the archive url didn't work then tlmgr will fail saying so.
 RUN tlmgr install adjustbox \
                   collectbox \
+                  fontawesome5 \
                   framed \
                   ly1 \
                   minted \

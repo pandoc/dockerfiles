@@ -77,7 +77,7 @@ archive:
 	@# NOTE: it's going to pull e.g., pandoc/latex:tag down during the build
 	@# which we will then basically overwrite.
 	docker build \
-		--tag pandoc/$(BASE_IMAGE)-archived:$(PANDOC_VERSION) \
+		--tag pandoc/$(BASE_IMAGE):$(PANDOC_VERSION)-archived \
 		--build-arg base_image=$(BASE_IMAGE) \
 		--build-arg archive_year=$(ARCHIVE_YEAR) \
 		--build-arg base_tag=$(PANDOC_VERSION) \
@@ -85,15 +85,14 @@ archive:
 	@# Image downloaded and built as ${orig}-archived:${tag}, name swap.
 	docker image tag \
 		pandoc/$(BASE_IMAGE):$(PANDOC_VERSION) \
-		pandoc/$(BASE_IMAGE)-old:$(PANDOC_VERSION)
+		pandoc/$(BASE_IMAGE):$(PANDOC_VERSION)-old
 	docker image tag \
-		pandoc/$(BASE_IMAGE)-archived:$(PANDOC_VERSION) \
+		pandoc/$(BASE_IMAGE):$(PANDOC_VERSION)-archived \
 		pandoc/$(BASE_IMAGE):$(PANDOC_VERSION)
 	@# With names swapped, test tlmgr works to report success or fail.
 	docker build \
-		--tag pandoc/$(BASE_IMAGE)-archive-test:$(PANDOC_VERSION) \
+		--tag pandoc/$(BASE_IMAGE):$(PANDOC_VERSION)-test-archive \
 		--build-arg base_image=$(BASE_IMAGE) \
-		--build-arg archive_year=$(ARCHIVE_YEAR) \
 	    --build-arg base_tag=$(PANDOC_VERSION) \
 		-f $(makefile_dir)/common/latex/archive/test-archive/Dockerfile $(makefile_dir)
 else
