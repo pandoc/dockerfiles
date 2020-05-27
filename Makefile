@@ -29,8 +29,13 @@ ubuntu_freeze_file = ubuntu/freeze/pandoc-$(PANDOC_COMMIT).project.freeze
 # than potentially engaging in expensive builds.
 .PHONY: show-args
 show-args:
-	@printf "PANDOC_VERSION (i.e. image version tag): %s\n" $(PANDOC_VERSION)
-	@printf "pandoc_commit=%s\n" $(PANDOC_COMMIT)
+	@printf "# Controls whether pandoc-crossref will be built in the base image.\n"
+	@printf "WITHOUT_CROSSREF=%s\n" $(WITHOUT_CROSSREF)
+	@printf "\n# The tag given to the image.\n"
+	@printf "PANDOC_VERSION=%s\n" $(PANDOC_VERSION)
+	@printf "\n# The pandoc commit used to build the image(s);\n"
+	@printf "# usually a tag or branch name.\n"
+	@printf "PANDOC_COMMIT=%s\n" $(PANDOC_COMMIT)
 
 ################################################################################
 # Alpine images and tests                                                      #
