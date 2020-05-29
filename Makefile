@@ -37,9 +37,74 @@ show-args:
 	@printf "# usually a tag or branch name.\n"
 	@printf "PANDOC_COMMIT=%s\n" $(PANDOC_COMMIT)
 
+# image_stacks = alpine \
+#                ubuntu
+image_stacks = ubuntu
+
+# Generates the targets for a given image stack.
+# $1: image stack, one of image_stacks
+define stack
+# Freeze #######################################################################
+# NOTE: this will change to compute freeze file with AzP / tectonic.
+#       (conditionally .PHONY freeze, point to ubuntu freeze, etc).
+$(1)_freeze_phony = $(1)-freeze-file
+$($(1)_freeze_phony): $($(1)_freeze_file)
+.PHONY: $(1) $(1)-crossref $(1)-latex $($(1)_freeze_phony)
+
+$($(1)_freeze_file): common/pandoc-freeze.sh
+	docker build \
+		--tag pandoc/$(1)-builder \
+		--target=$(1)-builder-common \
+		-f $(makefile_dir)/$(1)/Dockerfile $(makefile_dir)
+	docker run --rm \
+		-v "$(makefile_dir):/app" \
+		pandoc/$(1)-builder \
+		sh /app/$< $(PANDOC_COMMIT) "$(shell id -u):$(shell id -g)" /app/$@
+# Core #########################################################################
+$(1): $($(1)_freeze_file)
+	docker build \
+		--tag pandoc/$(1):$(PANDOC_VERSION) \
+		--build-arg pandoc_commit=$(PANDOC_COMMIT) \
+		--build-arg pandoc_version=$(PANDOC_VERSION) \
+		--build-arg without_crossref=$(WITHOUT_CROSSREF) \
+		--target pandoc-core \
+		-f $(makefile_dir)/$(1)/Dockerfile $(makefile_dir)
+# Crossref #####################################################################
+$(1)-crossref: $(1)
+	docker build \
+		--tag pandoc/$(1)-crossref:$(PANDOC_VERSION) \
+		--build-arg pandoc_commit=$(PANDOC_COMMIT) \
+		--build-arg pandoc_version=$(PANDOC_VERSION) \
+		--build-arg without_crossref=$(WITHOUT_CROSSREF) \
+		--target pandoc-core-crossref \
+		-f $(makefile_dir)/$(1)/Dockerfile $(makefile_dir)
+# LaTeX ########################################################################
+$(1)-latex: $(1)-crossref
+	docker build \
+		--tag pandoc/$(1)-latex:$(PANDOC_VERSION) \
+		--build-arg base_tag=$(PANDOC_VERSION) \
+		-f $(makefile_dir)/$(1)/latex.Dockerfile $(makefile_dir)
+# Test #########################################################################
+# TODO: test-$(1)-crossref
+.PHONY: test-$(1) test-$(1)-latex
+test-$(1): IMAGE ?= pandoc/$(1):$(PANDOC_VERSION)
+test-$(1):
+	IMAGE=$$(IMAGE) make -C test test-core
+
+test-$(1)-latex: IMAGE ?= pandoc/$(1)-latex:$(PANDOC_VERSION)
+test-$(1)-latex:
+	IMAGE=$$(IMAGE) make -C test test-latex
+endef
+
+$(foreach img,$(image_stacks),$(eval $(call stack,$(img))))
+
 ################################################################################
 # Alpine images and tests                                                      #
 ################################################################################
+#
+# TODO: @svenevs
+# Refactor alpine stack into the glorious beauty that is the ubuntu stack.
+#
 .PHONY: alpine alpine-latex test-alpine test-alpine-latex
 alpine:
 	docker build \
@@ -56,55 +121,6 @@ test-alpine:
 	IMAGE=$(IMAGE) make -C test test-core
 test-alpine-latex: IMAGE ?= pandoc/latex:$(PANDOC_VERSION)
 test-alpine-latex:
-	IMAGE=$(IMAGE) make -C test test-latex
-
-################################################################################
-# Ubuntu images and tests                                                      #
-################################################################################
-.PHONY: ubuntu ubuntu-crossref ubuntu-latex ubuntu-freeze-file
-ubuntu: $(ubuntu_freeze_file)
-	docker build \
-	    --tag pandoc/ubuntu:$(PANDOC_VERSION) \
-	    --build-arg pandoc_commit=$(PANDOC_COMMIT) \
-	    --build-arg pandoc_version=$(PANDOC_VERSION) \
-	    --build-arg without_crossref=$(WITHOUT_CROSSREF) \
-	    --target focal-pandoc \
-	    -f $(makefile_dir)/ubuntu/Dockerfile $(makefile_dir)
-
-ubuntu-crossref: ubuntu
-	docker build \
-	    --tag pandoc/ubuntu-crossref:$(PANDOC_VERSION) \
-	    --build-arg pandoc_commit=$(PANDOC_COMMIT) \
-	    --build-arg pandoc_version=$(PANDOC_VERSION) \
-	    --build-arg without_crossref=$(WITHOUT_CROSSREF) \
-	    --target focal-pandoc-crossref \
-	    -f $(makefile_dir)/ubuntu/Dockerfile $(makefile_dir)
-
-ubuntu-latex: ubuntu-crossref
-	docker build \
-	    --tag pandoc/ubuntu-latex:$(PANDOC_VERSION) \
-	    --build-arg base_tag=$(PANDOC_VERSION) \
-	    -f $(makefile_dir)/ubuntu/latex.Dockerfile $(makefile_dir)
-
-ubuntu-freeze-file: $(ubuntu_freeze_file)
-
-$(ubuntu_freeze_file): common/pandoc-freeze.sh
-	docker build \
-	    --tag pandoc/ubuntu-builder \
-	    --target=ubuntu-builder-common \
-	    -f $(makefile_dir)/ubuntu/Dockerfile $(makefile_dir)
-	docker run --rm \
-	    -v "$(makefile_dir):/app" \
-	    pandoc/ubuntu-builder \
-	    sh /app/$< $(PANDOC_COMMIT) "$(shell id -u):$(shell id -g)" /app/$@
-
-.PHONY: test-ubuntu test-ubuntu-latex
-test-ubuntu: IMAGE ?= pandoc/ubuntu-core:$(PANDOC_VERSION)
-test-ubuntu:
-	IMAGE=$(IMAGE) make -C test test-core
-
-test-ubuntu-latex: IMAGE ?= pandoc/ubuntu-latex:$(PANDOC_VERSION)
-test-ubuntu-latex:
 	IMAGE=$(IMAGE) make -C test test-latex
 
 ################################################################################
