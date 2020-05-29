@@ -1,0 +1,126 @@
+digraph G {
+  ranksep=0.75
+  node [
+    style="rounded,dotted,filled"
+    fontname="monospace"
+    shape=rect
+    width=3.25
+    height=2.5
+  ]
+  edge [
+    dir=none
+    style=fill
+  ]
+
+  latex -> crossref [dir=back]
+  tectonic -> crossref [dir=back]
+  crossref -> core [dir=back]
+
+  subgraph cluster_uber {
+    style=rounded
+    color=none
+    bgcolor=none
+
+    subgraph cluster_core {
+      core [
+        label="Core\n\n" +
+              "- pandoc\l" +
+              "- pandoc-citeproc\l"
+        shape=circle
+        style="rounded,filled"
+        fillcolor=thistle2
+      ]
+      core_repos [
+        label="Alpine:\l" +
+              "  - pandoc/alpine\l" +
+              "  - pandoc/core\l\n" +
+              "Azure Pipelines:\l" +
+              "  - pandoc/azp\l\n" +
+              "Ubuntu:\l" +
+              "  - pandoc/ubuntu\l"
+        fillcolor=ghostwhite
+      ]
+
+      core_repos -> core [style=dotted]
+      {rank=same; core; core_repos}
+    }
+
+    subgraph cluster_crossref {
+      crossref [
+        label="Crossref\n\n" +
+              "- pandoc\l" +
+              "- pandoc-citeproc\l" +
+              "- pandoc-crossref\l"
+        shape=circle
+        style="rounded,filled"
+        fillcolor=darkseagreen2
+      ]
+
+      crossref_repos [
+        label="Alpine:\l" +
+              "  - pandoc/alpine-crossref\l" +
+              "  - pandoc/crossref\l\n" +
+              "Azure Pipelines:\l" +
+              "  - pandoc/azp-crossref\l\n" +
+              "Ubuntu:\l" +
+              "  - pandoc/ubuntu-crossref\l"
+        fillcolor=ghostwhite
+      ]
+
+      crossref_repos -> crossref [style=dotted]
+      {rank=same; crossref; crossref_repos}
+    }
+    subgraph cluster_xref_children {
+      subgraph cluster_latex {
+        latex [
+          label="LaTeX\n\n" +
+                "- pandoc\l" +
+                "- pandoc-citeproc\l" +
+                "- pandoc-crossref\l" +
+                "- Minimal LaTeX\l"
+          shape=circle
+          style="rounded,filled"
+          fillcolor=bisque
+        ]
+        latex_repos [
+          label="Alpine:\l" +
+                "  - pandoc/alpine-latex\l" +
+                "  - pandoc/latex\l\n" +
+                "Azure Pipelines:\l" +
+                "  - pandoc/azp-latex\l\n" +
+                "Ubuntu:\l" +
+                "  - pandoc/ubuntu-latex\l"
+          fillcolor=ghostwhite
+        ]
+
+        latex_repos -> latex [style=dotted]
+        {rank=same; latex; latex_repos}
+      }
+      subgraph cluster_tectonic {
+        tectonic [
+          label="Tectonic\n\n" +
+                "- pandoc\l" +
+                "- pandoc-citeproc\l" +
+                "- pandoc-crossref\l" +
+                "- tectonic\l"
+          shape=circle
+          style="rounded,filled"
+          fillcolor=azure2
+        ]
+        tectonic_repos [
+          label="Alpine:\l" +
+                "  - pandoc/alpine-tectonic\l" +
+                "  - pandoc/tectonic\l\n" +
+                "Azure Pipelines:\l" +
+                "  - pandoc/azp-tectonic\l\n" +
+                "Ubuntu:\l" +
+                "  - pandoc/ubuntu-tectonic\l"
+          fillcolor=ghostwhite
+        ]
+
+        tectonic_repos -> tectonic [style=dotted]
+        {rank=same; tectonic; tectonic_repos}
+      }
+    }
+  }
+}
