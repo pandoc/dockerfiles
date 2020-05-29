@@ -36,7 +36,7 @@ testsuite-to-%: testsuite.native
 
 test-bib-conversion: example.bib
 	docker run --rm -it -v $(test_files_path):/data \
-	    --entrypoint=/usr/bin/pandoc-citeproc $(IMAGE) \
+	    --entrypoint=/usr/local/bin/pandoc-citeproc $(IMAGE) \
 	    --bib2yaml $< > /dev/null
 
 test-lua: testsuite.native lpeg-test.lua
