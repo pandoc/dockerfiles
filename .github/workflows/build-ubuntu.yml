@@ -60,21 +60,21 @@ jobs:
         run: make ubuntu-crossref
 
       - name: Build LaTeX image
-        if: env.WITHOUT_CROSSREF == ''
+        if: ${{ env.WITHOUT_CROSSREF == '' }}
         run: make ubuntu-latex
 
-      - name: Save images to tar
+      - name: Save images to archive
         run: |
           if [ -z "$WITHOUT_CROSSREF" ]; then
               CROSSREF_IMAGE=pandoc/ubuntu-crossref:$PANDOC_VERSION
+              LATEX_IMAGE=pandoc/ubuntu-latex:$PANDOC_VERSION
           fi
           docker save \
                  pandoc/ubuntu:$PANDOC_VERSION \
-                 pandoc/ubuntu-latex:$PANDOC_VERSION \
-                 $CROSSREF_IMAGE |\
+                 $CROSSREF_IMAGE $LATEX_IMAGE |\
               gzip > pandoc-$PANDOC_VERSION.tar.gz
 
-      - name: Upload images tar
+      - name: Upload archive
         uses: actions/upload-artifact@v1
         with:
           name: ubuntu-images
