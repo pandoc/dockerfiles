@@ -37,6 +37,7 @@ show-args:
 	@printf "# usually a tag or branch name.\n"
 	@printf "PANDOC_COMMIT=%s\n" $(PANDOC_COMMIT)
 
+# TODO: alpine
 # image_stacks = alpine \
 #                ubuntu
 image_stacks = ubuntu
