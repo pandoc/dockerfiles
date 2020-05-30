@@ -1,4 +1,4 @@
-FROM alpine AS pandoc-builder
+FROM alpine:3.11 AS pandoc-builder
 
 RUN apk --no-cache add \
          alpine-sdk \
@@ -40,19 +40,19 @@ RUN cabal --version \
 
 FROM pandoc-builder AS pandoc-binaries
 RUN find dist-newstyle \
-         -name 'pandoc*' -type f -perm +400 \
-         -exec cp '{}' /usr/bin/ ';' \
-  && strip /usr/bin/pandoc /usr/bin/pandoc-citeproc
+         -name 'pandoc*' -type f -perm -u+x \
+         -exec cp '{}' /usr/local/bin/ ';' \
+  && strip /usr/local/bin/pandoc*
 
 
-FROM alpine AS alpine-pandoc
+FROM alpine:3.11 AS alpine-pandoc
 ARG pandoc_commit=master
 LABEL maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
 LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
 LABEL org.pandoc.author "John MacFarlane"
 LABEL org.pandoc.version "$pandoc_commit"
 
-COPY --from=pandoc-binaries /usr/bin/pandoc* /usr/bin/
+COPY --from=pandoc-binaries /usr/local/bin/pandoc* /usr/local/bin/
 COPY common/docker-entrypoint.sh /usr/local/bin
 RUN apk add --no-cache \
          gmp \
