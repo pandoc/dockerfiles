@@ -189,6 +189,32 @@ To learn more how to use the docker pandoc images in your GitHub Actions
 workflow, see
 [these examples](http://github.com/maxheld83/pandoc-action-example).
 
+Building custom images
+--------------------------------------------------------------------------------
+
+The official images are bare-bones, providing everything required to use pandoc
+and Lua filters, but not much more. Often, one will want to have additional
+software available.  This is best achieved by building custom Docker images.
+
+For example, one may want to use advanced spellchecking as demonstrated in the
+[spellcheck] in the Lua filters collection. This requires the *aspell* package
+as well as language-specific packages. A good solution would be to define a new
+Dockerfile and to use `pandoc/core` as the base package:
+
+``` Dockerfile
+FROM pandoc/core:latest
+RUN apk --no-cache add aspell aspell-en aspell-fr
+```
+
+Create a new image by running `docker build --tag=pandoc-with-aspell .` in the
+directory containing the Dockerfile. Now you can use `pandoc-with-aspell`
+instead of `pandoc/core` to get access to spellchecking in your image.
+
+See Docker documentation for more details, for example [part 2 of the Get
+Started guide](https://docs.docker.com/get-started/part2/).
+
+[spellcheck](https://github.com/pandoc/lua-filters/tree/master/spellcheck)
+
 
 Maintenance Notes
 ================================================================================
