@@ -58,7 +58,7 @@ RUN find dist-newstyle \
 # Cabal's exec stripping doesn't seem to work reliably, let's do it here.
 RUN strip /usr/local/bin/pandoc*
 
-FROM ubuntu:focal AS focal-pandoc
+FROM ubuntu:focal AS pandoc-core
 ARG pandoc_version=edge
 LABEL maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
 LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
@@ -85,7 +85,7 @@ RUN apt-get -q --no-allow-insecure-repositories update \
 WORKDIR /data
 ENTRYPOINT ["/usr/local/bin/pandoc"]
 
-FROM focal-pandoc AS focal-pandoc-crossref
+FROM pandoc-core AS pandoc-core-crossref
 COPY --from=ubuntu-builder \
   /usr/local/bin/pandoc-crossref \
   /usr/local/bin/
