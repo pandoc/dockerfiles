@@ -1,0 +1,12 @@
+[Header 1 ("pandoc-crossref-test",[],[]) [Str "pandoc-crossref",Space,Str "test"]
+,Header 2 ("section-with-table",[],[]) [Str "Section",Space,Str "with",Space,Str "table"]
+,Div ("tbl:label",[],[])
+ [Table [Str "Table",Space,Str "1:",Space,Str "Caption"] [AlignLeft,AlignLeft] [0.0,0.0]
+  [[Plain [Str "a"]]
+  ,[Plain [Str "b"]]]
+  [[[Plain [Str "1"]]
+   ,[Plain [Str "2"]]]
+  ,[[Plain [Str "3"]]
+   ,[Plain [Str "4"]]]]]
+,Header 2 ("section-with-text",[],[]) [Str "Section",Space,Str "with",Space,Str "text"]
+,Para [Str "See",Space,Str "table",Space,Str "tbl.\160\&1."]]
