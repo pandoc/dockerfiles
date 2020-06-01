@@ -12,6 +12,9 @@ ifndef IMAGE
 $(error IMAGE variable must be set to docker image to test)
 endif
 
+# Control how to diff files
+DIFF ?= diff
+
 test_files_path := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 
 .PHONY: test
@@ -34,6 +37,7 @@ testsuite-to-%: testsuite.native
 	@# Pure HTML cannot represent fractions, use supported math rendering method.
 	$(CORE_CMD) $< --output=/dev/null --to=$* --mathml
 
+# Check that bibtex file can be converted to YAML with pandoc-citeproc
 test-bib-conversion: example.bib
 	docker run --rm -it -v $(test_files_path):/data \
 	    --entrypoint=/usr/local/bin/pandoc-citeproc $(IMAGE) \
@@ -42,6 +46,29 @@ test-bib-conversion: example.bib
 test-lua: testsuite.native lpeg-test.lua
 	docker run --rm -it -v $(test_files_path):/data $(IMAGE) \
 	    --lua-filter=lpeg-test.lua --to=json --output=/dev/null $<
+
+#   ____                             __
+#  / ___|_ __ ___  ___ ___ _ __ ___ / _|
+# | |   | '__/ _ \/ __/ __| '__/ _ \ |_
+# | |___| | | (_) \__ \__ \ | |  __/  _|
+#  \____|_|  \___/|___/___/_|  \___|_|
+#
+.PHONY: test-crossref test-crossref-is-callable
+test-crossref: test-crossref-is-callable test-crossref-filter
+
+test-crossref-is-callable:
+	@printf "### testing whether pandoc-crossref is in PATH "
+	@printf "and can be called with --version...\n"
+	docker run --rm -v $(test_files_path):/data \
+	    --entrypoint=pandoc-crossref $(IMAGE) --version > /dev/null
+
+test-crossref-filter: $(test_files_path)/crossref-test.md \
+		$(test_files_path)/expected/crossref-test.native
+	@printf "\n### testing document conversion with pandoc-crossref filter...\n"
+	docker run --rm -v $(test_files_path):/data $(IMAGE) \
+	    --filter=pandoc-crossref \
+	    --to=native \
+	    crossref-test.md | $(DIFF) expected/crossref-test.native -
 
 #  _         _____   __  __
 # | |    __ |_   _|__\ \/ /

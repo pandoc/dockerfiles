@@ -10,7 +10,7 @@ endif
 # the image. Useful when building new pandoc versions for which there is
 # no compatible pandoc-crossref version available. Setting this to a
 # non-empty string prevents pandoc-crossref from being built.
-WITHOUT_CROSSREF ?= ""
+WITHOUT_CROSSREF ?=
 
 # Used to specify the build context path for Docker.  Note that we are
 # specifying the repository root so that we can
@@ -87,10 +87,14 @@ $(1)-latex: $(1)-crossref
 		-f $(makefile_dir)/$(1)/latex.Dockerfile $(makefile_dir)
 # Test #########################################################################
 # TODO: test-$(1)-crossref
-.PHONY: test-$(1) test-$(1)-latex
+.PHONY: test-$(1) test-$(1)-latex test-$(1)-crossref
 test-$(1): IMAGE ?= pandoc/$(1):$(PANDOC_VERSION)
 test-$(1):
 	IMAGE=$$(IMAGE) make -C test test-core
+
+test-$(1)-crossref: IMAGE ?= pandoc/$(1)-crossref:$(PANDOC_VERSION)
+test-$(1)-crossref:
+	IMAGE=$$(IMAGE) test -n "$$(WITHOUT_CROSSREF)" || make -C test test-crossref
 
 test-$(1)-latex: IMAGE ?= pandoc/$(1)-latex:$(PANDOC_VERSION)
 test-$(1)-latex:
