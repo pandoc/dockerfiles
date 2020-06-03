@@ -80,6 +80,43 @@ jobs:
           name: ubuntu-images
           path: pandoc-${{ env.PANDOC_VERSION }}.tar.gz
 
+  # Ensure that there are no major issues with the images
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    needs:
+      - configure
+      - build
+    env:
+      PANDOC_VERSION: ${{ needs.configure.outputs.pandoc-version }}
+      WITHOUT_CROSSREF: ${{ needs.configure.outputs.without-crossref }}
+      CORE_IMAGE: pandoc/ubuntu-core
+      CROSSREF_IMAGE: pandoc/ubuntu-crossref
+
+    steps:
+      - name: Download images
+        uses: actions/download-artifact@v1
+        with:
+          name: ubuntu-images
+
+      - name: Load images
+        run: |
+          docker load --input ubuntu-images/pandoc-$PANDOC_VERSION.tar.gz
+
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Test core image
+        run: make test-ubuntu
+
+      - name: Test crossref image
+        if: ${{ env.WITHOUT_CROSSREF == '' }}
+        run: make test-ubuntu-crossref
+
+      - name: Test LaTeX image
+        if: ${{ env.WITHOUT_CROSSREF == '' }}
+        run: make test-ubuntu-latex
+
   # Push image to GitHub Packages.
   push:
     name: Push
@@ -88,6 +125,7 @@ jobs:
     needs:
       - configure
       - build
+      - test
 
     env:
       PANDOC_VERSION: ${{ needs.configure.outputs.pandoc-version }}
