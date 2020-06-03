@@ -8,7 +8,7 @@ jobs:
       - run:
           name: Download and Run ShellCheck
           command: |
-            curl -LO https://storage.googleapis.com/shellcheck/shellcheck-stable.linux.x86_64.tar.xz
+            curl -LO https://github.com/koalaman/shellcheck/releases/download/stable/shellcheck-stable.linux.x86_64.tar.xz
             tar -xf shellcheck-stable.linux.x86_64.tar.xz
             export PATH="$PWD/shellcheck-stable:$PATH"
             make lint
