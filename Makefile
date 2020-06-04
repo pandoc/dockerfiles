@@ -49,7 +49,7 @@ define stack
 # NOTE: this will change to compute freeze file with AzP / tectonic.
 #       (conditionally .PHONY freeze, point to ubuntu freeze, etc).
 $(1)_freeze_phony = $(1)-freeze-file
-$($(1)_freeze_phony): $($(1)_freeze_file)
+$$($(1)_freeze_phony): $$($(1)_freeze_file)
 .PHONY: $(1) $(1)-crossref $(1)-latex $($(1)_freeze_phony)
 
 $($(1)_freeze_file): common/pandoc-freeze.sh
@@ -60,7 +60,7 @@ $($(1)_freeze_file): common/pandoc-freeze.sh
 	docker run --rm \
 		-v "$(makefile_dir):/app" \
 		pandoc/$(1)-builder \
-		sh /app/$< $(PANDOC_COMMIT) "$(shell id -u):$(shell id -g)" /app/$@
+		sh /app/$$< $(PANDOC_COMMIT) "$(shell id -u):$(shell id -g)" /app/$$@
 # Core #########################################################################
 $(1): $($(1)_freeze_file)
 	docker build \
