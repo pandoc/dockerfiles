@@ -26,7 +26,7 @@ test: test-core test-latex
 # | |__| (_) | | |  __/
 #  \____\___/|_|  \___|
 #
-CORE_CMD = docker run --rm -it -v $(test_files_path):/data $(IMAGE)
+CORE_CMD = docker run --rm -v $(test_files_path):/data $(IMAGE)
 OUTPUT_FORMATS=markdown epub docx latex html
 
 .PHONY: test-core testsuite-to-% test-bib-conversion test-lua
@@ -39,12 +39,12 @@ testsuite-to-%: testsuite.native
 
 # Check that bibtex file can be converted to YAML with pandoc-citeproc
 test-bib-conversion: example.bib
-	docker run --rm -it -v $(test_files_path):/data \
+	docker run --rm -v $(test_files_path):/data \
 	    --entrypoint=/usr/local/bin/pandoc-citeproc $(IMAGE) \
 	    --bib2yaml $< > /dev/null
 
 test-lua: testsuite.native lpeg-test.lua
-	docker run --rm -it -v $(test_files_path):/data $(IMAGE) \
+	docker run --rm -v $(test_files_path):/data $(IMAGE) \
 	    --lua-filter=lpeg-test.lua --to=json --output=/dev/null $<
 
 #   ____                             __
@@ -76,7 +76,7 @@ test-crossref-filter: $(test_files_path)/crossref-test.md \
 # | |__| (_| || |  __//  \
 # |_____\__,_||_|\___/_/\_\
 #
-LATEX_CMD = docker run --rm -it \
+LATEX_CMD = docker run --rm \
 	-v $(test_files_path):/data \
 	$(IMAGE) \
 	--fail-if-warnings
@@ -157,7 +157,7 @@ output/baboon.png: baboon.png
 
 output/test-biblatex.pdf: output/test-biblatex.tex output/example.bib \
 		output/baboon.png
-	docker run --rm -it -v $(test_files_path):/data \
+	docker run --rm -v $(test_files_path):/data \
 	    --entrypoint=/data/pdf-via-biblatex.sh \
 	    $(IMAGE) \
 	    $(notdir $(basename $<))
