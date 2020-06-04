@@ -32,17 +32,6 @@ target_file="$3"
 tmpdir=$(mktemp -p /tmp -d pandoc-freeze.XXXXXX)
 cd "${tmpdir}"
 
-# get pandoc source code from Hackage
-cabal get pandoc-"${pandoc_version}"
-
-sourcedir=$PWD/pandoc-"${pandoc_version}"
-printf "Switching directory to %s\n" "${sourcedir}"
-cd "${sourcedir}"
-
-# Add pandoc-crossref to the project
-printf "Writing cabal.project.local\n"
-printf "\nextra-packages: pandoc-crossref\n" > cabal.project.local
-
 #
 # Constraints
 #
@@ -59,6 +48,33 @@ hslua_constraints="\
  +system-lua\
  +pkg-config\
  +hardcode-reg-keys"
+
+print_constraints_only ()
+{
+    printf "constraints: hslua %s,\n" "${hslua_constraints}"
+    printf "             pandoc %s,\n" "${pandoc_constraints}"
+    printf "             pandoc-citeproc %s\n" "${pandoc_citeproc_constraints}"
+}
+
+# Just write the constraints to the target file when targeting master
+if [ "$pandoc_version" = "master" ]; then
+    printf "Writing freeze file for builds from master...\n"
+    print_constraints_only > "${target_file}"
+    printf "Changing freeze file owner to %s\n" "${file_owner}"
+    chown "${file_owner}" "${target_file}"
+    exit 0
+fi
+
+# get pandoc source code from Hackage
+cabal get pandoc-"${pandoc_version}"
+
+sourcedir=$PWD/pandoc-"${pandoc_version}"
+printf "Switching directory to %s\n" "${sourcedir}"
+cd "${sourcedir}"
+
+# Add pandoc-crossref to the project
+printf "Writing cabal.project.local\n"
+printf "\nextra-packages: pandoc-crossref\n" > cabal.project.local
 
 # create freeze file with all desired constraints
 printf "Creating freeze file...\n"
