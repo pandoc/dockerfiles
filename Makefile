@@ -12,6 +12,9 @@ endif
 # non-empty string prevents pandoc-crossref from being built.
 WITHOUT_CROSSREF ?=
 
+# Use Alpine Linux as base stack by default.
+STACK ?= alpine
+
 # Used to specify the build context path for Docker.  Note that we are
 # specifying the repository root so that we can
 #
@@ -22,8 +25,13 @@ WITHOUT_CROSSREF ?=
 makefile_dir := $(dir $(realpath Makefile))
 
 # The freeze file fixes the versions of Haskell packages used to compile a
-# specific version. This enables reproducible builds.
-ubuntu_freeze_file = ubuntu/freeze/pandoc-$(PANDOC_COMMIT).project.freeze
+# specific version. This enables reproducible builds. The path is
+# relative to a distributions base directory.
+stack_freeze_file = freeze/pandoc-$(PANDOC_COMMIT).project.freeze
+
+# List of Linux distributions which are supported as image bases.
+# TODO: alpine
+image_stacks = ubuntu
 
 # Keep this target first so that `make` with no arguments will print this rather
 # than potentially engaging in expensive builds.
@@ -36,72 +44,93 @@ show-args:
 	@printf "\n# The pandoc commit used to build the image(s);\n"
 	@printf "# usually a tag or branch name.\n"
 	@printf "PANDOC_COMMIT=%s\n" $(PANDOC_COMMIT)
-
-# TODO: alpine
-# image_stacks = alpine \
-#                ubuntu
-image_stacks = ubuntu
+	@printf "\n# Linux distribution used as base. List of supported base stacks:\n"
+	@printf "#   %s\n" "$(supported_stacks)"
+	@printf "# May be overwritten by using a stack-specific target.\n"
+	@printf "STACK=%s\n" $(STACK)
 
 # Generates the targets for a given image stack.
-# $1: image stack, one of image_stacks
+# $1: base stack, one of the `supported_stacks`
 define stack
+.PHONY: $(1) $(1)-core $(1)-crossref $(1)-latex $(1)-freeze-file
+# Define targets which have the stack in their names, then set the
+# `STACK` variable based on the chosen target. This is an alternative to
+# setting the `STACK` variable directly and allows for convenient tab
+# completion.
+$(1) $(1)-core $(1)-crossref $(1)-latex $(1)-freeze-file: STACK = $(1)
+$(1): $(1)-core
+$(1)-core: $(1)-freeze-file core
+$(1)-crossref: crossref
+$(1)-latex: latex
+$(1)-freeze-file: $(1)/$(stack_freeze_file)
+
+# Do the same for test targets, again to allow for tab completion.
+.PHONY: test-$(1) test-$(1)-core test-$(1)-crossref test-$(1)-latex
+test-$(1) test-$(1)-core test-$(1)-crossref test-$(1)-latex: STACK = $(1)
+test-$(1): test-core
+test-$(1)-core: test-core
+test-$(1)-crossref: test-crossref
+test-$(1)-latex: test-latex
+endef
+# Generate convenience targets for all supported stacks.
+$(foreach img,$(image_stacks),$(eval $(call stack,$(img))))
+
 # Freeze #######################################################################
 # NOTE: this will change to compute freeze file with AzP / tectonic.
 #       (conditionally .PHONY freeze, point to ubuntu freeze, etc).
-$(1)_freeze_phony = $(1)-freeze-file
-$$($(1)_freeze_phony): $$($(1)_freeze_file)
-.PHONY: $(1) $(1)-crossref $(1)-latex $($(1)_freeze_phony)
-
-$($(1)_freeze_file): common/pandoc-freeze.sh
+.PHONY: freeze-file
+freeze-file: $(STACK)/$(stack_freeze_file)
+%/$(stack_freeze_file): STACK = $*
+%/$(stack_freeze_file): common/pandoc-freeze.sh
 	docker build \
-		--tag pandoc/$(1)-builder \
-		--target=$(1)-builder-common \
-		-f $(makefile_dir)/$(1)/Dockerfile $(makefile_dir)
+		--tag pandoc/$(STACK)-builder \
+		--target=$(STACK)-builder-common \
+		-f $(makefile_dir)/$(STACK)/Dockerfile $(makefile_dir)
 	docker run --rm \
 		-v "$(makefile_dir):/app" \
-		pandoc/$(1)-builder \
-		sh /app/$$< $(PANDOC_COMMIT) "$(shell id -u):$(shell id -g)" /app/$$@
+		pandoc/$(STACK)-builder \
+		sh /app/$< $(PANDOC_COMMIT) "$(shell id -u):$(shell id -g)" /app/$@
 # Core #########################################################################
-$(1): $($(1)_freeze_file)
+.PHONY: core
+core:
 	docker build \
-		--tag pandoc/$(1):$(PANDOC_VERSION) \
+		--tag pandoc/$(STACK):$(PANDOC_VERSION) \
 		--build-arg pandoc_commit=$(PANDOC_COMMIT) \
 		--build-arg pandoc_version=$(PANDOC_VERSION) \
 		--build-arg without_crossref=$(WITHOUT_CROSSREF) \
 		--target pandoc-core \
-		-f $(makefile_dir)/$(1)/Dockerfile $(makefile_dir)
+		-f $(makefile_dir)/$(STACK)/Dockerfile $(makefile_dir)
 # Crossref #####################################################################
-$(1)-crossref: $(1)
+.PHONY: crossref
+crossref: core
 	docker build \
-		--tag pandoc/$(1)-crossref:$(PANDOC_VERSION) \
+		--tag pandoc/$(STACK)-crossref:$(PANDOC_VERSION) \
 		--build-arg pandoc_commit=$(PANDOC_COMMIT) \
 		--build-arg pandoc_version=$(PANDOC_VERSION) \
 		--build-arg without_crossref=$(WITHOUT_CROSSREF) \
 		--target pandoc-core-crossref \
-		-f $(makefile_dir)/$(1)/Dockerfile $(makefile_dir)
+		-f $(makefile_dir)/$(STACK)/Dockerfile $(makefile_dir)
 # LaTeX ########################################################################
-$(1)-latex: $(1)-crossref
+.PHONY: latex
+latex: crossref
 	docker build \
-		--tag pandoc/$(1)-latex:$(PANDOC_VERSION) \
+		--tag pandoc/$(STACK)-latex:$(PANDOC_VERSION) \
 		--build-arg base_tag=$(PANDOC_VERSION) \
-		-f $(makefile_dir)/$(1)/latex.Dockerfile $(makefile_dir)
+		-f $(makefile_dir)/$(STACK)/latex.Dockerfile $(makefile_dir)
 # Test #########################################################################
-# TODO: test-$(1)-crossref
-.PHONY: test-$(1) test-$(1)-latex test-$(1)-crossref
-test-$(1): IMAGE ?= pandoc/$(1):$(PANDOC_VERSION)
-test-$(1):
-	IMAGE=$$(IMAGE) make -C test test-core
+.PHONY: test-core test-latex test-crossref
+test-core: IMAGE ?= pandoc/$(STACK):$(PANDOC_VERSION)
+test-core:
+	IMAGE=$(IMAGE) make -C test test-core
 
-test-$(1)-crossref: IMAGE ?= pandoc/$(1)-crossref:$(PANDOC_VERSION)
-test-$(1)-crossref:
-	IMAGE=$$(IMAGE) test -n "$$(WITHOUT_CROSSREF)" || make -C test test-crossref
+test-crossref: IMAGE ?= pandoc/$(STACK)-crossref:$(PANDOC_VERSION)
+test-crossref:
+	test -n "$(WITHOUT_CROSSREF)" || IMAGE=$(IMAGE) make -C test test-crossref
 
-test-$(1)-latex: IMAGE ?= pandoc/$(1)-latex:$(PANDOC_VERSION)
-test-$(1)-latex:
-	IMAGE=$$(IMAGE) make -C test test-latex
-endef
+test-latex: IMAGE ?= pandoc/$(STACK)-latex:$(PANDOC_VERSION)
+test-latex:
+	IMAGE=$(IMAGE) make -C test test-latex
 
-$(foreach img,$(image_stacks),$(eval $(call stack,$(img))))
 
 ################################################################################
 # Alpine images and tests                                                      #
