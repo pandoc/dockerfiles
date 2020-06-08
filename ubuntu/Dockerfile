@@ -1,7 +1,7 @@
-FROM ubuntu:focal AS ubuntu-builder-common
+# Base #########################################################################
+FROM ubuntu:focal AS ubuntu-builder-base
 
 ENV DEBIAN_FRONTEND noninteractive
-
 WORKDIR /app
 
 RUN apt-get -q --no-allow-insecure-repositories update \
@@ -29,8 +29,8 @@ RUN  cabal --version \
   && ghc --version \
   && cabal new-update
 
-# Actual builder
-FROM ubuntu-builder-common as ubuntu-builder
+# Builder ######################################################################
+FROM ubuntu-builder-base as ubuntu-builder
 ARG pandoc_commit=master
 RUN git clone --branch=$pandoc_commit --depth=1 --quiet \
   https://github.com/jgm/pandoc /usr/src/pandoc
@@ -58,17 +58,23 @@ RUN find dist-newstyle \
 # Cabal's exec stripping doesn't seem to work reliably, let's do it here.
 RUN strip /usr/local/bin/pandoc*
 
-FROM ubuntu:focal AS pandoc-core
+# Core #########################################################################
+FROM ubuntu:focal AS ubuntu-core
 ARG pandoc_version=edge
 LABEL maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
 LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
 LABEL org.pandoc.author "John MacFarlane"
 LABEL org.pandoc.version "$pandoc_version"
 
+WORKDIR /data
+ENTRYPOINT ["/usr/local/bin/pandoc"]
+
 COPY --from=ubuntu-builder \
   /usr/local/bin/pandoc \
   /usr/local/bin/pandoc-citeproc \
   /usr/local/bin/
+
+# begin(ubuntu-local)
 RUN apt-get -q --no-allow-insecure-repositories update \
   && DEBIAN_FRONTEND=noninteractive \
      apt-get install --assume-yes --no-install-recommends \
@@ -81,11 +87,10 @@ RUN apt-get -q --no-allow-insecure-repositories update \
        libyaml-0-2=0.2.* \
        zlib1g=1:1.2.11.* \
   && rm -rf /var/lib/apt/lists/*
+# end(ubuntu-local)
 
-WORKDIR /data
-ENTRYPOINT ["/usr/local/bin/pandoc"]
-
-FROM pandoc-core AS pandoc-core-crossref
+# Crossref #####################################################################
+FROM ubuntu-core AS ubuntu-crossref
 COPY --from=ubuntu-builder \
   /usr/local/bin/pandoc-crossref \
   /usr/local/bin/
