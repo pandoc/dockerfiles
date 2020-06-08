@@ -1,9 +1,9 @@
 # Base #########################################################################
 FROM ubuntu:focal AS ubuntu-builder-base
-
-ENV DEBIAN_FRONTEND noninteractive
 WORKDIR /app
 
+# begin(ubuntu-local)
+ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get -q --no-allow-insecure-repositories update \
   && apt-get install --assume-yes --no-install-recommends \
        software-properties-common \
@@ -23,6 +23,7 @@ RUN apt-get -q --no-allow-insecure-repositories update \
   && rm -rf /var/lib/apt/lists/* \
   && ln -s /opt/ghc/bin/ghc-8.8.3 /usr/bin/ghc \
   && ln -s /opt/cabal/bin/cabal-3.2 /usr/bin/cabal
+# close(ubuntu-local)
 
 COPY cabal.root.config /root/.cabal/config
 RUN  cabal --version \
@@ -87,7 +88,7 @@ RUN apt-get -q --no-allow-insecure-repositories update \
        libyaml-0-2=0.2.* \
        zlib1g=1:1.2.11.* \
   && rm -rf /var/lib/apt/lists/*
-# end(ubuntu-local)
+# close(ubuntu-local)
 
 # Crossref #####################################################################
 FROM ubuntu-core AS ubuntu-crossref
