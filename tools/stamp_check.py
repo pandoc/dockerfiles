@@ -325,12 +325,20 @@ if __name__ == "__main__":
                     "comment blocks.  Reverting to section-based diffing, the line "
                     "numbers shown will not be valid.\n\n"))
             else:
-                rel = str(self.actual_path.relative_to(repo_root))
-                diff_args = [actual_lines, template_lines, rel, rel]
+                rel = self.actual_path.relative_to(repo_root)
+                diff_args = [
+                    actual_lines,
+                    template_lines,
+                    # `git apply` needs a/ and b/ in the names
+                    str("a" / rel),
+                    str("b" / rel)
+                ]
 
             diff = difflib.unified_diff(*diff_args)
-
-            sys.stderr.write(code("".join(diff), "diff"))
+            diff_text = "".join(diff)
+            if sys.stderr.isatty():
+                diff_text = code(diff_text, "diff")
+            sys.stderr.write(diff_text)
 
         def validate(self) -> bool:
             close = []
@@ -341,29 +349,11 @@ if __name__ == "__main__":
 
         def _close_enough(self, expected: Section, actual: Section):
             # difflib needs the newlines back
-            expected_lines = [f"{l}\n" for l in expected.pruned_lines]
-            actual_lines = [f"{l}\n" for l in actual.pruned_lines]
-            return len(list(difflib.ndiff(expected_lines, actual_lines))) == 0
-
-            diff = list(unified_diff(
-                expected_lines, actual_lines, "expected", "actual"))
-            if diff:
-                return False
-                # bold = (exclaim("") * 22) + "\n"
-                # sys.stderr.write(
-                #     bold +
-                #     exclaim(f"{expected.title} section unexpected changes:\n") +
-                #     bold +
-                #     code("".join(diff), "diff")
-                # )
-                # return False
-
-            return True
-
-            for s in self.actual.sections:
-                for _ in range(11):
-                    print(exclaim(s.title))
-                print("\n".join(s.pruned_lines))
+            # expected_lines = [f"{l}\n" for l in expected.pruned_lines]
+            # actual_lines = [f"{l}\n" for l in actual.pruned_lines]
+            expected_lines = "\n".join(expected.pruned_lines)
+            actual_lines = "\n".join(actual.pruned_lines)
+            return next(difflib.unified_diff(expected_lines, actual_lines), None) is None
 
     class CoreCrossrefRedux(DockerfileComparator):
         def __init__(self, stack: str):
