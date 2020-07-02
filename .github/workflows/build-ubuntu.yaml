@@ -43,14 +43,19 @@ jobs:
     needs: configure
 
     env:
-      PANDOC_VERSION: ${{ jobs.configure.outputs.pandoc-version }}
-      WITHOUT_CROSSREF: ${{ jobs.configure.outputs.without-crossref }}
+      PANDOC_VERSION: ${{ needs.configure.outputs.pandoc-version }}
+      WITHOUT_CROSSREF: ${{ needs.configure.outputs.without-crossref }}
 
     steps:
       - uses: actions/checkout@v2
 
       - name: Show config
-        run: make show-args
+        run: |
+        echo "pandoc-version: $PANDOC_VERSION"
+        echo "            or: ${{ needs.configure.outputs.pandoc-version }}"
+        echo "without-crossref: $WITHOUT_CROSSREF"
+        echo "              or: ${{ needs.configure.outputs.without-crossref }}"
+        make show-args
 
       - name: Build core image
         run: make ubuntu
@@ -88,8 +93,8 @@ jobs:
       - configure
       - build
     env:
-      PANDOC_VERSION: ${{ jobs.configure.outputs.pandoc-version }}
-      WITHOUT_CROSSREF: ${{ jobs.configure.outputs.without-crossref }}
+      PANDOC_VERSION: ${{ needs.configure.outputs.pandoc-version }}
+      WITHOUT_CROSSREF: ${{ needs.configure.outputs.without-crossref }}
       CORE_IMAGE: pandoc/ubuntu-core
       CROSSREF_IMAGE: pandoc/ubuntu-crossref
 
@@ -128,8 +133,8 @@ jobs:
       - test
 
     env:
-      PANDOC_VERSION: ${{ jobs.configure.outputs.pandoc-version }}
-      WITHOUT_CROSSREF: ${{ jobs.configure.outputs.without-crossref }}
+      PANDOC_VERSION: ${{ needs.configure.outputs.pandoc-version }}
+      WITHOUT_CROSSREF: ${{ needs.configure.outputs.without-crossref }}
 
     steps:
       - name: Download stored images
