@@ -33,7 +33,11 @@ jobs:
               # Don't build pandoc-crossref for the edge version
               without_crossref=true
           fi
-          printf "Setting outputs:\n  - pandoc-version: %s\n  - without-crossref: %\n" "$version" "$without_crossref"
+
+          printf "Setting outputs:\n"
+          printf "  - pandoc-version: %s\n" "$version"
+          printf "  - without-crossref: %s\n" "$without_crossref"
+
           printf "::set-output name=pandoc-version::%s\n" "$version"
           printf "::set-output name=without-crossref::%s\n" "$without_crossref"
 
