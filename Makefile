@@ -18,7 +18,7 @@ STACK ?= alpine
 # Used to specify the build context path for Docker.  Note that we are
 # specifying the repository root so that we can
 #
-#     COPY latex-common/texlive.profile /root
+#     COPY common/latex/texlive.profile /root
 #
 # for example.  If writing a COPY statement in *ANY* Dockerfile, just know that
 # it is from the repository root.
@@ -83,12 +83,12 @@ freeze-file: $(STACK)/$(stack_freeze_file)
 %/$(stack_freeze_file): STACK = $*
 %/$(stack_freeze_file): common/pandoc-freeze.sh
 	docker build \
-		--tag pandoc/$(STACK)-builder \
-		--target=$(STACK)-builder-common \
+		--tag pandoc/$(STACK)-builder-base \
+		--target=$(STACK)-builder-base \
 		-f $(makefile_dir)/$(STACK)/Dockerfile $(makefile_dir)
 	docker run --rm \
 		-v "$(makefile_dir):/app" \
-		pandoc/$(STACK)-builder \
+		pandoc/$(STACK)-builder-base \
 		sh /app/$< $(PANDOC_COMMIT) "$(shell id -u):$(shell id -g)" /app/$@
 # Core #########################################################################
 .PHONY: core
@@ -98,7 +98,7 @@ core:
 		--build-arg pandoc_commit=$(PANDOC_COMMIT) \
 		--build-arg pandoc_version=$(PANDOC_VERSION) \
 		--build-arg without_crossref=$(WITHOUT_CROSSREF) \
-		--target pandoc-core \
+		--target $(STACK)-core \
 		-f $(makefile_dir)/$(STACK)/Dockerfile $(makefile_dir)
 # Crossref #####################################################################
 .PHONY: crossref
@@ -108,7 +108,7 @@ crossref: core
 		--build-arg pandoc_commit=$(PANDOC_COMMIT) \
 		--build-arg pandoc_version=$(PANDOC_VERSION) \
 		--build-arg without_crossref=$(WITHOUT_CROSSREF) \
-		--target pandoc-core-crossref \
+		--target $(STACK)-crossref \
 		-f $(makefile_dir)/$(STACK)/Dockerfile $(makefile_dir)
 # LaTeX ########################################################################
 .PHONY: latex
