@@ -16,7 +16,7 @@ jobs:
       pandoc-version: ${{ steps.config-from-commit-message.outputs.pandoc-version }}
       without-crossref: ${{ steps.config-from-commit-message.outputs.without-crossref }}
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Configure build
         id: config-from-commit-message
         run: |
@@ -24,7 +24,7 @@ jobs:
           # are looking for if the string `release=X.Y` or `release=X.Y.Z`
           # exists, if so then that is what we are going to build. Otherwise,
           # build the `master` branch (which is # the `edge` image).
-          version="$(git log --pretty='%B' -1 | \
+          version="$(git log --pretty='%B' -n 1 ${{ github.event.after }} | \
                      sed -ne 's#.*\brelease=\([0-9]*\(\.[0-9]*\)*\).*#\1#p')"
           without_crossref=''
 
@@ -55,12 +55,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Show config
-        run: |
-          echo "pandoc-version: $PANDOC_VERSION"
-          echo "            or: ${{ needs.configure.outputs.pandoc-version }}"
-          echo "without-crossref: $WITHOUT_CROSSREF"
-          echo "              or: ${{ needs.configure.outputs.without-crossref }}"
-          make show-args
+        run: make show-args
 
       - name: Build core image
         run: make ubuntu
