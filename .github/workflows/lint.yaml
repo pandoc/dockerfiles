@@ -16,6 +16,6 @@ jobs:
       - uses: actions/checkout@v2
       - name: ShellCheck
         run: |
-          apt-get instally -y shellcheck
+          apt-get install -y shellcheck
           make lint
 
