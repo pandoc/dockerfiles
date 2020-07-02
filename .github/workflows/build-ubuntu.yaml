@@ -16,7 +16,7 @@ jobs:
       pandoc-version: ${{ steps.config-from-commit-message.outputs.pandoc-version }}
       without-crossref: ${{ steps.config-from-commit-message.outputs.without-crossref }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v1
       - name: Configure build
         id: config-from-commit-message
         run: |
