@@ -60,7 +60,7 @@ test-crossref-is-callable:
 	@printf "### testing whether pandoc-crossref is in PATH "
 	@printf "and can be called with --version...\n"
 	docker run --rm -v $(test_files_path):/data \
-	    --entrypoint=pandoc-crossref $(IMAGE) --version > /dev/null
+	    --entrypoint=pandoc-crossref $(IMAGE) --version
 
 test-crossref-filter: $(test_files_path)/crossref-test.md \
 		$(test_files_path)/expected/crossref-test.native
