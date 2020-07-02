@@ -24,7 +24,7 @@ RUN apt-get -q --no-allow-insecure-repositories update \
   && ln -s /opt/cabal/bin/cabal-3.2 /usr/bin/cabal
 
 COPY cabal.root.config /root/.cabal/config
-RUN  cabal --version \
+RUN cabal --version \
   && ghc --version \
   && cabal new-update
 

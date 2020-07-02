@@ -1,64 +1,79 @@
-FROM alpine:3.11 AS pandoc-builder
+# Base #########################################################################
+FROM alpine:3.11 AS alpine-builder-base
+WORKDIR /app
 
 RUN apk --no-cache add \
-         alpine-sdk \
-         bash \
-         ca-certificates \
-         cabal \
-         fakeroot \
-         ghc \
-         git \
-         gmp-dev \
-         lua5.3-dev \
-         pkgconfig \
-         zlib-dev
+        alpine-sdk \
+        bash \
+        ca-certificates \
+        cabal \
+        fakeroot \
+        ghc \
+        git \
+        gmp-dev \
+        lua5.3-dev \
+        pkgconfig \
+        zlib-dev
 
-# Install newer cabal-install version
 COPY cabal.root.config /root/.cabal/config
-RUN cabal update \
-  && cabal install cabal-install \
-  && mv /root/.cabal/bin/cabal /usr/local/bin/cabal
+RUN cabal --version \
+  && ghc --version \
+  && cabal new-update
 
-# Get sources
+# Builder ######################################################################
+FROM alpine-builder-base as alpine-builder
 ARG pandoc_commit=master
 RUN git clone --branch=$pandoc_commit --depth=1 --quiet \
-        https://github.com/jgm/pandoc /usr/src/pandoc
+  https://github.com/jgm/pandoc /usr/src/pandoc
+
+COPY ./alpine/freeze/pandoc-$pandoc_commit.project.freeze \
+     /usr/src/pandoc/cabal.project.freeze
 
 # Install Haskell dependencies
 WORKDIR /usr/src/pandoc
-RUN cabal --version \
-  && ghc --version \
-  && cabal new-update \
-  && cabal new-clean \
-  && cabal new-configure \
-           --flag embed_data_files \
-           --flag bibutils \
-           --constraint 'hslua +system-lua +pkg-config' \
-           --enable-tests \
-           . pandoc-citeproc \
-  && cabal new-build . pandoc-citeproc
+# Add pandoc-crossref to project
+ARG without_crossref=
+RUN test -n "$without_crossref" || \
+    printf "extra-packages: pandoc-crossref\n" > cabal.project.local;
+RUN cabal new-update \
+  && cabal new-build \
+      --disable-tests \
+      --jobs \
+      . pandoc-citeproc \
+      $(test -n "$without_crossref" || printf pandoc-crossref)
 
-FROM pandoc-builder AS pandoc-binaries
 RUN find dist-newstyle \
          -name 'pandoc*' -type f -perm -u+x \
-         -exec cp '{}' /usr/local/bin/ ';' \
-  && strip /usr/local/bin/pandoc*
+         -exec cp '{}' /usr/local/bin/ ';'
 
+# Cabal's exec stripping doesn't seem to work reliably, let's do it here.
+RUN strip /usr/local/bin/pandoc*
 
-FROM alpine:3.11 AS alpine-pandoc
-ARG pandoc_commit=master
+# Core #########################################################################
+FROM alpine:3.11 AS alpine-core
+ARG pandoc_version=edge
 LABEL maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
 LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
 LABEL org.pandoc.author "John MacFarlane"
-LABEL org.pandoc.version "$pandoc_commit"
-
-COPY --from=pandoc-binaries /usr/local/bin/pandoc* /usr/local/bin/
-COPY common/docker-entrypoint.sh /usr/local/bin
-RUN apk add --no-cache \
-         gmp \
-         libffi \
-         lua5.3 \
-         lua5.3-lpeg
+LABEL org.pandoc.version "$pandoc_version"
 
 WORKDIR /data
-ENTRYPOINT ["docker-entrypoint.sh"]
+ENTRYPOINT ["/usr/local/bin/pandoc"]
+
+COPY --from=alpine-builder \
+  /usr/local/bin/pandoc \
+  /usr/local/bin/pandoc-citeproc \
+  /usr/local/bin/
+
+# Reinstall any system packages required for runtime.
+RUN apk --no-cache add \
+        gmp \
+        libffi \
+        lua5.3 \
+        lua5.3-lpeg
+
+# Crossref #####################################################################
+FROM alpine-core AS alpine-crossref
+COPY --from=alpine-builder \
+  /usr/local/bin/pandoc-crossref \
+  /usr/local/bin/

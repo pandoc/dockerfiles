@@ -30,8 +30,8 @@ makefile_dir := $(dir $(realpath Makefile))
 stack_freeze_file = freeze/pandoc-$(PANDOC_COMMIT).project.freeze
 
 # List of Linux distributions which are supported as image bases.
-# TODO: alpine
-image_stacks = ubuntu
+image_stacks = alpine \
+               ubuntu
 
 # Keep this target first so that `make` with no arguments will print this rather
 # than potentially engaging in expensive builds.
@@ -129,32 +129,6 @@ test-crossref:
 
 test-latex: IMAGE ?= pandoc/$(STACK)-latex:$(PANDOC_VERSION)
 test-latex:
-	IMAGE=$(IMAGE) make -C test test-latex
-
-
-################################################################################
-# Alpine images and tests                                                      #
-################################################################################
-#
-# TODO: @svenevs
-# Refactor alpine stack into the glorious beauty that is the ubuntu stack.
-#
-.PHONY: alpine alpine-latex test-alpine test-alpine-latex
-alpine:
-	docker build \
-	    --tag pandoc/core:$(PANDOC_VERSION) \
-	    --build-arg pandoc_commit=$(PANDOC_COMMIT) \
-	    -f $(makefile_dir)/alpine/Dockerfile $(makefile_dir)
-alpine-latex:
-	docker build \
-	    --tag pandoc/latex:$(PANDOC_VERSION) \
-	    --build-arg base_tag=$(PANDOC_VERSION) \
-	    -f $(makefile_dir)/alpine/latex/Dockerfile $(makefile_dir)
-test-alpine: IMAGE ?= pandoc/core:$(PANDOC_VERSION)
-test-alpine:
-	IMAGE=$(IMAGE) make -C test test-core
-test-alpine-latex: IMAGE ?= pandoc/latex:$(PANDOC_VERSION)
-test-alpine-latex:
 	IMAGE=$(IMAGE) make -C test test-latex
 
 ################################################################################

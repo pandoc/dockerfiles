@@ -21,15 +21,12 @@ RUN apt-get -q --no-allow-insecure-repositories update \
 # DANGER: this will vary for different distributions,
 # particularly the `linux` suffix. Ubuntu linux is a glibc based
 # distribution, adjust depending on the distro.
-# `-linux` ---------------------------> vvvvvv
+# `-linux` ----------------------------> vvvvv
 ENV PATH="/opt/texlive/texdir/bin/x86_64-linux:${PATH}"
 WORKDIR /root
 
 COPY common/latex/texlive.profile /root/texlive.profile
 COPY common/latex/install-texlive.sh /root/install-texlive.sh
-# Don't include linuxmusl, ubuntu is a glibc distro
-RUN sed -i'' -e 's/^\(binary_x86_64-linuxmusl\) 1/\1 0/' \
-        /root/texlive.profile
 
 RUN /root/install-texlive.sh
 

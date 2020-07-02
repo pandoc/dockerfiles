@@ -16,7 +16,6 @@ This repo contains a collection of Dockerfiles to build various
     - [Pandoc Scripts](#pandoc-scripts)
     - [GitHub Action](#github-action)
 - [Maintenance Notes](#maintenance-notes)
-    - [Adding a new Image Stack](#adding-a-new-image-stack)
     - [Managing new Pandoc Releases](#managing-new-pandoc-releases)
 - [License](#license)
 
@@ -219,90 +218,11 @@ Started guide](https://docs.docker.com/get-started/part2/).
 Maintenance Notes
 ================================================================================
 
-Adding a new Image Stack
---------------------------------------------------------------------------------
+TODO: CI deployment broken after switch to GitHub Actions.
 
-Suppose users desire a new image stack using a different base image.  To make
-the requirements clearer, assume the desire is to have a new image stack based
-off `ubuntu`.
-
-1. Create a top-level directory named `ubuntu`.  The name of this directory
-   should be exactly the same as whatever the `FROM` clause will be, for
-   consistency and clarity.
-2. Create `ubuntu/Dockerfile`.  This `Dockerfile` will be the "core" `ubuntu`
-   image, it should only contain `pandoc` and `pandoc-citeproc`.  Refer to the
-   [`alpine/Dockerfile`](alpine/Dockerfile) for assistance in how to create
-   multiple layers.  The idea is to create a base image, install all build
-   dependencies and `pandoc` / `pandoc-citeproc`.  Then create a new layer from
-   the original base image and copy from the intermediate build layer.  This way
-   the `pandoc` / `pandoc-citeproc` are effectively the only additional items
-   on top of the original base image.
-3. Add an `ubuntu` target to the `Makefile`.
-4. Create `ubuntu/latex/Dockerfile` and install the latex dependencies.  Use the
-   [`alpine/latex/Dockerfile`](alpine/latex/Dockerfile) as a reference for what
-   dependencies should be installed in addition to latex.
-5. Add an `ubuntu-latex` target to the `Makefile`.
-6. Add testing targets `test-ubuntu` and `test-ubuntu-latex`.  You should be
-   able to copy-paste the existing `test-alpine` and `test-alpine-latex` targets
-   and rename the [target-specific variable value][tsvv] for `IMAGE`:
-
-   ```make
-   # update default ---> |-----------------------------|
-   test-ubuntu: IMAGE ?= pandoc/ubuntu:$(PANDOC_VERSION)
-   test-ubuntu: # vvv invokation line is the same as alpine tests
-   	IMAGE=$(IMAGE) make -C test test-core
-   ```
-
-   This means that `make test-ubuntu` will invoke the `test-core` target in the
-   [`test/Makefile`](test/Makefile), using the image `pandoc/ubuntu:edge`.
-   The target specific value is helpful for developers to be able to run the
-   tests against an alternative image, e.g.,
-   `IMAGE=test/ubuntu:edge make test-ubuntu`.  **Note that the testing targets
-   must be the `core` and `latex` targets with `test-` preprended**.  The CI
-   tests run `make test-<< parameters.core_target >>` and
-   `make test-<< parameters.latex_target >>` (see next item).
-7. Now that your image stack has been defined (and tested!), update the CircleCI
-   [`.circleci/config.yml`](.circleci/config.yml) file to add a new build stack.
-   Specifically, search for `alpine_stack: &alpine_stack`.  An example `diff`
-   for this `ubuntu` stack could look like this:
-
-   ```diff
-   @@ -58,6 +58,9 @@ jobs:
-    alpine_stack: &alpine_stack
-      core_target: alpine
-      latex_target: alpine-latex
-   +ubuntu_stack: &ubuntu_stack
-   +  core_target: ubuntu
-   +  latex_target: ubuntu-latex
-
-    # Setup builds for each commit, as well as monthly cron job.
-    workflows:
-   @@ -66,12 +69,17 @@ workflows:
-          - lint
-          - build_stack:
-              <<: *alpine_stack
-   +      - build_stack:
-   +          <<: *ubuntu_stack
-      monthly:
-        # NOTE: make sure all `build_stack` calls here *also* set `cron_job: true`!
-        jobs:
-          - build_stack:
-              <<: *alpine_stack
-              cron_job: true
-   +      - build_stack:
-   +          <<: *ubuntu_stack
-   +          cron_job: true
-   ```
-
-   **You should not need to edit anything else in this file!**
-8. Update this file (README.md) to include a listing of this new image stack.
-   Create a new h2 heading (`Ubuntu Linux` in this example) underneath
-   `All Image Stacks` heading.  Please keep this alphabetical.  Please also make
-   sure to create a hyperlink under the `**Contents**` listing at the top of
-   this file for browsing convenience.
-9. Open a Pull Request for review!
-
-[tsvv]: https://www.gnu.org/software/make/manual/html_node/Target_002dspecific.html
+- [ ] Tagging to `:latest` if push event to master with `release=*` message.
+- [ ] Fix deadline: for 2.10 releases (on hold re: crossref, also avoid 2.9.2.1
+      conflicts with latex archive dilemma).
 
 Managing new Pandoc Releases
 --------------------------------------------------------------------------------
@@ -322,18 +242,14 @@ in this exact order:
    $ git push -u origin release/9.8
    ```
 
-   The important part is the commit message.  The
-   [`.circleci/version_for_commit_message.sh`][vfcm] script will check the
-   commit message for `release=X.Y` / `release=X.Y.Z`, and if found performs the
-   additional tagging to `:latest`.  So the diff does not really matter, just
+   The important part is the commit message.  The commit message is checked for
+   `release=X.Y` / `release=X.Y.Z`, the diff does not really matter, just
    the message.
 
    Create a pull request first to make sure all image stacks build as expected.
 2. Assuming the pull request build succeeds, merge to `master` branch.  The only
    time that `docker push` is performed is when a commit hits the `master`
    branch of this repository.
-
-[vfcm]: .circleci/version_for_commit_message.sh
 
 License
 ================================================================================
