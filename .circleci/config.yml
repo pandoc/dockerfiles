@@ -12,3 +12,8 @@ jobs:
             tar -xf shellcheck-stable.linux.x86_64.tar.xz
             export PATH="$PWD/shellcheck-stable:$PATH"
             make lint
+
+workflows:
+  build:
+    jobs:
+      - lint
