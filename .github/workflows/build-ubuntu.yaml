@@ -33,6 +33,8 @@ jobs:
               # Don't build pandoc-crossref for the edge version
               without_crossref=true
           fi
+
+          printf "Setting outputs:\n  - pandoc-version: %s\n  - without-crossref: %\n" "$version" "$without_crossref"
           printf "::set-output name=pandoc-version::%s\n" "$version"
           printf "::set-output name=without-crossref::%s\n" "$without_crossref"
 
@@ -51,11 +53,11 @@ jobs:
 
       - name: Show config
         run: |
-        echo "pandoc-version: $PANDOC_VERSION"
-        echo "            or: ${{ needs.configure.outputs.pandoc-version }}"
-        echo "without-crossref: $WITHOUT_CROSSREF"
-        echo "              or: ${{ needs.configure.outputs.without-crossref }}"
-        make show-args
+          echo "pandoc-version: $PANDOC_VERSION"
+          echo "            or: ${{ needs.configure.outputs.pandoc-version }}"
+          echo "without-crossref: $WITHOUT_CROSSREF"
+          echo "              or: ${{ needs.configure.outputs.without-crossref }}"
+          make show-args
 
       - name: Build core image
         run: make ubuntu
