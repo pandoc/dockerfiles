@@ -20,6 +20,8 @@ jobs:
       without-crossref: ${{ steps.config-from-commit-message.outputs.without-crossref }}
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.after }}
       # DEBUG
       - name: Dump GitHub context
         env:
