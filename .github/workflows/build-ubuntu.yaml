@@ -5,6 +5,9 @@ on:
     # Build and publish: configure built via commit message
     branches:
       - master
+      # DEBUG
+      - fix/alpine-crossref
+      # /DEBUG
   pull_request:
     # Build, but don't push on pull requests
 
@@ -17,6 +20,12 @@ jobs:
       without-crossref: ${{ steps.config-from-commit-message.outputs.without-crossref }}
     steps:
       - uses: actions/checkout@v2
+      # DEBUG
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+      # /DEBUG
       - name: Configure build
         id: config-from-commit-message
         run: |
