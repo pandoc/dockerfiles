@@ -1,8 +1,9 @@
-# Base #########################################################################
 FROM ubuntu:focal AS ubuntu-builder-base
-WORKDIR /app
 
 ENV DEBIAN_FRONTEND noninteractive
+
+WORKDIR /app
+
 RUN apt-get -q --no-allow-insecure-repositories update \
   && apt-get install --assume-yes --no-install-recommends \
        software-properties-common \
@@ -24,11 +25,11 @@ RUN apt-get -q --no-allow-insecure-repositories update \
   && ln -s /opt/cabal/bin/cabal-3.2 /usr/bin/cabal
 
 COPY cabal.root.config /root/.cabal/config
-RUN cabal --version \
+RUN  cabal --version \
   && ghc --version \
   && cabal new-update
 
-# Builder ######################################################################
+# Actual builder
 FROM ubuntu-builder-base as ubuntu-builder
 ARG pandoc_commit=master
 RUN git clone --branch=$pandoc_commit --depth=1 --quiet \
@@ -57,7 +58,6 @@ RUN find dist-newstyle \
 # Cabal's exec stripping doesn't seem to work reliably, let's do it here.
 RUN strip /usr/local/bin/pandoc*
 
-# Core #########################################################################
 FROM ubuntu:focal AS ubuntu-core
 ARG pandoc_version=edge
 LABEL maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
@@ -65,15 +65,10 @@ LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
 LABEL org.pandoc.author "John MacFarlane"
 LABEL org.pandoc.version "$pandoc_version"
 
-WORKDIR /data
-ENTRYPOINT ["/usr/local/bin/pandoc"]
-
 COPY --from=ubuntu-builder \
   /usr/local/bin/pandoc \
   /usr/local/bin/pandoc-citeproc \
   /usr/local/bin/
-
-# Reinstall any system packages required for runtime.
 RUN apt-get -q --no-allow-insecure-repositories update \
   && DEBIAN_FRONTEND=noninteractive \
      apt-get install --assume-yes --no-install-recommends \
@@ -87,7 +82,9 @@ RUN apt-get -q --no-allow-insecure-repositories update \
        zlib1g=1:1.2.11.* \
   && rm -rf /var/lib/apt/lists/*
 
-# Crossref #####################################################################
+WORKDIR /data
+ENTRYPOINT ["/usr/local/bin/pandoc"]
+
 FROM ubuntu-core AS ubuntu-crossref
 COPY --from=ubuntu-builder \
   /usr/local/bin/pandoc-crossref \

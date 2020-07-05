@@ -1,4 +1,4 @@
-name: Ubuntu
+name: Build Images
 
 on:
   push:
@@ -17,8 +17,6 @@ jobs:
       without-crossref: ${{ steps.config-from-commit-message.outputs.without-crossref }}
     steps:
       - uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.after }}
       - name: Configure build
         id: config-from-commit-message
         run: |
@@ -35,11 +33,6 @@ jobs:
               # Don't build pandoc-crossref for the edge version
               without_crossref=true
           fi
-
-          printf "Setting outputs:\n"
-          printf "  - pandoc-version: %s\n" "$version"
-          printf "  - without-crossref: %s\n" "$without_crossref"
-
           printf "::set-output name=pandoc-version::%s\n" "$version"
           printf "::set-output name=without-crossref::%s\n" "$without_crossref"
 
