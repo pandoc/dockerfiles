@@ -1,0 +1,175 @@
+name: Alpine
+
+on:
+  push:
+    # Build and publish: configure built via commit message
+    branches:
+      - master
+  pull_request:
+    # Build, but don't push on pull requests
+
+jobs:
+  configure:
+    name: Configure
+    runs-on: ubuntu-latest
+    outputs:
+      pandoc-version: ${{ steps.config-from-commit-message.outputs.pandoc-version }}
+      without-crossref: ${{ steps.config-from-commit-message.outputs.without-crossref }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.after }}
+      - name: Configure build
+        id: config-from-commit-message
+        run: |
+          # Determine PANDOC_VERSION for Makefile based on commit message. We
+          # are looking for if the string `release=X.Y` or `release=X.Y.Z`
+          # exists, if so then that is what we are going to build. Otherwise,
+          # build the `master` branch (which is # the `edge` image).
+          version="$(git log --pretty='%B' -1 | \
+                     sed -ne 's#.*\brelease=\([0-9]*\(\.[0-9]*\)*\).*#\1#p')"
+          without_crossref=''
+
+          if [ -z "$version" ]; then
+              version="edge"
+              # Don't build pandoc-crossref for the edge version
+              without_crossref=true
+          fi
+
+          printf "Setting outputs:\n"
+          printf "  - pandoc-version: %s\n" "$version"
+          printf "  - without-crossref: %s\n" "$without_crossref"
+
+          printf "::set-output name=pandoc-version::%s\n" "$version"
+          printf "::set-output name=without-crossref::%s\n" "$without_crossref"
+
+  # Build images and store them as tar archive
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: configure
+
+    env:
+      PANDOC_VERSION: ${{ needs.configure.outputs.pandoc-version }}
+      WITHOUT_CROSSREF: ${{ needs.configure.outputs.without-crossref }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Show config
+        run: make show-args
+
+      - name: Build core image
+        run: make alpine
+
+      - name: Build crossref image
+        if: ${{ env.WITHOUT_CROSSREF == '' }}
+        run: make alpine-crossref
+
+      - name: Build LaTeX image
+        if: ${{ env.WITHOUT_CROSSREF == '' }}
+        run: make alpine-latex
+
+      - name: Save images to archive
+        run: |
+          if [ -z "$WITHOUT_CROSSREF" ]; then
+              CROSSREF_IMAGE=pandoc/alpine-crossref:$PANDOC_VERSION
+              LATEX_IMAGE=pandoc/alpine-latex:$PANDOC_VERSION
+          fi
+          docker save \
+                 pandoc/alpine:$PANDOC_VERSION \
+                 $CROSSREF_IMAGE $LATEX_IMAGE |\
+              gzip > pandoc-$PANDOC_VERSION.tar.gz
+
+      - name: Upload archive
+        uses: actions/upload-artifact@v1
+        with:
+          name: alpine-images
+          path: pandoc-${{ env.PANDOC_VERSION }}.tar.gz
+
+  # Ensure that there are no major issues with the images
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    needs:
+      - configure
+      - build
+    env:
+      PANDOC_VERSION: ${{ needs.configure.outputs.pandoc-version }}
+      WITHOUT_CROSSREF: ${{ needs.configure.outputs.without-crossref }}
+      CORE_IMAGE: pandoc/alpine-core
+      CROSSREF_IMAGE: pandoc/alpine-crossref
+
+    steps:
+      - name: Download images
+        uses: actions/download-artifact@v1
+        with:
+          name: alpine-images
+
+      - name: Load images
+        run: |
+          docker load --input alpine-images/pandoc-$PANDOC_VERSION.tar.gz
+
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Test core image
+        run: make test-alpine
+
+      - name: Test crossref image
+        if: ${{ env.WITHOUT_CROSSREF == '' }}
+        run: make test-alpine-crossref
+
+      - name: Test LaTeX image
+        if: ${{ env.WITHOUT_CROSSREF == '' }}
+        run: make test-alpine-latex
+
+  # Push image to GitHub Packages.
+  push:
+    name: Push
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.repository == 'pandoc/dockerfiles'
+    needs:
+      - configure
+      - build
+      - test
+
+    env:
+      PANDOC_VERSION: ${{ needs.configure.outputs.pandoc-version }}
+      WITHOUT_CROSSREF: ${{ needs.configure.outputs.without-crossref }}
+
+    steps:
+      - name: Download stored images
+        uses: actions/download-artifact@v1
+        with:
+          name: alpine-images
+
+      - name: Load images
+        run: |
+          docker load --input alpine-images/pandoc-$PANDOC_VERSION.tar.gz
+
+      - name: Log into registry
+        run: >-
+          echo "${{ secrets.DOCKER_HUB_TOKEN }}" |
+            docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+
+      # NOTE: for historical reasons alpine images receive two names.
+      - name: Push core image
+        run: |
+          docker push pandoc/alpine:$PANDOC_VERSION
+          docker tag pandoc/alpine:$PANDOC_VERSION pandoc/core:$PANDOC_VERSION
+          docker push pandoc/core:$PANDOC_VERSION
+
+      - name: Push crossref image
+        if: env.WITHOUT_CROSSREF == ''
+        run: |
+          docker push pandoc/alpine-crossref:$PANDOC_VERSION
+          docker tag pandoc/alpine-crossref:$PANDOC_VERSION pandoc/crossref:$PANDOC_VERSION
+          docker push pandoc/crossref:$PANDOC_VERSION
+
+      - name: Push LaTeX image
+        if: env.WITHOUT_CROSSREF == ''
+        run: |
+          docker push pandoc/alpine-latex:$PANDOC_VERSION
+          docker tag pandoc/alpine-latex:$PANDOC_VERSION pandoc/latex:$PANDOC_VERSION
+          docke rpush pandoc/latex:$PANDOC_VERSION

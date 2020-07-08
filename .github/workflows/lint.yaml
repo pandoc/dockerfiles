@@ -1,0 +1,21 @@
+name: Tidy
+
+on:
+  push:
+    # Build and publish: configure built via commit message
+    branches:
+      - master
+  pull_request:
+    # Build, but don't push on pull requests
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: ShellCheck
+        run: |
+          sudo apt-get install -y shellcheck
+          make lint
+

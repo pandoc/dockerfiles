@@ -1,4 +1,4 @@
-FROM ubuntu:focal AS ubuntu-builder-common
+FROM ubuntu:focal AS ubuntu-builder-base
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -30,7 +30,7 @@ RUN  cabal --version \
   && cabal new-update
 
 # Actual builder
-FROM ubuntu-builder-common as ubuntu-builder
+FROM ubuntu-builder-base as ubuntu-builder
 ARG pandoc_commit=master
 RUN git clone --branch=$pandoc_commit --depth=1 --quiet \
   https://github.com/jgm/pandoc /usr/src/pandoc
@@ -58,7 +58,7 @@ RUN find dist-newstyle \
 # Cabal's exec stripping doesn't seem to work reliably, let's do it here.
 RUN strip /usr/local/bin/pandoc*
 
-FROM ubuntu:focal AS pandoc-core
+FROM ubuntu:focal AS ubuntu-core
 ARG pandoc_version=edge
 LABEL maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
 LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
@@ -85,7 +85,7 @@ RUN apt-get -q --no-allow-insecure-repositories update \
 WORKDIR /data
 ENTRYPOINT ["/usr/local/bin/pandoc"]
 
-FROM pandoc-core AS pandoc-core-crossref
+FROM ubuntu-core AS ubuntu-crossref
 COPY --from=ubuntu-builder \
   /usr/local/bin/pandoc-crossref \
   /usr/local/bin/

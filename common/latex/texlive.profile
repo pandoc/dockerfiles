@@ -1,6 +1,9 @@
 # texlive.profile written on Tue Feb  5 09:43:07 2019 UTC
 # It will NOT be updated and reflects only the
 # installation profile at installation time.
+#
+# NOTE: see also alpine/latex.Dockerfile which appends
+# `binary_x86_64-linuxmusl 1` to this file, use for non-glibc distributions.
 selected_scheme scheme-small
 TEXDIR         /opt/texlive/texdir
 TEXMFLOCAL     /opt/texlive/texmf-local
@@ -9,7 +12,6 @@ TEXMFSYSCONFIG /opt/texlive/texdir/texmf-config
 TEXMFVAR       ~/.texlive/texmf-var
 TEXMFCONFIG    ~/.texlive/texmf-config
 TEXMFHOME      ~/texmf
-binary_x86_64-linuxmusl 1
 instopt_adjustpath 0
 instopt_adjustrepo 1
 instopt_letter 0
