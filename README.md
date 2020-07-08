@@ -1,8 +1,6 @@
 pandoc Dockerfiles
 ================================================================================
 
-[![CircleCI](https://circleci.com/gh/pandoc/dockerfiles/tree/master.svg?style=svg)](https://circleci.com/gh/pandoc/dockerfiles/tree/master)
-
 This repo contains a collection of Dockerfiles to build various
 [pandoc](https://pandoc.org/) container images.
 
