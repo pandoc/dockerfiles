@@ -84,8 +84,15 @@ cabal new-freeze \
       --constraint="hslua ${hslua_constraints}"
 
 printf "Copying freeze file to %s\n" "${target_file}"
+target_dir="$(dirname "${target_file}")"
+if [ ! -d "${target_dir}" ]; then
+    mkdir -p "${target_dir}"
+    chmod 775 "${target_dir}"
+    chown "${file_owner}" "${target_dir}"
+fi
 cp cabal.project.freeze "${target_file}"
 printf "Changing freeze file owner to %s\n" "${file_owner}"
+chmod 664 "${target_file}"
 chown "${file_owner}" "${target_file}"
 
 printf "DONE\n"
