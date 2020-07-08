@@ -218,12 +218,6 @@ Started guide](https://docs.docker.com/get-started/part2/).
 Maintenance Notes
 ================================================================================
 
-TODO: CI deployment broken after switch to GitHub Actions.
-
-- [ ] Tagging to `:latest` if push event to master with `release=*` message.
-- [ ] Fix deadline: for 2.10 releases (on hold re: crossref, also avoid 2.9.2.1
-      conflicts with latex archive dilemma).
-
 Managing new Pandoc Releases
 --------------------------------------------------------------------------------
 
