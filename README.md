@@ -159,7 +159,7 @@ You only have to do this once for each script file.
 You can then run the completed script file in a pandoc docker container like so:
 
 ```sh
-docker run --rm --volume "`pwd`:/data" --entrypoint "`pwd`/script.sh" pandoc/latex:2.6
+docker run --rm --volume "`pwd`:/data" --entrypoint "/data/script.sh" pandoc/latex:2.6
 ```
 
 Notice that the above `script.sh` *did* specify `pandoc`, and you can't just
