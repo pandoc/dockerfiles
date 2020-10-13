@@ -172,4 +172,4 @@ jobs:
         run: |
           docker push pandoc/alpine-latex:$PANDOC_VERSION
           docker tag pandoc/alpine-latex:$PANDOC_VERSION pandoc/latex:$PANDOC_VERSION
-          docke rpush pandoc/latex:$PANDOC_VERSION
+          docker push pandoc/latex:$PANDOC_VERSION
