@@ -37,25 +37,30 @@ RUN git clone --branch=$pandoc_commit --depth=1 --quiet \
 COPY ./ubuntu/freeze/pandoc-$pandoc_commit.project.freeze \
      /usr/src/pandoc/cabal.project.freeze
 
+# Copy placeholder for pandoc-citeproc. This might be overwritten with a
+# proper binary later.
+COPY ./common/placeholder-pandoc-citeproc.sh \
+     /usr/local/bin/pandoc-citeproc
+
 # Install Haskell dependencies
 WORKDIR /usr/src/pandoc
 # Add pandoc-crossref to project
 ARG without_crossref=
+ARG extra_packages="pandoc-citeproc pandoc-crossref"
 RUN test -n "$without_crossref" || \
     printf "extra-packages: pandoc-crossref\n" > cabal.project.local;
+
 RUN cabal new-update \
   && cabal new-build \
       --disable-tests \
       --jobs \
-      . pandoc-citeproc \
-      $(test -n "$without_crossref" || printf pandoc-crossref)
-
-RUN find dist-newstyle \
-         -name 'pandoc*' -type f -perm -u+x \
-         -exec cp '{}' /usr/local/bin/ ';'
+      . $extra_packages
 
 # Cabal's exec stripping doesn't seem to work reliably, let's do it here.
-RUN strip /usr/local/bin/pandoc*
+RUN find dist-newstyle \
+         -name 'pandoc*' -type f -perm -u+x \
+         -exec strip '{}' ';' \
+         -exec cp '{}' /usr/local/bin/ ';'
 
 # Core #########################################################################
 FROM ubuntu:focal AS ubuntu-core

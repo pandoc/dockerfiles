@@ -30,22 +30,22 @@ CORE_CMD = docker run --rm -v $(test_files_path):/data $(IMAGE)
 OUTPUT_FORMATS=markdown epub docx latex html
 
 .PHONY: test-core testsuite-to-% test-bib-conversion test-lua
-test-core: test-bib-conversion test-lua \
+test-core: test-lua \
 		$(foreach format,$(OUTPUT_FORMATS), testsuite-to-$(format))
 
 testsuite-to-%: testsuite.native
 	@# Pure HTML cannot represent fractions, use supported math rendering method.
 	$(CORE_CMD) $< --output=/dev/null --to=$* --mathml
 
+test-lua: testsuite.native lpeg-test.lua
+	docker run --rm -v $(test_files_path):/data $(IMAGE) \
+	    --lua-filter=lpeg-test.lua --to=json --output=/dev/null $<
+
 # Check that bibtex file can be converted to YAML with pandoc-citeproc
 test-bib-conversion: example.bib
 	docker run --rm -v $(test_files_path):/data \
 	    --entrypoint=/usr/local/bin/pandoc-citeproc $(IMAGE) \
 	    --bib2yaml $< > /dev/null
-
-test-lua: testsuite.native lpeg-test.lua
-	docker run --rm -v $(test_files_path):/data $(IMAGE) \
-	    --lua-filter=lpeg-test.lua --to=json --output=/dev/null $<
 
 #   ____                             __
 #  / ___|_ __ ___  ___ ___ _ __ ___ / _|
