@@ -167,6 +167,18 @@ test-latex:
 lint:
 	shellcheck $(shell find . -name "*.sh")
 
+.PHONY: push-as-latest
+push-as-latest: image_names = core crossref latex \
+	alpine alpine-crossref alpine-latex \
+	ubuntu ubuntu-crossref ubuntu-latex
+push-as-latest:
+	for image in $(image_names); do \
+	    docker pull pandoc/$${image}:$(PANDOC_VERSION); \
+	    docker tag pandoc/$${image}:$(PANDOC_VERSION) \
+             pandoc/$${image}:latest; \
+	    docker push pandoc/$${image}:latest; \
+	done
+
 .PHONY: clean
 clean:
 	IMAGE=none make -C test clean
