@@ -76,6 +76,9 @@ if [ "$pandoc_version" = "master" ]; then
     exit 0
 fi
 
+# Download latest cabal database
+cabal update
+
 # get pandoc source code from Hackage
 cabal get pandoc-"${pandoc_version}"
 
