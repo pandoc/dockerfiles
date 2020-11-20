@@ -47,7 +47,7 @@ From there, the tagging scheme is either `X.Y`, `X.Y.Z`, `latest`, or `edge`.
 Current `latest` Tag
 --------------------------------------------------------------------------------
 
-The current `latest` tag for all images points to `pandoc` version `2.11.1.1`.
+The current `latest` tag for all images points to `pandoc` version `2.11.2`.
 
 Alpine Linux
 --------------------------------------------------------------------------------
