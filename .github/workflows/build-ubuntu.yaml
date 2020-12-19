@@ -23,6 +23,7 @@ jobs:
       - name: Configure build
         id: config-from-commit-message
         run: |
+          git log --pretty='%B' -1
           # Determine PANDOC_VERSION for Makefile based on commit message. We
           # are looking for if the string `release=X.Y` or `release=X.Y.Z`
           # exists, if so then that is what we are going to build. Otherwise,
