@@ -219,29 +219,7 @@ Maintenance Notes
 Managing new Pandoc Releases
 --------------------------------------------------------------------------------
 
-When `pandoc` has a new official release, the following steps must be performed
-in this exact order:
-
-1. Create a pull request from a branch.  Edit the ``Current `latest` Tag``
-   section to include the new `pandoc` release number.  Suppose
-   we are releasing image stacks for `pandoc` version 9.8:
-
-   ```console
-   $ git checkout -b release/9.8
-   # ... edit current :latest ...
-   $ git add README.md
-   $ git commit -m 'release=9.8'
-   $ git push -u origin release/9.8
-   ```
-
-   The important part is the commit message.  The commit message is checked for
-   `release=X.Y` / `release=X.Y.Z`, the diff does not really matter, just
-   the message.
-
-   Create a pull request first to make sure all image stacks build as expected.
-2. Assuming the pull request build succeeds, merge to `master` branch.  The only
-   time that `docker push` is performed is when a commit hits the `master`
-   branch of this repository.
+See the [release checklist](https://github.com/pandoc/dockerfiles/wiki/Release-checklist).
 
 License
 ================================================================================
