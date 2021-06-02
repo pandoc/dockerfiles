@@ -225,4 +225,4 @@ License
 ================================================================================
 
 Code in this repository is licensed under the
-[GNU General Public License Version 2](LICENSE).
+[GNU General Public License, version 2.0 or later](LICENSE).
