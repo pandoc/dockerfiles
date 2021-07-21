@@ -12,7 +12,7 @@ This repo contains a collection of Dockerfiles to build various
 - [Usage](#usage)
     - [Basic Usage](#basic-usage)
     - [Pandoc Scripts](#pandoc-scripts)
-    - [GitHub Action](#github-action)
+    - [GitHub Actions](#github-actions)
 - [Maintenance Notes](#maintenance-notes)
     - [Managing new Pandoc Releases](#managing-new-pandoc-releases)
 - [License](#license)
