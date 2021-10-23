@@ -42,6 +42,7 @@ tlmgr install bidi \
               microtype \
               pdftexcmds \
               polyglossia \
+              selnolig \
               upquote \
               xecjk \
               xetex \
