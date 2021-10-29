@@ -87,8 +87,10 @@ printf "Switching directory to %s\n" "${sourcedir}"
 cd "${sourcedir}"
 
 # Add pandoc-crossref to the project
-printf "Writing cabal.project.local\n"
-printf "\nextra-packages: pandoc-crossref\n" > cabal.project.local
+if [ -z "${WITHOUT_CROSSREF}" ]; then
+    printf "Writing cabal.project.local\n"
+    printf "\nextra-packages: pandoc-crossref\n" > cabal.project.local
+fi
 
 # create freeze file with all desired constraints
 printf "Creating freeze file...\n"
