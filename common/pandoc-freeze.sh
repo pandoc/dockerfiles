@@ -38,14 +38,28 @@ cd "${tmpdir}"
 pandoc_constraints="\
  +embed_data_files\
  -trypandoc"
-hslua_constraints="\
+lua_constraints="\
  +system-lua\
  +pkg-config\
  +hardcode-reg-keys"
 
+uses_hslua_2 ()
+{
+    major=$(printf "%s" "$pandoc_version" | \
+                awk -F. '{ printf("%03d%03d\n", $1,$2); }')
+    test "${major}" -ge "002015"
+    return $?
+}
+
+if uses_hslua_2; then
+    lua_package=lua
+else
+    lua_package=hslua
+fi
+
 print_constraints_only ()
 {
-    printf "constraints: hslua %s,\n" "${hslua_constraints}"
+    printf "constraints: %s %s,\n" "${lua_package}" "${lua_constraints}"
     printf "             pandoc %s,\n" "${pandoc_constraints}"
 }
 
@@ -78,7 +92,7 @@ fi
 printf "Creating freeze file...\n"
 cabal new-freeze \
       --constraint="pandoc ${pandoc_constraints}" \
-      --constraint="hslua ${hslua_constraints}"
+      --constraint="${lua_package} ${lua_constraints}"
 
 printf "Copying freeze file to %s\n" "${target_file}"
 target_dir="$(dirname "${target_file}")"
