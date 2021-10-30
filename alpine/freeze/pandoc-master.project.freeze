@@ -1,2 +1,2 @@
-constraints: hslua  +system-lua +pkg-config +hardcode-reg-keys,
+constraints: lua  +system-lua +pkg-config +hardcode-reg-keys,
              pandoc  +embed_data_files -trypandoc
