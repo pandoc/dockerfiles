@@ -38,33 +38,15 @@ cd "${tmpdir}"
 pandoc_constraints="\
  +embed_data_files\
  -trypandoc"
-pandoc_citeproc_constraints="\
- +embed_data_files\
- +bibutils\
- -unicode_collation\
- -test_citeproc\
- -debug"
 hslua_constraints="\
  +system-lua\
  +pkg-config\
  +hardcode-reg-keys"
 
-needs_pandoc_citeproc ()
-{
-    major=$(printf "%s" "$pandoc_version" | \
-            awk -F. '{ printf("%03d%03d\n", $1,$2); }')
-    test "${major}" -ge "002011"
-    return $?
-}
-
 print_constraints_only ()
 {
     printf "constraints: hslua %s,\n" "${hslua_constraints}"
     printf "             pandoc %s,\n" "${pandoc_constraints}"
-    if needs_pandoc_citeproc; then
-        printf "             pandoc-citeproc %s\n" \
-               "${pandoc_citeproc_constraints}"
-    fi
 }
 
 # Just write the constraints to the target file when targeting master
@@ -96,9 +78,7 @@ fi
 printf "Creating freeze file...\n"
 cabal new-freeze \
       --constraint="pandoc ${pandoc_constraints}" \
-      --constraint="hslua ${hslua_constraints}" \
-      "$(needs_pandoc_citeproc &&
-        printf -- '--constraint=pandoc-citeproc %s' "${pandoc_citeproc_constraints}")"
+      --constraint="hslua ${hslua_constraints}"
 
 printf "Copying freeze file to %s\n" "${target_file}"
 target_dir="$(dirname "${target_file}")"

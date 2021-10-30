@@ -12,15 +12,7 @@ endif
 # non-empty string prevents pandoc-crossref from being built.
 WITHOUT_CROSSREF ?=
 
-# Toggle switching whether pandoc-citeproc should be included in the
-# image. Pandoc 2.11 has a citeproc processor built-in so
-# pandoc-citeproc is no longer required.
-WITHOUT_CITEPROC ?=
-
 ifndef extra_packages
-ifndef WITHOUT_CITEPROC
-extra_packages += pandoc-citeproc
-endif
 ifndef WITHOUT_CROSSREF
 extra_packages += pandoc-crossref
 endif
@@ -53,9 +45,7 @@ image_stacks = alpine \
 show-args:
 	@printf "# Controls whether pandoc-crossref will be built in the base image.\n"
 	@printf "WITHOUT_CROSSREF=%s\n" $(WITHOUT_CROSSREF)
-	@printf "# Toggle inclusion of pandoc-citeproc in the base image.\n"
-	@printf "WITHOUT_CITEPROC=%s\n" $(WITHOUT_CITEPROC)
-	@printf "\n# The tag given to the image.\n"
+	@printf "# Toggle inclusion of pandoc-crossref in the base image.\n"
 	@printf "PANDOC_VERSION=%s\n" $(PANDOC_VERSION)
 	@printf "\n# The pandoc commit used to build the image(s);\n"
 	@printf "# usually a tag or branch name.\n"
@@ -65,8 +55,7 @@ show-args:
 	@printf "# May be overwritten by using a stack-specific target.\n"
 	@printf "STACK=%s\n" $(STACK)
 	@printf "\n# Additional packages build alongside pandoc. Controlled via\n"
-	@printf "# WITHOUT_CROSSREF and WITHOUT_CITEPROC; not intended to be\n"
-	@printf "# set directly.\n"
+	@printf "# WITHOUT_CROSSREF; not intended to be set directly.\n"
 	@printf "extra_packages=%s\n" "$(extra_packages)"
 
 # Generates the targets for a given image stack.
@@ -143,15 +132,8 @@ latex: crossref
 # Test #########################################################################
 .PHONY: test-core test-latex test-crossref
 test-core: IMAGE ?= pandoc/$(STACK):$(PANDOC_VERSION)
-ifndef WITHOUT_CITEPROC
-test_citeproc = test-bib-conversion
-endif
 test-core:
-	IMAGE=$(IMAGE) make -C test test-core $(test_citeproc)
-
-test-citeproc: IMAGE ?= pandoc/$(STACK):$(PANDOC_VERSION)
-test-citeproc:
-	IMAGE=$(IMAGE) make -C test test-citeproc
+	IMAGE=$(IMAGE) make -C test test-core
 
 test-crossref: IMAGE ?= pandoc/$(STACK)-crossref:$(PANDOC_VERSION)
 test-crossref:
