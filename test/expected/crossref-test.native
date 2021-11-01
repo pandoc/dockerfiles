@@ -1,29 +1,93 @@
-[Header 1 ("pandoc-crossref-test",[],[]) [Str "pandoc-crossref",Space,Str "test"]
-,Header 2 ("section-with-table",[],[]) [Str "Section",Space,Str "with",Space,Str "table"]
-,Div ("tbl:label",[],[])
- [Table ("",[],[]) (Caption Nothing
-  [Plain [Str "Table",Space,Str "1:",Space,Str "Caption"]])
-  [(AlignLeft,ColWidthDefault)
-  ,(AlignLeft,ColWidthDefault)]
-  (TableHead ("",[],[])
-  [Row ("",[],[])
-   [Cell ("",[],[]) AlignDefault (RowSpan 1) (ColSpan 1)
-    [Plain [Str "a"]]
-   ,Cell ("",[],[]) AlignDefault (RowSpan 1) (ColSpan 1)
-    [Plain [Str "b"]]]])
-  [(TableBody ("",[],[]) (RowHeadColumns 0)
-   []
-   [Row ("",[],[])
-    [Cell ("",[],[]) AlignDefault (RowSpan 1) (ColSpan 1)
-     [Plain [Str "1"]]
-    ,Cell ("",[],[]) AlignDefault (RowSpan 1) (ColSpan 1)
-     [Plain [Str "2"]]]
-   ,Row ("",[],[])
-    [Cell ("",[],[]) AlignDefault (RowSpan 1) (ColSpan 1)
-     [Plain [Str "3"]]
-    ,Cell ("",[],[]) AlignDefault (RowSpan 1) (ColSpan 1)
-     [Plain [Str "4"]]]])]
-  (TableFoot ("",[],[])
-  [])]
-,Header 2 ("section-with-text",[],[]) [Str "Section",Space,Str "with",Space,Str "text"]
-,Para [Str "See",Space,Str "table",Space,Str "tbl.\160\&1."]]
+[ Header
+    1
+    ( "pandoc-crossref-test" , [] , [] )
+    [ Str "pandoc-crossref" , Space , Str "test" ]
+, Header
+    2
+    ( "section-with-table" , [] , [] )
+    [ Str "Section" , Space , Str "with" , Space , Str "table" ]
+, Div
+    ( "tbl:label" , [] , [] )
+    [ Table
+        ( "" , [] , [] )
+        (Caption
+           Nothing
+           [ Plain
+               [ Str "Table"
+               , Space
+               , Str "1:"
+               , Space
+               , Str "Caption"
+               ]
+           ])
+        [ ( AlignLeft , ColWidthDefault )
+        , ( AlignLeft , ColWidthDefault )
+        ]
+        (TableHead
+           ( "" , [] , [] )
+           [ Row
+               ( "" , [] , [] )
+               [ Cell
+                   ( "" , [] , [] )
+                   AlignDefault
+                   (RowSpan 1)
+                   (ColSpan 1)
+                   [ Plain [ Str "a" ] ]
+               , Cell
+                   ( "" , [] , [] )
+                   AlignDefault
+                   (RowSpan 1)
+                   (ColSpan 1)
+                   [ Plain [ Str "b" ] ]
+               ]
+           ])
+        [ TableBody
+            ( "" , [] , [] )
+            (RowHeadColumns 0)
+            []
+            [ Row
+                ( "" , [] , [] )
+                [ Cell
+                    ( "" , [] , [] )
+                    AlignDefault
+                    (RowSpan 1)
+                    (ColSpan 1)
+                    [ Plain [ Str "1" ] ]
+                , Cell
+                    ( "" , [] , [] )
+                    AlignDefault
+                    (RowSpan 1)
+                    (ColSpan 1)
+                    [ Plain [ Str "2" ] ]
+                ]
+            , Row
+                ( "" , [] , [] )
+                [ Cell
+                    ( "" , [] , [] )
+                    AlignDefault
+                    (RowSpan 1)
+                    (ColSpan 1)
+                    [ Plain [ Str "3" ] ]
+                , Cell
+                    ( "" , [] , [] )
+                    AlignDefault
+                    (RowSpan 1)
+                    (ColSpan 1)
+                    [ Plain [ Str "4" ] ]
+                ]
+            ]
+        ]
+        (TableFoot ( "" , [] , [] ) [])
+    ]
+, Header
+    2
+    ( "section-with-text" , [] , [] )
+    [ Str "Section" , Space , Str "with" , Space , Str "text" ]
+, Para
+    [ Str "See"
+    , Space
+    , Str "table"
+    , Space
+    , Str "tbl.\160\&1."
+    ]
+]
