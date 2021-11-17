@@ -76,6 +76,7 @@ COPY --from=alpine-builder \
 RUN apk --no-cache add \
         gmp \
         libffi \
+        librsvg \
         lua5.3 \
         lua5.3-lpeg
 
