@@ -88,6 +88,7 @@ RUN apt-get -q --no-allow-insecure-repositories update \
        libatomic1=10* \
        libgmp10=2:6.* \
        libpcre3=2:8.39-* \
+       librsvg2-bin=2.50.* \
        libyaml-0-2=0.2.* \
        zlib1g=1:1.2.11.* \
   && rm -rf /var/lib/apt/lists/*
