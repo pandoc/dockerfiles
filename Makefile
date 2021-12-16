@@ -1,4 +1,5 @@
 PANDOC_VERSION ?= edge
+CORES        ?= 2
 
 ifeq ($(PANDOC_VERSION),edge)
 PANDOC_COMMIT          ?= master
@@ -57,6 +58,8 @@ show-args:
 	@printf "\n# Additional packages build alongside pandoc. Controlled via\n"
 	@printf "# WITHOUT_CROSSREF; not intended to be set directly.\n"
 	@printf "extra_packages=%s\n" "$(extra_packages)"
+	@printf "\n# Controls the number of threads to be used during the build process\n"
+	@printf "CORES=%s\n" $(CORES)
 
 # Generates the targets for a given image stack.
 # $1: base stack, one of the `supported_stacks`
@@ -92,6 +95,8 @@ freeze-file: $(STACK)/$(stack_freeze_file)
 %/$(stack_freeze_file): STACK = $*
 %/$(stack_freeze_file): common/pandoc-freeze.sh
 	docker build \
+		--cpu-period="100000" \
+		--cpu-quota="$$(( $(CORES) * 100000 ))" \
 		--tag pandoc/$(STACK)-builder-base \
 		--target=$(STACK)-builder-base \
 		-f $(makefile_dir)/$(STACK)/Dockerfile $(makefile_dir)
@@ -104,6 +109,8 @@ freeze-file: $(STACK)/$(stack_freeze_file)
 .PHONY: core
 core:
 	docker build \
+		--cpu-period="100000" \
+		--cpu-quota="$$(( $(CORES) * 100000 ))" \
 		--tag pandoc/$(STACK):$(PANDOC_VERSION) \
 		--build-arg pandoc_commit=$(PANDOC_COMMIT) \
 		--build-arg pandoc_version=$(PANDOC_VERSION) \
