@@ -1,5 +1,4 @@
 PANDOC_VERSION ?= edge
-CORES        ?= 2
 
 ifeq ($(PANDOC_VERSION),edge)
 PANDOC_COMMIT          ?= master
@@ -58,7 +57,8 @@ show-args:
 	@printf "\n# Additional packages build alongside pandoc. Controlled via\n"
 	@printf "# WITHOUT_CROSSREF; not intended to be set directly.\n"
 	@printf "extra_packages=%s\n" "$(extra_packages)"
-	@printf "\n# Controls the number of threads to be used during the build process\n"
+	@printf "\n# Controls the number of threads to be used during the build\n"
+	@printf "process (use all cores when not set)\n"
 	@printf "CORES=%s\n" $(CORES)
 
 # Generates the targets for a given image stack.
@@ -87,6 +87,12 @@ endef
 # Generate convenience targets for all supported stacks.
 $(foreach img,$(image_stacks),$(eval $(call stack,$(img))))
 
+ifdef CORES
+docker_cpu_options=--cpu-period="100000" --cpu-quota="$$(( $(CORES) * 100000 ))"
+else
+docker_cpu_options=
+endif
+
 # Freeze #######################################################################
 # NOTE: this will change to compute freeze file with AzP / tectonic.
 #       (conditionally .PHONY freeze, point to ubuntu freeze, etc).
@@ -94,9 +100,7 @@ $(foreach img,$(image_stacks),$(eval $(call stack,$(img))))
 freeze-file: $(STACK)/$(stack_freeze_file)
 %/$(stack_freeze_file): STACK = $*
 %/$(stack_freeze_file): common/pandoc-freeze.sh
-	docker build \
-		--cpu-period="100000" \
-		--cpu-quota="$$(( $(CORES) * 100000 ))" \
+	docker build $(docker_cpu_options) \
 		--tag pandoc/$(STACK)-builder-base \
 		--target=$(STACK)-builder-base \
 		-f $(makefile_dir)/$(STACK)/Dockerfile $(makefile_dir)
@@ -108,9 +112,7 @@ freeze-file: $(STACK)/$(stack_freeze_file)
 # Core #########################################################################
 .PHONY: core
 core:
-	docker build \
-		--cpu-period="100000" \
-		--cpu-quota="$$(( $(CORES) * 100000 ))" \
+	docker build $(docker_cpu_options) \
 		--tag pandoc/$(STACK):$(PANDOC_VERSION) \
 		--build-arg pandoc_commit=$(PANDOC_COMMIT) \
 		--build-arg pandoc_version=$(PANDOC_VERSION) \
@@ -121,7 +123,7 @@ core:
 # Crossref #####################################################################
 .PHONY: crossref
 crossref: core
-	docker build \
+	docker build $(docker_cpu_options) \
 		--tag pandoc/$(STACK)-crossref:$(PANDOC_VERSION) \
 		--build-arg pandoc_commit=$(PANDOC_COMMIT) \
 		--build-arg pandoc_version=$(PANDOC_VERSION) \
@@ -132,7 +134,7 @@ crossref: core
 # LaTeX ########################################################################
 .PHONY: latex
 latex: crossref
-	docker build \
+	docker build $(docker_cpu_options) \
 		--tag pandoc/$(STACK)-latex:$(PANDOC_VERSION) \
 		--build-arg base_tag=$(PANDOC_VERSION) \
 		-f $(makefile_dir)/$(STACK)/latex.Dockerfile $(makefile_dir)
