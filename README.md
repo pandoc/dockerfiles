@@ -22,8 +22,8 @@ Available Images
 
 Docker images hosted here have a "core" version and a "latex" version:
 
-- core: `pandoc` and `pandoc-citeproc`, as well as the appropriate backend for
-  the full lua filtering backend (lua filters can call external modules).
+- core: `pandoc` as well as the appropriate system libraries for
+  the full Lua filtering backend (Lua filters can call external modules).
 - latex: builds on top of the core image, and provides an as-minimal-as-possible
   latex installation in addition.  This includes all packages that `pandoc`
   _might_ use, and any libraries needed by these packages (such as image
@@ -38,11 +38,15 @@ From there, the tagging scheme is either `X.Y`, `X.Y.Z`, `latest`, or `edge`.
 - `latest`: the `latest` tag points to the most recent `X.Y` release.  For
   example, if tags `2.5` and `2.6` were available online, `latest` would be the
   same image as `2.6`.
-- `edge`: the "bleeding edge" tag clones the `master` branch of `pandoc` and
-  `pandoc-citeproc`.  This tag is a moving target, and will be re-built
+- `edge`: the "bleeding edge" tag clones the `master` branch of `pandoc`.
+  This tag is a moving target, and will be re-built
   _at least_ once a month.  The CI scripts have a cron job to build each image
   stack on the first of the month.  However, changes to the `master` branch of
   this repository may also result in the `edge` tag being updated sooner.
+
+All images for older (pre 2.11) versions, i.e. those where pandoc didn't
+have citeproc capabilities built-in, also include the `pandoc-citeproc`
+binary.
 
 Current `latest` Tag
 --------------------------------------------------------------------------------
