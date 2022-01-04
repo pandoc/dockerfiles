@@ -37,16 +37,11 @@ RUN git clone --branch=$pandoc_commit --depth=1 --quiet \
 COPY ./ubuntu/freeze/pandoc-$pandoc_commit.project.freeze \
      /usr/src/pandoc/cabal.project.freeze
 
-# Copy placeholder for pandoc-citeproc. This might be overwritten with a
-# proper binary later.
-COPY ./common/placeholder-pandoc-citeproc.sh \
-     /usr/local/bin/pandoc-citeproc
-
 # Install Haskell dependencies
 WORKDIR /usr/src/pandoc
 # Add pandoc-crossref to project
 ARG without_crossref=
-ARG extra_packages="pandoc-citeproc pandoc-crossref"
+ARG extra_packages="pandoc-crossref"
 RUN test -n "$without_crossref" || \
     printf "extra-packages: pandoc-crossref\n" > cabal.project.local;
 
@@ -75,7 +70,6 @@ ENTRYPOINT ["/usr/local/bin/pandoc"]
 
 COPY --from=ubuntu-builder \
   /usr/local/bin/pandoc \
-  /usr/local/bin/pandoc-citeproc \
   /usr/local/bin/
 
 # Reinstall any system packages required for runtime.

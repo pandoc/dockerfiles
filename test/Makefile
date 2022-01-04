@@ -41,12 +41,6 @@ test-lua: testsuite.native lpeg-test.lua
 	docker run --rm -v $(test_files_path):/data $(IMAGE) \
 	    --lua-filter=lpeg-test.lua --to=json --output=/dev/null $<
 
-# Check that bibtex file can be converted to YAML with pandoc-citeproc
-test-bib-conversion: example.bib
-	docker run --rm -v $(test_files_path):/data \
-	    --entrypoint=/usr/local/bin/pandoc-citeproc $(IMAGE) \
-	    --bib2yaml $< > /dev/null
-
 #   ____                             __
 #  / ___|_ __ ___  ___ ___ _ __ ___ / _|
 # | |   | '__/ _ \/ __/ __| '__/ _ \ |_
