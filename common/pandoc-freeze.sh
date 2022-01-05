@@ -42,6 +42,8 @@ lua_constraints="\
  +system-lua\
  +pkg-config\
  +hardcode-reg-keys"
+lpeg_constraints="\
+ +rely-on-shared-lpeg-library"
 
 uses_hslua_2 ()
 {
@@ -60,6 +62,7 @@ fi
 print_constraints_only ()
 {
     printf "constraints: %s %s,\n" "${lua_package}" "${lua_constraints}"
+    printf "             lpeg %s,\n" "${lpeg_constraints}"
     printf "             pandoc %s\n" "${pandoc_constraints}"
 }
 
@@ -92,6 +95,7 @@ fi
 printf "Creating freeze file...\n"
 cabal v2-freeze \
       --constraint="pandoc ${pandoc_constraints}" \
+      --constraint="lpeg ${lpeg_constraints}" \
       --constraint="${lua_package} ${lua_constraints}"
 
 printf "Copying freeze file to %s\n" "${target_file}"
