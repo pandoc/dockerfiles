@@ -14,9 +14,9 @@ set -e
 usage ()
 {
     printf "Generate a cabal freeze file for a given pandoc version\n\n"
-    printf "Usage: %s PANDOC_VERSION FILE_OWNER\n\n" "$0"
+    printf "Usage: %s PANDOC_COMMIT FILE_OWNER\n\n" "$0"
     printf "Parameters:\n"
-    printf "  PANDOC_VERSION: targeted pandoc version, e.g. 2.9.2.1\n"
+    printf "  PANDOC_COMMIT: targeted pandoc commit, e.g. 2.9.2.1\n"
     printf "  FILE_OWNER: owner of the new freeze file, e.g. 1000:1000\n\n"
     printf "  TARGET_FILE: target file name\n"
     printf "NOTE: This script is designed to run in a Docker container. The\n"
@@ -25,7 +25,7 @@ usage ()
 # Bail unless the script is called with exactly two parameters
 [ $# -eq 3 ] || ( usage 1>&2; exit 1 )
 
-pandoc_version="$1"
+pandoc_commit="$1"
 file_owner="$2"
 target_file="$3"
 
@@ -47,9 +47,9 @@ lpeg_constraints="\
 
 uses_hslua_2 ()
 {
-    major=$(printf "%s" "$pandoc_version" | \
+    major=$(printf "%s" "$pandoc_commit" | \
                 awk -F. '{ printf("%03d%03d\n", $1,$2); }')
-    test "${major}" -ge "002015" || [ "$pandoc_version" = "master" ]
+    test "${major}" -ge "002015" || [ "$pandoc_commit" = "master" ]
     return $?
 }
 
@@ -67,7 +67,7 @@ print_constraints_only ()
 }
 
 # Just write the constraints to the target file when targeting master
-if [ "$pandoc_version" = "master" ]; then
+if [ "$pandoc_commit" = "master" ]; then
     printf "Writing freeze file for builds from master...\n"
     print_constraints_only > "${target_file}"
     printf "Changing freeze file owner to %s\n" "${file_owner}"
@@ -79,9 +79,9 @@ fi
 cabal update
 
 # get pandoc source code from Hackage
-cabal get pandoc-"${pandoc_version}"
+cabal get pandoc-"${pandoc_commit}"
 
-sourcedir=$PWD/pandoc-"${pandoc_version}"
+sourcedir=$PWD/pandoc-"${pandoc_commit}"
 printf "Switching directory to %s\n" "${sourcedir}"
 cd "${sourcedir}"
 

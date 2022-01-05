@@ -45,7 +45,8 @@ image_stacks = alpine \
 show-args:
 	@printf "# Controls whether pandoc-crossref will be built in the base image.\n"
 	@printf "WITHOUT_CROSSREF=%s\n" $(WITHOUT_CROSSREF)
-	@printf "# Toggle inclusion of pandoc-crossref in the base image.\n"
+	@printf "# Pandoc version to build. Must be either a published version, or \n"
+	@printf "# the string 'edge' to build from the development version.\n"
 	@printf "PANDOC_VERSION=%s\n" $(PANDOC_VERSION)
 	@printf "\n# The pandoc commit used to build the image(s);\n"
 	@printf "# usually a tag or branch name.\n"
