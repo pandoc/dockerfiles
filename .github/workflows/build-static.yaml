@@ -1,0 +1,123 @@
+name: Static
+
+on:
+  push:
+    # Build and publish: configure built via commit message
+    branches:
+      - master
+  pull_request:
+    # Build, but don't push on pull requests
+
+jobs:
+  configure:
+    name: Configure
+    runs-on: ubuntu-latest
+    outputs:
+      pandoc-version: ${{ steps.config-from-commit-message.outputs.pandoc-version }}
+      without-crossref: ${{ steps.config-from-commit-message.outputs.without-crossref }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.after }}
+      - name: Configure build
+        id: config-from-commit-message
+        run: |
+          # Determine PANDOC_VERSION for Makefile based on commit message. We
+          # are looking for if the string `release=X.Y` or `release=X.Y.Z`
+          # exists, if so then that is what we are going to build. Otherwise,
+          # build the `master` branch (for the `edge` version).
+          version="$(git log --pretty='%B' -1 | \
+                     sed -ne 's#.*\brelease=\([0-9]*\(\.[0-9]*\)*\).*#\1#p')"
+
+          if [ -z "$version" ]; then
+              version="edge"
+          fi
+
+          printf "Setting outputs:\n"
+          printf "  - pandoc-version: %s\n" "$version"
+
+          printf "::set-output name=pandoc-version::%s\n" "$version"
+
+  # Build images and store them as tar archive
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: configure
+
+    env:
+      PANDOC_VERSION: ${{ needs.configure.outputs.pandoc-version }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Show config
+        run: make show-args
+
+      - name: Build core image
+        run: make static
+
+      - name: Save image to archive
+        run: |
+          docker save pandoc/static:$PANDOC_VERSION |\
+              gzip > pandoc-$PANDOC_VERSION.tar.gz
+
+      - name: Upload archive
+        uses: actions/upload-artifact@v1
+        with:
+          name: static-images
+          path: pandoc-${{ env.PANDOC_VERSION }}.tar.gz
+
+  # Ensure that there are no major issues with the images
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    needs:
+      - configure
+      - build
+    env:
+      PANDOC_VERSION: ${{ needs.configure.outputs.pandoc-version }}
+      CORE_IMAGE: pandoc/static-core
+
+    steps:
+      - name: Download images
+        uses: actions/download-artifact@v1
+        with:
+          name: static-images
+
+      - name: Load images
+        run: |
+          docker load --input static-images/pandoc-$PANDOC_VERSION.tar.gz
+
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Test core image
+        run: make test-static
+
+  # Push image to GitHub Packages.
+  push:
+    name: Push
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.repository == 'pandoc/dockerfiles'
+    needs:
+      - configure
+      - build
+      - test
+
+    env:
+      PANDOC_VERSION: ${{ needs.configure.outputs.pandoc-version }}
+
+    steps:
+      - name: Download stored images
+        uses: actions/download-artifact@v1
+        with:
+          name: static-images
+
+      - name: Load images
+        run: |
+          docker load --input static-images/pandoc-$PANDOC_VERSION.tar.gz
+
+      - name: Log into registry
+        run: >-
+          echo "${{ secrets.DOCKER_HUB_TOKEN }}" |
+            docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
