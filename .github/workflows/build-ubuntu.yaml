@@ -15,7 +15,6 @@ jobs:
     outputs:
       pandoc-version: ${{ steps.config-from-commit-message.outputs.pandoc-version }}
       without-crossref: ${{ steps.config-from-commit-message.outputs.without-crossref }}
-      without-citeproc: ${{ steps.config-from-commit-message.outputs.without-citeproc }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -36,22 +35,13 @@ jobs:
               version="edge"
               # Don't build pandoc-crossref for the edge version
               without_crossref=true
-              # don't build pandoc-citeproc either
-              without_citeproc=true
           fi
-          major=$(printf "$version" | awk -F. '{ printf("%03d%03d\n",$1,$2); }')
-          if [ "${major}" -ge "002011" ]; then
-              without_citeproc=true
-          fi
-
           printf "Setting outputs:\n"
           printf "  - pandoc-version: %s\n" "$version"
           printf "  - without-crossref: %s\n" "$without_crossref"
-          printf "  - without-citeproc: %s\n" "$without_citeproc"
 
           printf "::set-output name=pandoc-version::%s\n" "$version"
           printf "::set-output name=without-crossref::%s\n" "$without_crossref"
-          printf "::set-output name=without-citeproc::%s\n" "$without_citeproc"
 
   # Build images and store them as tar archive
   build:
@@ -62,7 +52,6 @@ jobs:
     env:
       PANDOC_VERSION: ${{ needs.configure.outputs.pandoc-version }}
       WITHOUT_CROSSREF: ${{ needs.configure.outputs.without-crossref }}
-      WITHOUT_CITEPROC: ${{ needs.configure.outputs.without-citeproc }}
 
     steps:
       - uses: actions/checkout@v2
@@ -108,7 +97,6 @@ jobs:
     env:
       PANDOC_VERSION: ${{ needs.configure.outputs.pandoc-version }}
       WITHOUT_CROSSREF: ${{ needs.configure.outputs.without-crossref }}
-      WITHOUT_CITEPROC: ${{ needs.configure.outputs.without-citeproc }}
       CORE_IMAGE: pandoc/ubuntu-core
       CROSSREF_IMAGE: pandoc/ubuntu-crossref
 
