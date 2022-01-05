@@ -16,12 +16,12 @@ RUN apt-get -q --no-allow-insecure-repositories update \
        fakeroot=* \
        git \
        libgmp-dev=2:6.* \
-       liblua5.3-dev=5.3.3* \
+       liblua5.3-dev=5.3.* \
        pkg-config=0.29.1* \
        zlib1g-dev=1:1.2.11.* \
   && rm -rf /var/lib/apt/lists/* \
-  && ln -s /opt/ghc/bin/ghc-8.8.3 /usr/bin/ghc \
-  && ln -s /opt/cabal/bin/cabal-3.2 /usr/bin/cabal
+  && ln -s /opt/ghc/bin/ghc /usr/bin/ghc \
+  && ln -s /opt/cabal/bin/cabal /usr/bin/cabal
 
 COPY cabal.root.config /root/.cabal/config
 RUN cabal --version \
