@@ -47,7 +47,7 @@ uses_hslua_2 ()
 {
     major=$(printf "%s" "$pandoc_version" | \
                 awk -F. '{ printf("%03d%03d\n", $1,$2); }')
-    test "${major}" -ge "002015"
+    test "${major}" -ge "002015" || [ "$pandoc_version" = "master" ]
     return $?
 }
 
@@ -60,7 +60,7 @@ fi
 print_constraints_only ()
 {
     printf "constraints: %s %s,\n" "${lua_package}" "${lua_constraints}"
-    printf "             pandoc %s,\n" "${pandoc_constraints}"
+    printf "             pandoc %s\n" "${pandoc_constraints}"
 }
 
 # Just write the constraints to the target file when targeting master
