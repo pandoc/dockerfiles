@@ -160,13 +160,6 @@ jobs:
           docker tag pandoc/alpine:$PANDOC_VERSION pandoc/core:$PANDOC_VERSION
           docker push pandoc/core:$PANDOC_VERSION
 
-      - name: Push crossref image
-        if: env.WITHOUT_CROSSREF == ''
-        run: |
-          docker push pandoc/alpine-crossref:$PANDOC_VERSION
-          docker tag pandoc/alpine-crossref:$PANDOC_VERSION pandoc/crossref:$PANDOC_VERSION
-          docker push pandoc/crossref:$PANDOC_VERSION
-
       - name: Push LaTeX image
         if: env.WITHOUT_CROSSREF == ''
         run: |

@@ -156,10 +156,6 @@ jobs:
       - name: Push core image
         run: docker push pandoc/ubuntu:$PANDOC_VERSION
 
-      - name: Push crossref image
-        if: env.WITHOUT_CROSSREF == ''
-        run: docker push pandoc/ubuntu-crossref:$PANDOC_VERSION
-
       - name: Push LaTeX image
         if: env.WITHOUT_CROSSREF == ''
         run: docker push pandoc/ubuntu-latex:$PANDOC_VERSION
