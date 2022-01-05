@@ -18,7 +18,7 @@ RUN apk --no-cache add \
 COPY cabal.root.config /root/.cabal/config
 RUN cabal --version \
   && ghc --version \
-  && cabal new-update
+  && cabal v2-update
 
 # Builder ######################################################################
 FROM alpine-builder-base as alpine-builder
@@ -39,8 +39,8 @@ RUN test -n "$without_crossref" || \
 # Additional projects to compile alongside pandoc
 ARG extra_packages="pandoc-crossref"
 
-RUN cabal new-update \
-  && cabal new-build \
+RUN cabal v2-update \
+  && cabal v2-build \
       --disable-tests \
       --jobs \
       . $extra_packages

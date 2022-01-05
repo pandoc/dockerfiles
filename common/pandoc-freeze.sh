@@ -90,7 +90,7 @@ fi
 
 # create freeze file with all desired constraints
 printf "Creating freeze file...\n"
-cabal new-freeze \
+cabal v2-freeze \
       --constraint="pandoc ${pandoc_constraints}" \
       --constraint="${lua_package} ${lua_constraints}"
 
