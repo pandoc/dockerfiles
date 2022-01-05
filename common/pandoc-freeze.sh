@@ -74,15 +74,15 @@ cd "${tmpdir}"
 #
 # Constraints
 #
-pandoc_constraints="\
- +embed_data_files\
- -trypandoc"
-lua_constraints="\
- +system-lua\
- +pkg-config\
- +hardcode-reg-keys"
-lpeg_constraints="\
- +rely-on-shared-lpeg-library"
+if [ "${stack}" = "static" ]; then
+    pandoc_constraints=" +embed_data_files -trypandoc"
+    lua_constraints=" -system-lua -pkg-config +hardcode-reg-keys"
+    lpeg_constraints=" -rely-on-shared-lpeg-library"
+else
+    pandoc_constraints=" +embed_data_files -trypandoc"
+    lua_constraints=" +system-lua +pkg-config +hardcode-reg-keys"
+    lpeg_constraints=" +rely-on-shared-lpeg-library"
+fi
 
 uses_hslua_2 ()
 {

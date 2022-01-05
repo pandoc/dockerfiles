@@ -37,7 +37,8 @@ stack_freeze_file = freeze/pandoc-$(PANDOC_COMMIT).project.freeze
 
 # List of Linux distributions which are supported as image bases.
 image_stacks = alpine \
-               ubuntu
+               ubuntu \
+               static
 
 # Keep this target first so that `make` with no arguments will print this rather
 # than potentially engaging in expensive builds.
@@ -65,25 +66,31 @@ show-args:
 # Generates the targets for a given image stack.
 # $1: base stack, one of the `supported_stacks`
 define stack
-.PHONY: $(1) $(1)-core $(1)-crossref $(1)-latex $(1)-freeze-file
 # Define targets which have the stack in their names, then set the
 # `STACK` variable based on the chosen target. This is an alternative to
 # setting the `STACK` variable directly and allows for convenient tab
 # completion.
+.PHONY: $(1) $(1)-core $(1)-freeze-file
 $(1) $(1)-core $(1)-crossref $(1)-latex $(1)-freeze-file: STACK = $(1)
 $(1): $(1)-core
 $(1)-core: $(1)-freeze-file core
+$(1)-freeze-file: $(1)/$(stack_freeze_file)
+# Only alpine and ubuntu support crossref and latex images
+ifeq ($(1),$(filter $(1),alpine ubuntu))
+.PHONY: $(1)-crossref $(1)-latex
 $(1)-crossref: crossref
 $(1)-latex: latex
-$(1)-freeze-file: $(1)/$(stack_freeze_file)
+endif
 
 # Do the same for test targets, again to allow for tab completion.
 .PHONY: test-$(1) test-$(1)-core test-$(1)-crossref test-$(1)-latex
 test-$(1) test-$(1)-core test-$(1)-crossref test-$(1)-latex: STACK = $(1)
 test-$(1): test-core
 test-$(1)-core: test-core
+ifeq ($(1),$(filter $(1),alpine ubuntu))
 test-$(1)-crossref: test-crossref
 test-$(1)-latex: test-latex
+endif
 endef
 # Generate convenience targets for all supported stacks.
 $(foreach img,$(image_stacks),$(eval $(call stack,$(img))))

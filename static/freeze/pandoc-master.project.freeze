@@ -1,0 +1,3 @@
+constraints: lua  -system-lua -pkg-config +hardcode-reg-keys,
+             lpeg  -rely-on-shared-lpeg-library,
+             pandoc  +embed_data_files -trypandoc
