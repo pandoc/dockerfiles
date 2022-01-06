@@ -109,7 +109,10 @@ freeze-file: $(STACK)/$(stack_freeze_file)
 		-v "$(makefile_dir):/app" \
 	  --env WITHOUT_CROSSREF=$(WITHOUT_CROSSREF) \
 		pandoc/$(STACK)-builder-base \
-		sh /app/$< $(PANDOC_COMMIT) "$(shell id -u):$(shell id -g)" /app/$@
+		sh /app/$< -c $(PANDOC_COMMIT) \
+               -u "$(shell id -u):$(shell id -g)" \
+               -s "$(STACK)" \
+               -o /app/$@
 # Core #########################################################################
 .PHONY: core
 core:
