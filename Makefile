@@ -63,6 +63,14 @@ show-args:
 	@printf "process (use all cores when not set)\n"
 	@printf "CORES=%s\n" $(CORES)
 
+# Calculate docker build options limiting the amount of CPU time that's
+# being used.
+ifdef CORES
+docker_cpu_options=--cpu-period="100000" --cpu-quota="$$(( $(CORES) * 100000 ))"
+else
+docker_cpu_options=
+endif
+
 # Generates the targets for a given image stack.
 # $1: base stack, one of the `supported_stacks`
 define stack
@@ -95,15 +103,7 @@ endef
 # Generate convenience targets for all supported stacks.
 $(foreach img,$(image_stacks),$(eval $(call stack,$(img))))
 
-ifdef CORES
-docker_cpu_options=--cpu-period="100000" --cpu-quota="$$(( $(CORES) * 100000 ))"
-else
-docker_cpu_options=
-endif
-
 # Freeze #######################################################################
-# NOTE: this will change to compute freeze file with AzP / tectonic.
-#       (conditionally .PHONY freeze, point to ubuntu freeze, etc).
 .PHONY: freeze-file
 freeze-file: $(STACK)/$(stack_freeze_file)
 %/$(stack_freeze_file): STACK = $*
@@ -124,7 +124,7 @@ freeze-file: $(STACK)/$(stack_freeze_file)
 .PHONY: core
 core:
 	docker build $(docker_cpu_options) \
-		--tag pandoc/$(STACK):$(PANDOC_VERSION) \
+		--tag pandoc/core:$(PANDOC_VERSION)-$(STACK) \
 		--build-arg pandoc_commit=$(PANDOC_COMMIT) \
 		--build-arg pandoc_version=$(PANDOC_VERSION) \
 		--build-arg without_crossref=$(WITHOUT_CROSSREF) \
@@ -135,7 +135,7 @@ core:
 .PHONY: crossref
 crossref: core
 	docker build $(docker_cpu_options) \
-		--tag pandoc/$(STACK)-crossref:$(PANDOC_VERSION) \
+		--tag pandoc/crossref:$(PANDOC_VERSION)-$(STACK) \
 		--build-arg pandoc_commit=$(PANDOC_COMMIT) \
 		--build-arg pandoc_version=$(PANDOC_VERSION) \
 		--build-arg without_crossref=$(WITHOUT_CROSSREF) \
@@ -146,20 +146,20 @@ crossref: core
 .PHONY: latex
 latex: crossref
 	docker build $(docker_cpu_options) \
-		--tag pandoc/$(STACK)-latex:$(PANDOC_VERSION) \
+		--tag pandoc/latex:$(PANDOC_VERSION)-$(STACK) \
 		--build-arg base_tag=$(PANDOC_VERSION) \
 		-f $(makefile_dir)/$(STACK)/latex.Dockerfile $(makefile_dir)
 # Test #########################################################################
 .PHONY: test-core test-latex test-crossref
-test-core: IMAGE ?= pandoc/$(STACK):$(PANDOC_VERSION)
+test-core: IMAGE ?= pandoc/core:$(PANDOC_VERSION)-$(STACK)
 test-core:
 	IMAGE=$(IMAGE) make -C test test-core
 
-test-crossref: IMAGE ?= pandoc/$(STACK)-crossref:$(PANDOC_VERSION)
+test-crossref: IMAGE ?= pandoc/crossref:$(PANDOC_VERSION)-$(STACK)
 test-crossref:
 	test -n "$(WITHOUT_CROSSREF)" || IMAGE=$(IMAGE) make -C test test-crossref
 
-test-latex: IMAGE ?= pandoc/$(STACK)-latex:$(PANDOC_VERSION)
+test-latex: IMAGE ?= pandoc/latex:$(PANDOC_VERSION)-$(STACK)
 test-latex:
 	IMAGE=$(IMAGE) make -C test test-latex
 
@@ -171,13 +171,11 @@ lint:
 	shellcheck $(shell find . -name "*.sh")
 
 .PHONY: push-as-latest
-push-as-latest: image_names = core latex \
-	alpine alpine-latex \
-	ubuntu ubuntu-latex
+push-as-latest: image_names = core latex
 push-as-latest:
 	for image in $(image_names); do \
-	    docker pull pandoc/$${image}:$(PANDOC_VERSION); \
-	    docker tag pandoc/$${image}:$(PANDOC_VERSION) \
+	    docker pull pandoc/$${image}:$(PANDOC_VERSION)-alpine; \
+	    docker tag pandoc/$${image}:$(PANDOC_VERSION)-alpine \
              pandoc/$${image}:latest; \
 	    docker push pandoc/$${image}:latest; \
 	done

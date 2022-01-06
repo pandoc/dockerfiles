@@ -1,16 +1,16 @@
 ARG base_tag="edge"
-FROM pandoc/ubuntu-crossref:${base_tag}
+FROM pandoc/crossref:${base_tag}-ubuntu
 
 # NOTE: `libsrvg`, pandoc uses `rsvg-convert` for working with svg images.
 # NOTE: to maintainers, please keep this listing alphabetical.
 RUN apt-get -q --no-allow-insecure-repositories update \
   && DEBIAN_FRONTEND=noninteractive \
      apt-get install --assume-yes --no-install-recommends \
-        libfreetype6 \
-        libfontconfig1 \
         fontconfig \
         gnupg \
         gzip \
+        libfontconfig1 \
+        libfreetype6 \
         librsvg2-bin \
         perl \
         tar \
