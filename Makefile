@@ -81,7 +81,7 @@ define stack
 .PHONY: $(1) $(1)-core $(1)-freeze-file
 $(1) $(1)-core $(1)-crossref $(1)-latex $(1)-freeze-file: STACK = $(1)
 $(1): $(1)-core
-$(1)-core: $(1)-freeze-file core
+$(1)-core: core
 $(1)-freeze-file: $(1)/$(stack_freeze_file)
 # Only alpine and ubuntu support crossref and latex images
 ifeq ($(1),$(filter $(1),alpine ubuntu))
@@ -107,7 +107,7 @@ $(foreach img,$(image_stacks),$(eval $(call stack,$(img))))
 .PHONY: freeze-file
 freeze-file: $(STACK)/$(stack_freeze_file)
 %/$(stack_freeze_file): STACK = $*
-%/$(stack_freeze_file): common/pandoc-freeze.sh
+%/$(stack_freeze_file):
 	docker build $(docker_cpu_options) \
 		--tag pandoc/$(STACK)-builder-base \
 		--target=$(STACK)-builder-base \
@@ -122,7 +122,7 @@ freeze-file: $(STACK)/$(stack_freeze_file)
                -o /app/$@
 # Core #########################################################################
 .PHONY: core
-core:
+core: $(STACK)/$(stack_freeze_file)
 	./build.sh build -v \
 		-r core \
 		-s "$(STACK)" \
@@ -132,7 +132,7 @@ core:
 		$(docker_cpu_options)
 # Crossref #####################################################################
 .PHONY: crossref
-crossref:
+crossref: $(STACK)/$(stack_freeze_file)
 	./build.sh build -v \
 		-r crossref \
 		-s "$(STACK)" \
@@ -142,7 +142,7 @@ crossref:
 		$(docker_cpu_options)
 # LaTeX ########################################################################
 .PHONY: latex
-latex:
+latex: $(STACK)/$(stack_freeze_file)
 	./build.sh build -v \
 		-r latex \
 		-s "$(STACK)" \
