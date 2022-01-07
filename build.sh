@@ -3,7 +3,7 @@
 usage ()
 {
     printf 'Generates all parameters for the docker image\n'
-    printf 'Usage: %s ACTION [OPTIONS]\n\n' "$0"
+    printf 'Usage: %s ACTION [OPTIONS] [EXTRA ARGS]\n\n' "$0"
     printf 'Actions:\n'
     printf '\tbuild: build and tag the image\n'
     printf '\tpush: push the tags to Docker Hub\n'
@@ -39,10 +39,6 @@ while true; do
             ;;
         (-d)
             directory="${2}"
-            shift 2
-            ;;
-        (-o)
-            docker_build_options="${2}"
             shift 2
             ;;
         (-r)
@@ -122,7 +118,7 @@ extra_packages=pandoc-crossref
 without_crossref=
 
 # Do not build pandoc-crossref for static images
-if [ "$stack" == "static" ]; then
+if [ "$stack" = "static" ]; then
     extra_packages=
     without_crossref=true
 fi
@@ -140,10 +136,10 @@ if [ "$verbosity" -gt 0 ]; then
     printf '\tversion_table_file: %s\n' "${version_table_file}" >&2
 fi
 
+# ARG 1: tag version
 image_name ()
 {
-    local tag_version="${1:-edge}"
-    printf 'pandoc/%s:%s-%s' "$repo" "$tag_version" "$stack"
+    printf 'pandoc/%s:%s-%s' "$repo" "${1:-edge}" "$stack"
 }
 
 tags ()
@@ -151,11 +147,6 @@ tags ()
     for tag_version in $tag_versions; do
         printf ' --tag=%s' "$(image_name "$tag_version")"
     done
-}
-
-extra_options ()
-{
-    printf '%s' "$@"
 }
 
 
@@ -170,13 +161,15 @@ case "$action" in
         ;;
     (build)
         ## build images
-        docker build $(extra_options)\
-               $(tags)\
-               --build-arg pandoc_commit="${pandoc_commit}"\
-               --build-arg pandoc_version="${pandoc_version}"\
-               --build-arg without_crossref="${without_crossref}"\
+        # The use of $(tags) is correct here
+        # shellcheck disable=SC2046
+        docker build "$@" \
+               $(tags) \
+               --build-arg pandoc_commit="${pandoc_commit}" \
+               --build-arg pandoc_version="${pandoc_version}" \
+               --build-arg without_crossref="${without_crossref}" \
                --build-arg extra_packages="${extra_packages}"\
-               --build-arg base_image_version="${base_image_version}"\
+               --build-arg base_image_version="${base_image_version}" \
                --target "${target}"\
                -f "${directory}/${stack}/Dockerfile"\
                "${directory}"
