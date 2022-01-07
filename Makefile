@@ -99,6 +99,14 @@ ifeq ($(1),$(filter $(1),alpine ubuntu))
 test-$(1)-crossref: test-crossref
 test-$(1)-latex: test-latex
 endif
+# And for push targets
+.PHONY: push-$(1) push-$(1)-core push-$(1)-crossref push-$(1)-latex
+push-$(1) push-$(1)-core push-$(1)-crossref push-$(1)-latex: STACK = $(1)
+push-$(1): push-core
+push-$(1)-core: push-core
+ifeq ($(1),$(filter $(1),alpine ubuntu))
+push-$(1)-latex: push-latex
+endif
 endef
 # Generate convenience targets for all supported stacks.
 $(foreach img,$(image_stacks),$(eval $(call stack,$(img))))
