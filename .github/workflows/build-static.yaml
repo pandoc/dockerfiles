@@ -2,7 +2,7 @@ name: Static
 
 on:
   push:
-    # Build and publish: configure built via commit message
+    # Build and publish: configure build via commit message
     branches:
       - master
   pull_request:
@@ -56,68 +56,13 @@ jobs:
       - name: Build core image
         run: make static
 
-      - name: Save image to archive
-        run: |
-          docker save pandoc/static:$PANDOC_VERSION |\
-              gzip > pandoc-$PANDOC_VERSION.tar.gz
-
-      - name: Upload archive
-        uses: actions/upload-artifact@v1
-        with:
-          name: static-images
-          path: pandoc-${{ env.PANDOC_VERSION }}.tar.gz
-
-  # Ensure that there are no major issues with the images
-  test:
-    name: Test
-    runs-on: ubuntu-latest
-    needs:
-      - configure
-      - build
-    env:
-      PANDOC_VERSION: ${{ needs.configure.outputs.pandoc-version }}
-      CORE_IMAGE: pandoc/static-core
-
-    steps:
-      - name: Download images
-        uses: actions/download-artifact@v1
-        with:
-          name: static-images
-
-      - name: Load images
-        run: |
-          docker load --input static-images/pandoc-$PANDOC_VERSION.tar.gz
-
-      - name: Checkout sources
-        uses: actions/checkout@v2
-
       - name: Test core image
         run: make test-static
 
-  # Push image to GitHub Packages.
-  push:
-    name: Push
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.repository == 'pandoc/dockerfiles'
-    needs:
-      - configure
-      - build
-      - test
-
-    env:
-      PANDOC_VERSION: ${{ needs.configure.outputs.pandoc-version }}
-
-    steps:
-      - name: Download stored images
-        uses: actions/download-artifact@v1
-        with:
-          name: static-images
-
-      - name: Load images
+      - name: Push
+        if: github.event_name == 'push' && github.repository == 'pandoc/dockerfiles'
         run: |
-          docker load --input static-images/pandoc-$PANDOC_VERSION.tar.gz
-
-      - name: Log into registry
-        run: >-
+          # Log into registry
           echo "${{ secrets.DOCKER_HUB_TOKEN }}" |
             docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+          make push-static
