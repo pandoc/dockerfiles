@@ -1,5 +1,6 @@
 # Base #########################################################################
-FROM alpine:3.14 AS alpine-builder-base
+ARG base_image_version=3.14
+FROM alpine:$base_image_version AS alpine-builder-base
 WORKDIR /app
 
 RUN apk --no-cache add \
@@ -52,7 +53,7 @@ RUN find dist-newstyle \
          -exec cp '{}' /usr/local/bin/ ';'
 
 # Core #########################################################################
-FROM alpine:3.14 AS alpine-core
+FROM alpine:$base_image_version AS alpine-core
 ARG pandoc_version=edge
 LABEL maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
 LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'

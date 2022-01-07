@@ -123,32 +123,33 @@ freeze-file: $(STACK)/$(stack_freeze_file)
 # Core #########################################################################
 .PHONY: core
 core:
-	docker build $(docker_cpu_options) \
-		--tag pandoc/core:$(PANDOC_VERSION)-$(STACK) \
-		--build-arg pandoc_commit=$(PANDOC_COMMIT) \
-		--build-arg pandoc_version=$(PANDOC_VERSION) \
-		--build-arg without_crossref=$(WITHOUT_CROSSREF) \
-		--build-arg extra_packages="$(extra_packages)" \
-		--target $(STACK)-core \
-		-f $(makefile_dir)/$(STACK)/Dockerfile $(makefile_dir)
+	./build.sh -v \
+		-r core \
+		-s "$(STACK)" \
+		-c "$(PANDOC_COMMIT)" \
+		-d "$(makefile_dir)" \
+		-t "$(STACK)-core" \
+		$(docker_cpu_options)
 # Crossref #####################################################################
 .PHONY: crossref
 crossref: core
-	docker build $(docker_cpu_options) \
-		--tag pandoc/crossref:$(PANDOC_VERSION)-$(STACK) \
-		--build-arg pandoc_commit=$(PANDOC_COMMIT) \
-		--build-arg pandoc_version=$(PANDOC_VERSION) \
-		--build-arg without_crossref=$(WITHOUT_CROSSREF) \
-		--build-arg extra_packages="$(extra_packages)" \
-		--target $(STACK)-crossref \
-		-f $(makefile_dir)/$(STACK)/Dockerfile $(makefile_dir)
+	./build.sh -v \
+		-r crossref \
+		-s "$(STACK)" \
+		-c "$(PANDOC_COMMIT)" \
+		-d "$(makefile_dir)" \
+		-t "$(STACK)-crossref" \
+		$(docker_cpu_options)
 # LaTeX ########################################################################
 .PHONY: latex
 latex: crossref
-	docker build $(docker_cpu_options) \
-		--tag pandoc/latex:$(PANDOC_VERSION)-$(STACK) \
-		--build-arg base_tag=$(PANDOC_VERSION) \
-		-f $(makefile_dir)/$(STACK)/latex.Dockerfile $(makefile_dir)
+	./build.sh -v \
+		-r latex \
+		-s "$(STACK)" \
+		-c "$(PANDOC_COMMIT)" \
+		-d "$(makefile_dir)" \
+		-t "$(STACK)-latex" \
+		$(docker_cpu_options)
 # Test #########################################################################
 .PHONY: test-core test-latex test-crossref
 test-core: IMAGE ?= pandoc/core:$(PANDOC_VERSION)-$(STACK)

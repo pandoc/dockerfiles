@@ -1,5 +1,6 @@
 # Base #########################################################################
-FROM ubuntu:focal AS ubuntu-builder-base
+ARG base_image_version=focal
+FROM ubuntu:$base_image_version AS ubuntu-builder-base
 WORKDIR /app
 
 ENV DEBIAN_FRONTEND noninteractive
@@ -10,14 +11,14 @@ RUN apt-get -q --no-allow-insecure-repositories update \
   && apt-get install --assume-yes --no-install-recommends \
        ghc-8.8.3=8.8.3-* \
        cabal-install-3.2=3.2* \
-       build-essential=12.8* \
+       build-essential=* \
        ca-certificates=* \
        curl=* \
        fakeroot=* \
        git \
        libgmp-dev=2:6.* \
        liblua5.3-dev=5.3.* \
-       pkg-config=0.29.1* \
+       pkg-config=* \
        zlib1g-dev=1:1.2.11.* \
   && rm -rf /var/lib/apt/lists/* \
   && ln -s /opt/ghc/bin/ghc /usr/bin/ghc \
