@@ -52,8 +52,8 @@ RUN find dist-newstyle \
          -exec strip '{}' ';' \
          -exec cp '{}' /usr/local/bin/ ';'
 
-# Core ##################################################################
-FROM alpine:$base_image_version AS alpine-core
+# Minimal ###############################################################
+FROM alpine:$base_image_version AS alpine-minimal
 ARG pandoc_version=edge
 LABEL maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
 LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
@@ -74,14 +74,14 @@ RUN apk --no-cache add \
         lua5.3 \
         lua5.3-lpeg
 
-# Crossref ##############################################################
-FROM alpine-core AS alpine-crossref
+# Core ##################################################################
+FROM alpine-minimal AS alpine-core
 COPY --from=alpine-builder \
   /usr/local/bin/pandoc-crossref \
   /usr/local/bin/
 
 # LaTeX #################################################################
-FROM alpine-crossref as alpine-latex
+FROM alpine-core as alpine-latex
 
 # NOTE: `libsrvg`, pandoc uses `rsvg-convert` for working with svg images.
 # NOTE: to maintainers, please keep this listing alphabetical.

@@ -1,12 +1,12 @@
 # Two primary targets are defined by this Makefile:
 #
-# 1. test-core: test a core base image
+# 1. test-minimal: test a minimal base image
 # 2. test-latex: test a latex image
 #
 # The IMAGE variable is required to be defined in order to `docker run` the
 # various tests.  The parent Makefile test targets define this, or alternatively
 #
-# 1. IMAGE=pandoc/image:tag make test-core
+# 1. IMAGE=pandoc/image:tag make test-minimal
 # 2. IMAGE=pandoc/image:tag make test-latex
 ifndef IMAGE
 $(error IMAGE variable must be set to docker image to test)
@@ -18,7 +18,7 @@ DIFF ?= diff
 test_files_path := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 
 .PHONY: test
-test: test-core test-latex
+test: test-minimal test-latex
 
 #   ____
 #  / ___|___  _ __ ___
@@ -29,8 +29,8 @@ test: test-core test-latex
 CORE_CMD = docker run --rm -v $(test_files_path):/data $(IMAGE)
 OUTPUT_FORMATS=markdown epub docx latex html
 
-.PHONY: test-core testsuite-to-% test-bib-conversion test-lua
-test-core: test-lua \
+.PHONY: test-minimal testsuite-to-% test-bib-conversion test-lua
+test-minimal: test-lua \
 		$(foreach format,$(OUTPUT_FORMATS), testsuite-to-$(format))
 
 testsuite-to-%: testsuite.native
@@ -47,8 +47,8 @@ test-lua: testsuite.native lpeg-test.lua
 # | |___| | | (_) \__ \__ \ | |  __/  _|
 #  \____|_|  \___/|___/___/_|  \___|_|
 #
-.PHONY: test-crossref test-crossref-is-callable
-test-crossref: test-crossref-is-callable test-crossref-filter
+.PHONY: test-core test-crossref-is-callable
+test-core: test-crossref-is-callable test-crossref-filter
 
 test-crossref-is-callable:
 	@printf "### testing whether pandoc-crossref is in PATH "

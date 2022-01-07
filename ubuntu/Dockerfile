@@ -58,8 +58,8 @@ RUN find dist-newstyle \
          -exec strip '{}' ';' \
          -exec cp '{}' /usr/local/bin/ ';'
 
-# Core ##################################################################
-FROM ubuntu:focal AS ubuntu-core
+# Minimal ###############################################################
+FROM ubuntu:focal AS ubuntu-minimal
 ARG pandoc_version=edge
 LABEL maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
 LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
@@ -87,14 +87,14 @@ RUN apt-get -q --no-allow-insecure-repositories update \
        zlib1g=1:1.2.11.* \
   && rm -rf /var/lib/apt/lists/*
 
-# Crossref ##############################################################
-FROM ubuntu-core AS ubuntu-crossref
+# Core ##################################################################
+FROM ubuntu-minimal AS ubuntu-core
 COPY --from=ubuntu-builder \
   /usr/local/bin/pandoc-crossref \
   /usr/local/bin/
 
 # LaTeX ##############################################################
-FROM ubuntu-crossref as ubuntu-latex
+FROM ubuntu-core as ubuntu-latex
 
 # NOTE: `libsrvg`, pandoc uses `rsvg-convert` for working with svg images.
 # NOTE: to maintainers, please keep this listing alphabetical.
