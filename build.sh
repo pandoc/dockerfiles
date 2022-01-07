@@ -3,8 +3,11 @@
 usage ()
 {
     printf 'Generates all parameters for the docker image\n'
-    printf 'Usage: %s [OPTIONS]\n\n' "$0"
-    printf 'Parameters:\n'
+    printf 'Usage: %s ACTION [OPTIONS]\n\n' "$0"
+    printf 'Actions:\n'
+    printf '\tbuild: build and tag the image\n'
+    printf '\tpush: push the tags to Docker Hub\n'
+    printf 'Options:\n'
     printf '  -c: targeted pandoc commit, e.g. 2.9.2.1\n'
     printf '  -d: directory\n'
     printf '  -o: docker build options\n'
@@ -14,7 +17,7 @@ usage ()
     printf '  -v: increase verbosity\n'
 }
 
-if ! args=$(getopt 'c:d:o:r:s:t:v' "$@"); then
+if ! args=$(getopt 'c:d:o:pr:s:t:v' "$@"); then
     usage && exit 1
 fi
 # The variable is intentionally left unquoted.
@@ -69,6 +72,10 @@ while true; do
             ;;
     esac
 done
+
+### Actions
+action=${1}
+shift
 
 pandoc_version=${pandoc_commit}
 if [ "$pandoc_commit" = "master" ]; then
@@ -133,10 +140,16 @@ if [ "$verbosity" -gt 0 ]; then
     printf '\tversion_table_file: %s\n' "${version_table_file}" >&2
 fi
 
+image_name ()
+{
+    local tag_version="${1:-edge}"
+    printf 'pandoc/%s:%s-%s' "$repo" "$tag_version" "$stack"
+}
+
 tags ()
 {
     for tag_version in $tag_versions; do
-        printf ' --tag=pandoc/%s:%s-%s' "$repo" "$tag_version" "$stack"
+        printf ' --tag=%s' "$(image_name "$tag_version")"
     done
 }
 
@@ -145,13 +158,31 @@ extra_options ()
     printf '%s' "$@"
 }
 
-docker build $(extra_options)\
-       $(tags)\
-       --build-arg pandoc_commit="${pandoc_commit}"\
-       --build-arg pandoc_version="${pandoc_version}"\
-       --build-arg without_crossref="${without_crossref}"\
-       --build-arg extra_packages="${extra_packages}"\
-       --build-arg base_image_version="${base_image_version}"\
-       --target "${target}"\
-       -f "${directory}/${stack}/Dockerfile"\
-       "${directory}"
+
+case "$action" in
+    (push)
+        for tag_version in $tag_versions; do
+            image=$(image_name "$tag_version")
+            printf 'Pushing %s...\n' "$image"
+            docker push "${image}" ||
+                exit 5
+        done
+        ;;
+    (build)
+        ## build images
+        docker build $(extra_options)\
+               $(tags)\
+               --build-arg pandoc_commit="${pandoc_commit}"\
+               --build-arg pandoc_version="${pandoc_version}"\
+               --build-arg without_crossref="${without_crossref}"\
+               --build-arg extra_packages="${extra_packages}"\
+               --build-arg base_image_version="${base_image_version}"\
+               --target "${target}"\
+               -f "${directory}/${stack}/Dockerfile"\
+               "${directory}"
+        ;;
+    (*)
+        printf 'Unknown action: %s\n' "$action"
+        exit 2
+        ;;
+esac
