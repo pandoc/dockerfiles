@@ -145,21 +145,13 @@ extra_options ()
     printf '%s' "$@"
 }
 
-if [ "$repo" = "latex" ]; then
-    docker build $(extra_options) \
-           $(tags)\
-           --build-arg base_tag="${pandoc_version}" \
-           -f "${directory}"/$(STACK)/latex.Dockerfile \
-           "${directory}"
-else
-    docker build $(extra_options)\
-           $(tags)\
-           --build-arg pandoc_commit="${pandoc_commit}"\
-           --build-arg pandoc_version="${pandoc_version}"\
-           --build-arg without_crossref="${without_crossref}"\
-           --build-arg extra_packages="${extra_packages}"\
-           --build-arg base_image_version="${base_image_version}"\
-           --target "${target}"\
-           -f "${directory}/${stack}/Dockerfile"\
-           "${directory}"
-fi
+docker build $(extra_options)\
+       $(tags)\
+       --build-arg pandoc_commit="${pandoc_commit}"\
+       --build-arg pandoc_version="${pandoc_version}"\
+       --build-arg without_crossref="${without_crossref}"\
+       --build-arg extra_packages="${extra_packages}"\
+       --build-arg base_image_version="${base_image_version}"\
+       --target "${target}"\
+       -f "${directory}/${stack}/Dockerfile"\
+       "${directory}"
