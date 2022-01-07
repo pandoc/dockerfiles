@@ -1,4 +1,4 @@
-# Base #########################################################################
+# Base ##################################################################
 ARG base_image_version=focal
 FROM ubuntu:$base_image_version AS ubuntu-builder-base
 WORKDIR /app
@@ -29,7 +29,7 @@ RUN cabal --version \
   && ghc --version \
   && cabal v2-update
 
-# Builder ######################################################################
+# Builder ###############################################################
 FROM ubuntu-builder-base as ubuntu-builder
 ARG pandoc_commit=master
 RUN git clone --branch=$pandoc_commit --depth=1 --quiet \
@@ -58,7 +58,7 @@ RUN find dist-newstyle \
          -exec strip '{}' ';' \
          -exec cp '{}' /usr/local/bin/ ';'
 
-# Core #########################################################################
+# Core ##################################################################
 FROM ubuntu:focal AS ubuntu-core
 ARG pandoc_version=edge
 LABEL maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
@@ -87,8 +87,49 @@ RUN apt-get -q --no-allow-insecure-repositories update \
        zlib1g=1:1.2.11.* \
   && rm -rf /var/lib/apt/lists/*
 
-# Crossref #####################################################################
+# Crossref ##############################################################
 FROM ubuntu-core AS ubuntu-crossref
 COPY --from=ubuntu-builder \
   /usr/local/bin/pandoc-crossref \
   /usr/local/bin/
+
+# LaTeX ##############################################################
+FROM ubuntu-crossref as ubuntu-latex
+
+# NOTE: `libsrvg`, pandoc uses `rsvg-convert` for working with svg images.
+# NOTE: to maintainers, please keep this listing alphabetical.
+RUN apt-get -q --no-allow-insecure-repositories update \
+  && DEBIAN_FRONTEND=noninteractive \
+     apt-get install --assume-yes --no-install-recommends \
+        fontconfig \
+        gnupg \
+        gzip \
+        libfontconfig1 \
+        libfreetype6 \
+        librsvg2-bin \
+        perl \
+        tar \
+        wget \
+        xzdec \
+        && rm -rf /var/lib/apt/lists/*
+
+# DANGER: this will vary for different distributions,
+# particularly the `linux` suffix. Ubuntu linux is a glibc based
+# distribution, adjust depending on the distro.
+# `-linux` ----------------------------> vvvvv
+ENV PATH="/opt/texlive/texdir/bin/x86_64-linux:${PATH}"
+WORKDIR /root
+
+COPY common/latex/texlive.profile /root/texlive.profile
+COPY common/latex/install-texlive.sh /root/install-texlive.sh
+
+RUN /root/install-texlive.sh
+
+COPY common/latex/install-tex-packages.sh /root/install-tex-packages.sh
+RUN /root/install-tex-packages.sh
+
+RUN rm -f /root/texlive.profile \
+          /root/install-texlive.sh \
+          /root/install-tex-packages.sh
+
+WORKDIR /data
