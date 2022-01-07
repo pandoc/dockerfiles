@@ -123,7 +123,7 @@ freeze-file: $(STACK)/$(stack_freeze_file)
 # Core #########################################################################
 .PHONY: core
 core:
-	./build.sh -v \
+	./build.sh build -v \
 		-r core \
 		-s "$(STACK)" \
 		-c "$(PANDOC_COMMIT)" \
@@ -133,7 +133,7 @@ core:
 # Crossref #####################################################################
 .PHONY: crossref
 crossref: core
-	./build.sh -v \
+	./build.sh build -v \
 		-r crossref \
 		-s "$(STACK)" \
 		-c "$(PANDOC_COMMIT)" \
@@ -143,7 +143,7 @@ crossref: core
 # LaTeX ########################################################################
 .PHONY: latex
 latex: crossref
-	./build.sh -v \
+	./build.sh build -v \
 		-r latex \
 		-s "$(STACK)" \
 		-c "$(PANDOC_COMMIT)" \
@@ -171,15 +171,23 @@ test-latex:
 lint:
 	shellcheck $(shell find . -name "*.sh")
 
-.PHONY: push-as-latest
-push-as-latest: image_names = core latex
-push-as-latest:
-	for image in $(image_names); do \
-	    docker pull pandoc/$${image}:$(PANDOC_VERSION)-alpine; \
-	    docker tag pandoc/$${image}:$(PANDOC_VERSION)-alpine \
-             pandoc/$${image}:latest; \
-	    docker push pandoc/$${image}:latest; \
-	done
+.PHONY: push-core push-latex
+push-core: REPO ?= core
+push-core:
+	./build.sh push -v \
+		-r $(REPO) \
+		-s "$(STACK)" \
+		-c "$(PANDOC_COMMIT)" \
+		-d "$(makefile_dir)" \
+		-t "$(STACK)-latex"
+push-latex: REPO ?= latex
+push-latex:
+	./build.sh push -v \
+		-r $(REPO) \
+		-s "$(STACK)" \
+		-c "$(PANDOC_COMMIT)" \
+		-d "$(makefile_dir)" \
+		-t "$(STACK)-latex"
 
 .PHONY: clean
 clean:
