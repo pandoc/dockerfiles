@@ -6,18 +6,6 @@ else
 PANDOC_COMMIT          ?= $(PANDOC_VERSION)
 endif
 
-# Variable controlling whether pandoc-crossref should not be included in
-# the image. Useful when building new pandoc versions for which there is
-# no compatible pandoc-crossref version available. Setting this to a
-# non-empty string prevents pandoc-crossref from being built.
-WITHOUT_CROSSREF ?=
-
-ifndef extra_packages
-ifndef WITHOUT_CROSSREF
-extra_packages += pandoc-crossref
-endif
-endif
-
 # Use Alpine Linux as base stack by default.
 STACK ?= alpine
 
@@ -44,8 +32,6 @@ image_stacks = alpine \
 # than potentially engaging in expensive builds.
 .PHONY: show-args
 show-args:
-	@printf "# Controls whether pandoc-crossref will be built in the base image.\n"
-	@printf "WITHOUT_CROSSREF=%s\n" $(WITHOUT_CROSSREF)
 	@printf "# Pandoc version to build. Must be either a published version, or \n"
 	@printf "# the string 'edge' to build from the development version.\n"
 	@printf "PANDOC_VERSION=%s\n" $(PANDOC_VERSION)
@@ -56,9 +42,6 @@ show-args:
 	@printf "#   %s\n" "$(supported_stacks)"
 	@printf "# May be overwritten by using a stack-specific target.\n"
 	@printf "STACK=%s\n" $(STACK)
-	@printf "\n# Additional packages build alongside pandoc. Controlled via\n"
-	@printf "# WITHOUT_CROSSREF; not intended to be set directly.\n"
-	@printf "extra_packages=%s\n" "$(extra_packages)"
 	@printf "\n# Controls the number of threads to be used during the build\n"
 	@printf "process (use all cores when not set)\n"
 	@printf "CORES=%s\n" $(CORES)
