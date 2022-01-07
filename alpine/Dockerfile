@@ -80,17 +80,20 @@ COPY --from=alpine-builder \
   /usr/local/bin/pandoc-crossref \
   /usr/local/bin/
 
+# Additional packages frequently used during conversions
+# NOTE: `libsrvg`, pandoc uses `rsvg-convert` for working with svg images.
+RUN apk --no-cache add \
+        librsvg
+
 # LaTeX #################################################################
 FROM alpine-core as alpine-latex
 
-# NOTE: `libsrvg`, pandoc uses `rsvg-convert` for working with svg images.
 # NOTE: to maintainers, please keep this listing alphabetical.
 RUN apk --no-cache add \
         freetype \
         fontconfig \
         gnupg \
         gzip \
-        librsvg \
         perl \
         tar \
         wget \

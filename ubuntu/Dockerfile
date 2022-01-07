@@ -93,10 +93,17 @@ COPY --from=ubuntu-builder \
   /usr/local/bin/pandoc-crossref \
   /usr/local/bin/
 
+# Additional packages frequently used during conversions
+# NOTE: `libsrvg`, pandoc uses `rsvg-convert` for working with svg images.
+RUN apt-get -q --no-allow-insecure-repositories update \
+  && DEBIAN_FRONTEND=noninteractive \
+     apt-get install --assume-yes --no-install-recommends \
+       librsvg2-bin=2.* \
+  && rm -rf /var/lib/apt/lists/*
+
 # LaTeX ##############################################################
 FROM ubuntu-core as ubuntu-latex
 
-# NOTE: `libsrvg`, pandoc uses `rsvg-convert` for working with svg images.
 # NOTE: to maintainers, please keep this listing alphabetical.
 RUN apt-get -q --no-allow-insecure-repositories update \
   && DEBIAN_FRONTEND=noninteractive \
@@ -106,7 +113,6 @@ RUN apt-get -q --no-allow-insecure-repositories update \
         gzip \
         libfontconfig1 \
         libfreetype6 \
-        librsvg2-bin \
         perl \
         tar \
         wget \
