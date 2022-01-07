@@ -52,20 +52,20 @@ jobs:
       - name: Show config
         run: make show-args
 
-      - name: Build core image
+      - name: Build minimal image
         run: make ubuntu
 
-      - name: Build crossref image
-        run: make ubuntu-crossref
+      - name: Build core image
+        run: make ubuntu-core
 
       - name: Build LaTeX image
         run: make ubuntu-latex
 
-      - name: Test core image
+      - name: Test minimal image
         run: make test-ubuntu
 
-      - name: Test crossref image
-        run: make test-ubuntu-crossref
+      - name: Test core image
+        run: make test-ubuntu-core
 
       - name: Test LaTeX image
         run: make test-ubuntu-latex
@@ -76,5 +76,6 @@ jobs:
           # Log into registry
           echo "${{ secrets.DOCKER_HUB_TOKEN }}" |
             docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
-          make push-core  STACK=ubuntu
-          make push-latex STACK=ubuntu
+          make push-minimal STACK=ubuntu
+          make push-core    STACK=ubuntu
+          make push-latex   STACK=ubuntu

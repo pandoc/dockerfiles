@@ -53,10 +53,10 @@ jobs:
       - name: Show config
         run: make show-args
 
-      - name: Build core image
+      - name: Build minimal image
         run: make static
 
-      - name: Test core image
+      - name: Test minimal image
         run: make test-static
 
       - name: Push

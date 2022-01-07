@@ -61,40 +61,41 @@ define stack
 # `STACK` variable based on the chosen target. This is an alternative to
 # setting the `STACK` variable directly and allows for convenient tab
 # completion.
-.PHONY: $(1) $(1)-core $(1)-freeze-file
-$(1) $(1)-core $(1)-crossref $(1)-latex $(1)-freeze-file: STACK = $(1)
-$(1): $(1)-core
-$(1)-core: core
+.PHONY: $(1) $(1)-minimal $(1)-core $(1)-freeze-file
+$(1) $(1)-minimal $(1)-core $(1)-latex $(1)-freeze-file: STACK = $(1)
+$(1): $(1)-minimal
+$(1)-minimal: minimal
 $(1)-freeze-file: $(1)/$(stack_freeze_file)
-# Only alpine and ubuntu support crossref and latex images
+# Only alpine and ubuntu support core and latex images
 ifeq ($(1),$(filter $(1),alpine ubuntu))
-.PHONY: $(1)-crossref $(1)-latex
-$(1)-crossref: crossref
+.PHONY: $(1)-core $(1)-latex
+$(1)-core: core
 $(1)-latex: latex
 endif
 
 # Do the same for test targets, again to allow for tab completion.
-.PHONY: test-$(1) test-$(1)-core test-$(1)-crossref test-$(1)-latex
-test-$(1) test-$(1)-core test-$(1)-crossref test-$(1)-latex: STACK = $(1)
-test-$(1): test-core
-test-$(1)-core: test-core
+.PHONY: test-$(1) test-$(1)-minimal test-$(1)-core test-$(1)-latex
+test-$(1) test-$(1)-minimal test-$(1)-core test-$(1)-latex: STACK = $(1)
+test-$(1): test-minimal
+test-$(1)-minimal: test-minimal
 ifeq ($(1),$(filter $(1),alpine ubuntu))
-test-$(1)-crossref: test-crossref
+test-$(1)-core: test-core
 test-$(1)-latex: test-latex
 endif
 # And for push targets
-.PHONY: push-$(1) push-$(1)-core push-$(1)-crossref push-$(1)-latex
-push-$(1) push-$(1)-core push-$(1)-crossref push-$(1)-latex: STACK = $(1)
-push-$(1): push-core
-push-$(1)-core: push-core
+.PHONY: push-$(1) push-$(1)-minimal push-$(1)-core push-$(1)-latex
+push-$(1) push-$(1)-minimal push-$(1)-core push-$(1)-latex: STACK = $(1)
+push-$(1): push-minimal
+push-$(1)-minimal: push-minimal
 ifeq ($(1),$(filter $(1),alpine ubuntu))
+push-$(1)-core: push-core
 push-$(1)-latex: push-latex
 endif
 endef
 # Generate convenience targets for all supported stacks.
 $(foreach img,$(image_stacks),$(eval $(call stack,$(img))))
 
-# Freeze #######################################################################
+# Freeze ################################################################
 .PHONY: freeze-file
 freeze-file: $(STACK)/$(stack_freeze_file)
 %/$(stack_freeze_file): STACK = $*
@@ -111,7 +112,17 @@ freeze-file: $(STACK)/$(stack_freeze_file)
                -u "$(shell id -u):$(shell id -g)" \
                -s "$(STACK)" \
                -o /app/$@
-# Core #########################################################################
+# Minimal ###############################################################
+.PHONY: core
+minimal: $(STACK)/$(stack_freeze_file)
+	./build.sh build -v \
+		-r minimal \
+		-s "$(STACK)" \
+		-c "$(PANDOC_COMMIT)" \
+		-d "$(makefile_dir)" \
+		-t "$(STACK)-minimal" \
+		$(docker_cpu_options)
+# Core ##################################################################
 .PHONY: core
 core: $(STACK)/$(stack_freeze_file)
 	./build.sh build -v \
@@ -120,16 +131,6 @@ core: $(STACK)/$(stack_freeze_file)
 		-c "$(PANDOC_COMMIT)" \
 		-d "$(makefile_dir)" \
 		-t "$(STACK)-core" \
-		$(docker_cpu_options)
-# Crossref #####################################################################
-.PHONY: crossref
-crossref: $(STACK)/$(stack_freeze_file)
-	./build.sh build -v \
-		-r crossref \
-		-s "$(STACK)" \
-		-c "$(PANDOC_COMMIT)" \
-		-d "$(makefile_dir)" \
-		-t "$(STACK)-crossref" \
 		$(docker_cpu_options)
 # LaTeX ########################################################################
 .PHONY: latex
@@ -142,14 +143,14 @@ latex: $(STACK)/$(stack_freeze_file)
 		-t "$(STACK)-latex" \
 		$(docker_cpu_options)
 # Test #########################################################################
-.PHONY: test-core test-latex test-crossref
+.PHONY: test-core test-latex test-minimal
+test-minimal: IMAGE ?= pandoc/minimal:$(PANDOC_VERSION)-$(STACK)
+test-minimal:
+	IMAGE=$(IMAGE) make -C test test-minimal
+
 test-core: IMAGE ?= pandoc/core:$(PANDOC_VERSION)-$(STACK)
 test-core:
-	IMAGE=$(IMAGE) make -C test test-core
-
-test-crossref: IMAGE ?= pandoc/crossref:$(PANDOC_VERSION)-$(STACK)
-test-crossref:
-	test -n "$(WITHOUT_CROSSREF)" || IMAGE=$(IMAGE) make -C test test-crossref
+	test -n "$(WITHOUT_CROSSREF)" || IMAGE=$(IMAGE) make -C test test-core
 
 test-latex: IMAGE ?= pandoc/latex:$(PANDOC_VERSION)-$(STACK)
 test-latex:
@@ -162,7 +163,15 @@ test-latex:
 lint:
 	shellcheck $(shell find . -name "*.sh")
 
-.PHONY: push-core push-latex
+.PHONY: push-minimal push-core push-latex
+push-minimal: REPO ?= minimal
+push-minimal:
+	./build.sh push -v \
+		-r $(REPO) \
+		-s "$(STACK)" \
+		-c "$(PANDOC_COMMIT)" \
+		-d "$(makefile_dir)" \
+		-t "$(STACK)-minimal"
 push-core: REPO ?= core
 push-core:
 	./build.sh push -v \
@@ -170,7 +179,7 @@ push-core:
 		-s "$(STACK)" \
 		-c "$(PANDOC_COMMIT)" \
 		-d "$(makefile_dir)" \
-		-t "$(STACK)-latex"
+		-t "$(STACK)-core"
 push-latex: REPO ?= latex
 push-latex:
 	./build.sh push -v \

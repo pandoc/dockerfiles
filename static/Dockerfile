@@ -43,8 +43,8 @@ RUN find dist-newstyle \
          -exec strip '{}' ';' \
          -exec cp '{}' /usr/local/bin/ ';'
 
-# minimal ###############################################################
-FROM scratch as static-core
+# Minimal ###############################################################
+FROM scratch as static-minimal
 ARG pandoc_version=edge
 LABEL maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
 LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
