@@ -132,7 +132,7 @@ core:
 		$(docker_cpu_options)
 # Crossref #####################################################################
 .PHONY: crossref
-crossref: core
+crossref:
 	./build.sh build -v \
 		-r crossref \
 		-s "$(STACK)" \
@@ -142,7 +142,7 @@ crossref: core
 		$(docker_cpu_options)
 # LaTeX ########################################################################
 .PHONY: latex
-latex: crossref
+latex:
 	./build.sh build -v \
 		-r latex \
 		-s "$(STACK)" \
