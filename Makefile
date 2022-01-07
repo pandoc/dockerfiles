@@ -39,7 +39,7 @@ show-args:
 	@printf "# usually a tag or branch name.\n"
 	@printf "PANDOC_COMMIT=%s\n" $(PANDOC_COMMIT)
 	@printf "\n# Linux distribution used as base. List of supported base stacks:\n"
-	@printf "#   %s\n" "$(supported_stacks)"
+	@printf "#   %s\n" "$(image_stacks)"
 	@printf "# May be overwritten by using a stack-specific target.\n"
 	@printf "STACK=%s\n" $(STACK)
 	@printf "\n# Controls the number of threads to be used during the build\n"
