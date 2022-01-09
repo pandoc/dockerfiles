@@ -106,19 +106,20 @@ RUN apk --no-cache add \
 ENV PATH="/opt/texlive/texdir/bin/x86_64-linuxmusl:${PATH}"
 WORKDIR /root
 
+# Installer scripts and config
 COPY common/latex/texlive.profile /root/texlive.profile
 COPY common/latex/install-texlive.sh /root/install-texlive.sh
+COPY common/latex/install-tex-packages.sh /root/install-tex-packages.sh
+
+# TeXLive version to install (leave empty to use the latest version).
+ARG texlive_version=
 
 # Request musl precompiled binary access
-RUN echo "binary_x86_64-linuxmusl 1" >> /root/texlive.profile
-
-RUN /root/install-texlive.sh
-
-COPY common/latex/install-tex-packages.sh /root/install-tex-packages.sh
-RUN /root/install-tex-packages.sh
-
-RUN rm -f /root/texlive.profile \
-          /root/install-texlive.sh \
-          /root/install-tex-packages.sh
+RUN echo "binary_x86_64-linuxmusl 1" >> /root/texlive.profile \
+  && /root/install-texlive.sh $texlive_version \
+  && /root/install-tex-packages.sh \
+  && rm -f /root/texlive.profile \
+           /root/install-texlive.sh \
+           /root/install-tex-packages.sh
 
 WORKDIR /data

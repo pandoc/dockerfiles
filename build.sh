@@ -85,24 +85,29 @@ if [ ! -f "$version_table_file" ]; then
     exit 1
 fi
 
-alpine_s_command="\
-s#| *${pandoc_commit} |[^|]*| *\\([^ |]*\\) *|[^|]*|\$#\1#p\
-"
-ubuntu_s_command="\
-s#| *${pandoc_commit} |[^|]*|[^|]*| *\\([^ |]*\\) *|\$#\1#p\
-"
+pandoc_version_opts=$(grep "^| *${pandoc_commit} *|" "$version_table_file")
+if [ -z "$pandoc_version_opts" ]; then
+    printf 'Unsupported version: %s; aborting!\n' "$pandoc_commit" >&2
+    exit 1
+fi
+
+version_table_field ()
+{
+    printf '%s\n' "$pandoc_version_opts" | \
+        awk -F '|' "{ gsub(/^ *| *\$/,\"\",\$$1); print \$$1 }"
+}
 
 base_image_version=
 case "$stack" in
     (alpine)
-        base_image_version=$(sed -ne "$alpine_s_command" "$version_table_file")
+        base_image_version=$(version_table_field 4)
         ;;
     (static)
         # The static binary is built on alpine
-        base_image_version=$(sed -ne "$alpine_s_command" "$version_table_file")
+        base_image_version=$(version_table_field 4)
         ;;
     (ubuntu)
-        base_image_version=$(sed -ne "$ubuntu_s_command" "$version_table_file")
+        base_image_version=$(version_table_field 5)
         ;;
     (*)
         printf 'Unknown stack: %s\n' "$stack" >&2
@@ -110,8 +115,8 @@ case "$stack" in
         ;;
 esac
 
-tag_versions=$(sed -ne "s#| *${pandoc_commit} | \\([^|]*\\) *|.*\$#\\1#p" \
-                   "$version_table_file")
+tag_versions=$(version_table_field 3)
+texlive_version=$(version_table_field 6)
 
 # Crossref
 extra_packages=pandoc-crossref
@@ -130,10 +135,11 @@ if [ "$verbosity" -gt 0 ]; then
     printf '\tstack: %s\n' "$stack"
     printf '\tbase_image_version: %s\n' "$base_image_version"
     printf '\ttag_versions: %s\n' "$tag_versions"
-    printf '\tverbosity: %s\n' "${verbosity}" >&2
+    printf '\ttexlive_version: %s\n' "$texlive_version"
+    printf '\tverbosity: %s\n' "${verbosity}"
     printf '\textra_packages: %s\n' "$extra_packages"
     printf '\twithout_crossref: %s\n' "${without_crossref}"
-    printf '\tversion_table_file: %s\n' "${version_table_file}" >&2
+    printf '\tversion_table_file: %s\n' "${version_table_file}"
 fi
 
 # ARG 1: tag version
@@ -170,6 +176,7 @@ case "$action" in
                --build-arg without_crossref="${without_crossref}" \
                --build-arg extra_packages="${extra_packages}"\
                --build-arg base_image_version="${base_image_version}" \
+               --build-arg texlive_version="${texlive_version}" \
                --target "${target}"\
                -f "${directory}/${stack}/Dockerfile"\
                "${directory}"
