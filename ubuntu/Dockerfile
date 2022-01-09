@@ -117,7 +117,7 @@ RUN apt-get -q --no-allow-insecure-repositories update \
         tar \
         wget \
         xzdec \
-        && rm -rf /var/lib/apt/lists/*
+  && rm -rf /var/lib/apt/lists/*
 
 # DANGER: this will vary for different distributions,
 # particularly the `linux` suffix. Ubuntu linux is a glibc based
@@ -128,14 +128,16 @@ WORKDIR /root
 
 COPY common/latex/texlive.profile /root/texlive.profile
 COPY common/latex/install-texlive.sh /root/install-texlive.sh
-
-RUN /root/install-texlive.sh
-
 COPY common/latex/install-tex-packages.sh /root/install-tex-packages.sh
-RUN /root/install-tex-packages.sh
 
-RUN rm -f /root/texlive.profile \
-          /root/install-texlive.sh \
-          /root/install-tex-packages.sh
+# TeXLive version to install (leave empty to use the latest version).
+ARG texlive_version=
+
+# Request musl precompiled binary access
+RUN /root/install-texlive.sh $texlive_version \
+  && /root/install-tex-packages.sh \
+  && rm -f /root/texlive.profile \
+           /root/install-texlive.sh \
+           /root/install-tex-packages.sh
 
 WORKDIR /data
