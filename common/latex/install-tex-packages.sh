@@ -44,7 +44,6 @@ tlmgr install bidi \
               polyglossia \
               selnolig \
               upquote \
-              xecjk \
               xetex \
               || exit 1
 
