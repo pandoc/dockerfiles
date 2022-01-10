@@ -39,8 +39,13 @@ framed
 
 #########################################################################
 # Extra packages for XeTex, LuaTex, and BibLaTex.                     
+embedfile
 fontspec
+hyperxmp
+ifmtarg
+luacode
 lualatex-math
+luatexbase
 mathspec
 microtype
 selnolig
