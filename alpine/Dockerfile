@@ -109,7 +109,7 @@ WORKDIR /root
 # Installer scripts and config
 COPY common/latex/texlive.profile /root/texlive.profile
 COPY common/latex/install-texlive.sh /root/install-texlive.sh
-COPY common/latex/install-tex-packages.sh /root/install-tex-packages.sh
+COPY common/latex/packages.txt /root/packages.txt
 
 # TeXLive version to install (leave empty to use the latest version).
 ARG texlive_version=
@@ -117,7 +117,8 @@ ARG texlive_version=
 # Request musl precompiled binary access
 RUN echo "binary_x86_64-linuxmusl 1" >> /root/texlive.profile \
   && /root/install-texlive.sh $texlive_version \
-  && /root/install-tex-packages.sh \
+  && sed -e 's/ *#.*$//' -e '/^ *$/d' /root/packages.txt | \
+     xargs tlmgr install \
   && rm -f /root/texlive.profile \
            /root/install-texlive.sh \
            /root/install-tex-packages.sh

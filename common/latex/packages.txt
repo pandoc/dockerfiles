@@ -1,0 +1,99 @@
+# Packages listed in https://pandoc.org/MANUAL.html#creating-a-pdf
+
+# NOTE: search left hand side on CTAN to see for yourself:
+#       graphicx  -> graphics
+#       grffile   -> oberdiek
+#       longtable -> tools
+
+# Redundant, as included in `scheme-basic`
+amsfonts
+amsmath
+geometry
+graphics
+hyperref
+iftex
+lm
+luatex
+oberdiek
+pdftexcmds
+tools
+
+# Other basic packages
+beamer
+booktabs
+fancyvrb
+listings
+lm-math
+logreq
+memoir
+parskip
+pgf         # for TikZ
+setspace
+ulem
+unicode-math
+xcolor
+
+# Needed for when `--highlight-style` is used with something other than
+# pygments.
+framed
+
+#########################################################################
+# Extra packages for XeTex, LuaTex, and BibLaTex.                     
+fontspec
+lualatex-math
+mathspec
+microtype
+selnolig
+upquote
+xetex
+
+#########################################################################
+# I18n and languages; the choice of selected languages is historic,
+# those were the ones installed by texlive by default for a long time.
+bidi
+csquotes
+babel-basque
+babel-czech
+babel-danish
+babel-dutch
+babel-english
+babel-finnish
+babel-french
+babel-german
+babel-hungarian
+babel-italian
+babel-norsk
+babel-polish
+babel-portuges
+babel-spanish
+babel-swedish
+hyphen-basque
+hyphen-czech
+hyphen-danish
+hyphen-dutch
+hyphen-english
+hyphen-finnish
+hyphen-french
+hyphen-german
+hyphen-hungarian
+hyphen-italian
+hyphen-norwegian
+hyphen-polish
+hyphen-portuguese
+hyphen-spanish
+hyphen-swedish
+# no longer needed in newer pandoc versions
+polyglossia
+
+#########################################################################
+# Reference backend options
+biber
+biblatex
+bibtex
+natbib
+
+#########################################################################
+# These packages were identified by the tests, they are likely
+# dependencies of dependencies that are not encoded well.
+footnotehyper
+xurl
