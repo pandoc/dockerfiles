@@ -4,7 +4,7 @@
 #
 # NOTE: see also alpine/latex.Dockerfile which appends
 # `binary_x86_64-linuxmusl 1` to this file, use for non-glibc distributions.
-selected_scheme scheme-small
+selected_scheme scheme-basic
 TEXDIR         /opt/texlive/texdir
 TEXMFLOCAL     /opt/texlive/texmf-local
 TEXMFSYSVAR    /opt/texlive/texdir/texmf-var
