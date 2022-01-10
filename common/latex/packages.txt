@@ -21,12 +21,16 @@ tools
 # Other basic packages
 beamer
 booktabs
+cmap        # Make PDF files searchable and copyable
+euler       # Use AMS Euler fonts for math
+eurosym     # Metafont and macros for Euro sign
 fancyvrb
 listings
 lm-math
 logreq
 memoir
 parskip
+pdflscape   # landscape mode for single pages
 pgf         # for TikZ
 setspace
 ulem
