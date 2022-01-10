@@ -8,7 +8,15 @@ installer_archive=install-tl-unx.tar.gz
 
 # Do normal install for the default version.
 if [ "$tlversion" = "$default_version" ]; then
-    installer_url="http://mirror.ctan.org/systems/texlive/tlnet"
+    # Get the mirror URL from the redirect. Otherwise, if we were to
+    # always use the mirror URL, we'd run into problems whenever we get
+    # installer and signatures from different mirrors that are not 100%
+    # in sync.
+    installer_url=$(wget --quiet --output-document=/dev/null \
+                         --server-response \
+                         http://mirror.ctan.org/systems/texlive/tlnet/ \
+                         2>&1 | \
+                        sed -ne 's/.*Location: \(.*\)$/\1/p')
     repository=
 else
     installer_url="\
@@ -18,7 +26,8 @@ ftp://tug.org/historic/systems/texlive/$tlversion/tlnet-final"
 fi
 
 # Download the install-tl perl script.
-wget "$installer_url/$installer_archive" \
+wget --no-verbose \
+     "$installer_url/$installer_archive" \
      "$installer_url/$installer_archive".sha512 \
      "$installer_url/$installer_archive".sha512.asc \
     || exit 1
