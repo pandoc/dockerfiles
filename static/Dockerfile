@@ -1,5 +1,6 @@
 # Builder
-FROM alpine:3.14 AS static-builder-base
+ARG base_image_version=3.14
+FROM alpine:$base_image_version AS static-builder-base
 WORKDIR /app
 
 RUN apk --no-cache add \
