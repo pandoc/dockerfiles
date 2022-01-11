@@ -84,6 +84,12 @@ if [ ! -f "$version_table_file" ]; then
     printf 'Version table not found: %s\n' "$version_table_file" >&2
     exit 1
 fi
+# File containing the default stack config
+stack_table_file="${directory}/default-stack.md"
+if [ ! -f "$stack_table_file" ]; then
+    printf 'Stack table not found: %s\n' "$stack_table_file" >&2
+    exit 1
+fi
 
 pandoc_version_opts=$(grep "^| *${pandoc_commit} *|" "$version_table_file")
 if [ -z "$pandoc_version_opts" ]; then
@@ -142,35 +148,59 @@ if [ "$verbosity" -gt 0 ]; then
     printf '\tversion_table_file: %s\n' "${version_table_file}"
 fi
 
-# ARG 1: tag version
-image_name ()
+# Succeeds if the stack is the default for this repo, in which case the
+# stack can be omitted from the tag.
+is_default_stack_for_repo ()
 {
-    printf 'pandoc/%s:%s-%s' "$repo" "${1:-edge}" "$stack"
+    grep -q "^| *$repo *| *${stack} *|$" "$stack_table_file"
 }
 
+# ARG 1: pandoc version
+# ARG 2: stack
+image_name ()
+{
+    if [ -z "$2" ]; then
+        printf 'pandoc/%s:%s' "$repo" "${1:-edge}"
+    else
+        printf 'pandoc/%s:%s-%s' "$repo" "${1:-edge}" "$2"
+    fi
+}
+
+# List all tags for this image.
 tags ()
 {
     for tag_version in $tag_versions; do
-        printf ' --tag=%s' "$(image_name "$tag_version")"
+        printf '%s\n' "$(image_name "$tag_version" "$stack")"
+    done
+    if is_default_stack_for_repo; then
+        for tag_version in $tag_versions; do
+            printf '%s\n' "$(image_name "$tag_version")"
+        done
+    fi
+}
+
+# Produce the "tag" command line arguments for `docker build`
+tag_arguments ()
+{
+    for tag in $(tags); do
+        printf ' --tag=%s' "$tag"
     done
 }
 
-
 case "$action" in
     (push)
-        for tag_version in $tag_versions; do
-            image=$(image_name "$tag_version")
-            printf 'Pushing %s...\n' "$image"
-            docker push "${image}" ||
+        for tag in $(tags); do
+            printf 'Pushing %s...\n' "$tag"
+            docker push "${tag}" ||
                 exit 5
         done
         ;;
     (build)
         ## build images
-        # The use of $(tags) is correct here
+        # The use of $(tag_arguments) is correct here
         # shellcheck disable=SC2046
         docker build "$@" \
-               $(tags) \
+               $(tag_arguments) \
                --build-arg pandoc_commit="${pandoc_commit}" \
                --build-arg pandoc_version="${pandoc_version}" \
                --build-arg without_crossref="${without_crossref}" \
