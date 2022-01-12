@@ -1,9 +1,15 @@
+-- Hacky way to test if we are in the static image, as the assertion is
+-- expected to fail lpeg was compiled into pandoc.
+local isstatic = os.getenv 'HOME' == '/'
+
 if PANDOC_VERSION < '2.16.2' then
-  local lpeg = require 'lpeg'
+  -- don't do this test on static before 2.16.2
+  if isstatic then
+    os.exit(0)
+  end
+  lpeg = require 'lpeg'
 else
-  -- Hacky way to test if we are in the static image, as the assertion is
-  -- expected to fail lpeg was compiled into pandoc.
-  if os.getenv('HOME') ~= '/' then
+  if not isstatic then
     assert(lpeg and lpeg == require 'lpeg', 'lpeg not loaded from system lib')
   end
 end
