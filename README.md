@@ -190,14 +190,6 @@ Started guide](https://docs.docker.com/get-started/part2/).
 [spellcheck](https://github.com/pandoc/lua-filters/tree/master/spellcheck)
 
 
-Maintenance Notes
-================================================================================
-
-Managing new Pandoc Releases
---------------------------------------------------------------------------------
-
-See the [release checklist](https://github.com/pandoc/dockerfiles/wiki/Release-checklist).
-
 License
 ================================================================================
 
