@@ -7,8 +7,6 @@ This repo contains a collection of Dockerfiles to build various
 **Contents**
 
 - [Available Images](#available-images)
-    - [Current `latest` Tag](#current-latest-tag)
-    - [Alpine Linux](#alpine-linux)
 - [Usage](#usage)
     - [Basic Usage](#basic-usage)
     - [Pandoc Scripts](#pandoc-scripts)
@@ -18,48 +16,23 @@ This repo contains a collection of Dockerfiles to build various
 - [License](#license)
 
 Available Images
-================================================================================
+==================================================================
 
-Docker images hosted here have a "core" version and a "latex" version:
+Docker images hosted here have a the variants "minimal", "core",
+and "latex".
 
-- core: `pandoc` as well as the appropriate system libraries for
-  the full Lua filtering backend (Lua filters can call external modules).
-- latex: builds on top of the core image, and provides an as-minimal-as-possible
-  latex installation in addition.  This includes all packages that `pandoc`
-  _might_ use, and any libraries needed by these packages (such as image
-  libraries needed by the latex graphics packages).
-
-From there, the tagging scheme is either `X.Y`, `X.Y.Z`, `latest`, or `edge`.
-
-- `X.Y` or `X.Y.Z`: an official `pandoc` release (e.g., `2.6`).  Once an `X.Y`
-  tag is pushed, it will not be re-built (unless there is a problem).  Pandoc
-  releases versions such as `2.7` or `2.7.1` (there is no `2.7.0`), which is
-  where the optional `.Z` comes from.
-- `latest`: the `latest` tag points to the most recent `X.Y` release.  For
-  example, if tags `2.5` and `2.6` were available online, `latest` would be the
-  same image as `2.6`.
-- `edge`: the "bleeding edge" tag clones the `master` branch of `pandoc`.
-  This tag is a moving target, and will be re-built
-  _at least_ once a month.  The CI scripts have a cron job to build each image
-  stack on the first of the month.  However, changes to the `master` branch of
-  this repository may also result in the `edge` tag being updated sooner.
-
-All images for older (pre 2.11) versions, i.e. those where pandoc didn't
-have citeproc capabilities built-in, also include the `pandoc-citeproc`
-binary.
-
-Current `latest` Tag
---------------------------------------------------------------------------------
-
-The current `latest` tag for all images points to `pandoc` version `2.16.2`.
-
-Alpine Linux
---------------------------------------------------------------------------------
-
-- Core image: [`pandoc/core`](https://hub.docker.com/r/pandoc/core/)
-    - To build locally: `make alpine`
-- Latex image: [`pandoc/latex`](https://hub.docker.com/r/pandoc/latex/)
-    - To build locally: `make alpine-latex`
+- minimal: kept as small as possible. See the [pandoc/minimal][]
+  repository.
+- core: suitable for common conversion tasks; includes additional
+  libraries and programs. See the [pandoc/core][] repository.
+- latex: builds on top of the core image, and provides a basic
+  LaTeX installation in addition. This includes all packages that
+  `pandoc` _might_ use, and any libraries needed by these
+  packages. See the [pandoc/latex][] repository.
+  
+[pandoc/minimal]: https://hub.docker.com/r/pandoc/minimal
+[pandoc/core]: https://hub.docker.com/r/pandoc/core
+[pandoc/latex]: https://hub.docker.com/r/pandoc/latex
 
 Usage
 ================================================================================
