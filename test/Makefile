@@ -57,12 +57,20 @@ test-crossref-is-callable:
 	    --entrypoint=pandoc-crossref $(IMAGE) --version
 
 test-crossref-filter: $(test_files_path)/crossref-test.md \
-		$(test_files_path)/expected/crossref-test.native
+		$(test_files_path)/expected/crossref-test.native \
+		$(test_files_path)/minversion.lua
 	@printf "\n### testing document conversion with pandoc-crossref filter...\n"
-	docker run --rm -v $(test_files_path):/data $(IMAGE) \
-	    --filter=pandoc-crossref \
-	    --to=native \
-	    crossref-test.md | $(DIFF) expected/crossref-test.native -
+
+	@if docker run --rm -v $(test_files_path):/data $(IMAGE) \
+	      --metadata=minversion=2.16 \
+	      --lua-filter=minversion.lua; then \
+	    docker run --rm -v $(test_files_path):/data $(IMAGE) \
+	        --filter=pandoc-crossref \
+	        --to=native \
+	        crossref-test.md | $(DIFF) expected/crossref-test.native -; \
+	else \
+	    printf "### Pandoc version is too old for this test, skipping.\n"; \
+	fi
 
 #  _         _____   __  __
 # | |    __ |_   _|__\ \/ /
