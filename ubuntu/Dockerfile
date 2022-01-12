@@ -133,12 +133,13 @@ COPY common/latex/packages.txt /root/packages.txt
 # TeXLive version to install (leave empty to use the latest version).
 ARG texlive_version=
 
-# Request musl precompiled binary access
 RUN /root/install-texlive.sh $texlive_version \
   && sed -e 's/ *#.*$//' -e '/^ *$/d' /root/packages.txt | \
      xargs tlmgr install \
   && rm -f /root/texlive.profile \
            /root/install-texlive.sh \
-           /root/install-tex-packages.sh
+           /root/packages.txt \
+  && TERM=dumb luaotfload-tool --update \
+  && chmod -R o+w /opt/texlive/texdir/texmf-var
 
 WORKDIR /data

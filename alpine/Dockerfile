@@ -121,6 +121,8 @@ RUN echo "binary_x86_64-linuxmusl 1" >> /root/texlive.profile \
      xargs tlmgr install \
   && rm -f /root/texlive.profile \
            /root/install-texlive.sh \
-           /root/install-tex-packages.sh
+           /root/packages.txt \
+  && TERM=dumb luaotfload-tool --update \
+  && chmod -R o+w /opt/texlive/texdir/texmf-var
 
 WORKDIR /data
