@@ -99,7 +99,7 @@ $(foreach img,$(image_stacks),$(eval $(call stack,$(img))))
 .PHONY: freeze-file
 freeze-file: $(STACK)/$(stack_freeze_file)
 %/$(stack_freeze_file): STACK = $*
-%/$(stack_freeze_file): common/pandoc-freeze.sh
+%/$(stack_freeze_file):
 	docker build $(docker_cpu_options) \
 		--tag pandoc/$(STACK)-builder-base \
 		--target=$(STACK)-builder-base \
@@ -108,7 +108,7 @@ freeze-file: $(STACK)/$(stack_freeze_file)
 		-v "$(makefile_dir):/app" \
 	  --env WITHOUT_CROSSREF=$(WITHOUT_CROSSREF) \
 		pandoc/$(STACK)-builder-base \
-		sh /app/$< \
+		sh /app/common/pandoc-freeze.sh \
 		    -c $(PANDOC_COMMIT) \
 		    -u "$(shell id -u):$(shell id -g)" \
 		    -s "$(STACK)" \
