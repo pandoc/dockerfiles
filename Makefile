@@ -156,9 +156,9 @@ test-latex: IMAGE ?= pandoc/latex:$(PANDOC_VERSION)-$(STACK)
 test-latex:
 	IMAGE=$(IMAGE) make -C test test-latex
 
-################################################################################
-# Developer targets                                                            #
-################################################################################
+########################################################################
+# Developer targets                                                    #
+########################################################################
 .PHONY: lint
 lint:
 	shellcheck $(shell find . -name "*.sh")
@@ -188,6 +188,24 @@ push-latex:
 		-c "$(PANDOC_COMMIT)" \
 		-d "$(makefile_dir)" \
 		-t "$(STACK)-latex"
+
+.PHONY: docs docs-minimal
+docs:
+	@pandoc "docs/$(REPO).md" \
+		--lua-filter="docs/filters/transclude.lua" \
+		--lua-filter="docs/filters/supported-tags.lua" \
+		--lua-filter="docs/filters/fix-run.lua" \
+		--to=commonmark
+
+docs-minimal: REPO = minimal
+docs-minimal: docs
+
+docs-core: REPO = core
+docs-core: docs
+
+docs-latex: REPO = latex
+docs-latex: docs
+
 
 .PHONY: clean
 clean:

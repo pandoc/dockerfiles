@@ -1,13 +1,16 @@
-Minimal pandoc images
+Pandoc LaTeX images
 ==================================================================
 
-These images contain [pandoc][], the universal document converter.
-Containers are stripped down to a bare minimum as far as sensible:
-The "static" images contain only a statically compiled pandoc
-binary, whereas the other images also contain a minimal operating
-system.
+These images contain [pandoc][], the universal document converter,
+and a basic [LaTeX] installation for conversions to PDF.
+
+Using pandoc together with [LaTeX] is a popular option to create
+PDF files from other formats. This image provides a [TeX Live]
+installation and contains all packages required to produce a PDF
+with pandoc's default options.
 
 [pandoc]: https://pandoc.org/
+[TeX Live]: https://www.tug.org/texlive/
 
 ``` include
 docs/sections/quick-reference.md
@@ -24,12 +27,10 @@ All tags can be suffixed with a stack-identifier, e.g.,
 `latest-ubuntu`. This allows to chose a specific operation system.
 Available stacks are
 
-- *static*: statically compiled binary, wrapped in a `scratch`
-  image.
 - *alpine*: [Alpine] Linux.
 - *ubuntu*: [Ubuntu] Linux.
 
-The default for `pandoc/minimal` is `static`.
+The default for `pandoc/latex` is `alpine`.
 
 [Alpine]: https://alpinelinux.org/
 [Ubuntu]: https://ubuntu.org/
@@ -44,8 +45,8 @@ Other images
 If the images here do not fit your use-case, then checkout these
 alternatives:
 
+-   pandoc/minimal: small images with the pandoc executable.
 -   pandoc/core: based on minimal images, but ships with
     additional programs commonly used during conversions.
--   pandoc/latex: suitable for conversions to PDF via [LaTeX].
 
 [LaTeX]: https://latex-project.org/
