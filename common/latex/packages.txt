@@ -16,11 +16,12 @@ lm
 luatex
 oberdiek
 pdftexcmds
-tools
+tools       # The LaTeX standard tools bundle; e.g., calc, longtable
 
 # Other basic packages
 beamer
 booktabs
+caption     # Customize captions in floating envs; required for beamer
 cmap        # Make PDF files searchable and copyable
 euler       # Use AMS Euler fonts for math
 eurosym     # Metafont and macros for Euro sign
@@ -29,6 +30,7 @@ listings
 lm-math
 logreq
 memoir
+multirow    # Tabular cells spanning multiple rows
 parskip
 pdflscape   # landscape mode for single pages
 pgf         # for TikZ
