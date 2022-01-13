@@ -135,7 +135,8 @@ printf "Creating freeze file...\n"
 cabal v2-freeze \
       --constraint="pandoc ${pandoc_constraints}" \
       --constraint="lpeg ${lpeg_constraints}" \
-      --constraint="${lua_package} ${lua_constraints}"
+      --constraint="${lua_package} ${lua_constraints}" \
+      --allow-newer='pandoc'
 
 printf "Copying freeze file to %s\n" "${outfile}"
 target_dir="$(dirname "${outfile}")"

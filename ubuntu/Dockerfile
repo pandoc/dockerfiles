@@ -46,8 +46,12 @@ ARG extra_packages="pandoc-crossref"
 RUN test -n "$without_crossref" || \
     printf "extra-packages: pandoc-crossref\n" > cabal.project.local;
 
+# Build pandoc and pandoc-crossref. The `allow-newer` is required for
+# when pandoc-crossref has not been updated yet, but we want to build
+# anyway.
 RUN cabal v2-update \
   && cabal v2-build \
+      --allow-newer 'lib:pandoc' \
       --disable-tests \
       --jobs \
       . $extra_packages
