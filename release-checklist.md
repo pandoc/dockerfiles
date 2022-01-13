@@ -18,10 +18,8 @@
   $ make {static,alpine,ubuntu}-freeze-file
   ```
 
-  If any of these cause an error, e.g., because pandoc-crossref
-  considers the new pandoc version out of bounds, go and raise an
-  issue on GitHub. We currently can't release core builds unless
-  all versions match.
+  It may make sense to also specify `WITHOUT_CROSSREF=true`, but
+  the build should succeed either way.
 
 - [ ] Commit the results.
 
@@ -36,6 +34,12 @@
 - [ ] GitHub Actions will take it from here: the new images will
   be built and pushed to Docker Hub as soon as the commit hits the
   master branch. Just check after 1h that everything worked.
+
+- [ ] If there is a problem, e.g., because the tests fails as
+  pandoc-crossref does not actually work with the new pandoc
+  version, then raise an issue on GitHub. Either we can fix it, or
+  we'll have to be patient and wait for an updated
+  pandoc-crossref.
 
 - [ ] Update the readme for each repository. This cannot be
   automated yet due to limitations of the Docker Hub API.
