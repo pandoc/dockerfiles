@@ -5,6 +5,7 @@ on:
     # Build and publish: configure build via commit message
     branches:
       - master
+      - build
   pull_request:
     # Build, but don't push on pull requests
 
@@ -21,21 +22,12 @@ jobs:
       - name: Configure build
         id: config-from-commit-message
         run: |
-          # Determine PANDOC_VERSION for Makefile based on commit message. We
-          # are looking for if the string `release=X.Y` or `release=X.Y.Z`
-          # exists, if so then that is what we are going to build. Otherwise,
-          # build the `master` branch (which is # the `edge` image).
-          version="$(git log --pretty='%B' -1 | \
-                     sed -ne 's#.*\brelease=\([0-9]*\(\.[0-9]*\)*\).*#\1#p')"
-
-          if [ -z "$version" ]; then
-              version="edge"
-          fi
+          eval "$(./common/config-from-commit-message.sh)"
 
           printf "Setting outputs:\n"
-          printf "  - pandoc-version: %s\n" "$version"
+          printf "  - pandoc-versions: %s\n" "$pandoc_versions"
 
-          printf "::set-output name=pandoc-version::%s\n" "$version"
+          printf "::set-output name=pandoc-version::%s\n" "$pandoc_versions"
 
   # Build images and store them as tar archive
   build:
@@ -50,9 +42,10 @@ jobs:
           - 'alpine'
           - 'ubuntu'
           - 'static'
+        version: ${{ fromJSON( needs.configure.outputs.pandoc-version ) }}
 
     env:
-      PANDOC_VERSION: ${{ needs.configure.outputs.pandoc-version }}
+      PANDOC_VERSION: ${{ matrix.version }}
       STACK: ${{ matrix.stack }}
 
     steps:
