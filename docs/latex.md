@@ -49,6 +49,11 @@ for the version associated with a given tag / pandoc version.
 ``` texlive-versions
 ```
 
+Note that, due to the way TeXLive releases work, users who build
+derivative images may experience problems if the TeXLive version
+has been newly frozen. This can be resolved by pulling the
+updated base image again.
+
 Other images
 ------------------------------------------------------------------
 
