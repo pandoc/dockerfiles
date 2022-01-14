@@ -22,7 +22,21 @@ jobs:
       - name: Configure build
         id: config-from-commit-message
         run: |
-          eval "$(./common/config-from-commit-message.sh)"
+          # Determine PANDOC_VERSION for Makefile based on commit message.
+          # We are looking for if the string `release=...`. If it exists,
+          # and if it is followed by a comma-separated list of versions,
+          # then those should be built. Otherwise, build the `master` branch
+          # (which is # the `edge` image).
+          versions=$(git log --pretty='%B' -1 | \
+                     sed -ne 's#.*\brelease=\(.*\)$#\1#p' | \
+                     sed -e  's# *, *#\n#g' | \
+                     sed -ne 's#^\([0-9]*\(\.[0-9]*\)*\)*$#"\1"#p' | \
+                     tr '\n' ',')
+
+          if [ -z "$versions" ]; then
+              versions="'edge'"
+          fi
+          pandoc_versions="[$versions]"
 
           printf "Setting outputs:\n"
           printf "  - pandoc-versions: %s\n" "$pandoc_versions"
