@@ -62,10 +62,14 @@ The `tlmgr` command in LaTeX images will start to behave badly
 every time a new TeXLive version is released. All images with the
 now frozen TeXLive version will have to be rebuilt.
 
-This will probably require multiple versions to be rebuilt. Use a
-comma-separated list, like so:
+- [ ] Change the variable `default_version` in file
+  `common/latex/install-texlive.sh` to the current year.
 
-    release=2.17, 2.16.2
+- [ ] Rebuilt and push all images that come with the last, now
+  frozen, TeXLive version. This will probably affect multiple
+  versions. Put a line with all these version anywhere in the
+  commit message. E.g.,
 
-Put this line anywhere in the commit message; the CI will then rebuild all
-specified versions.
+      release=2.17, 2.16.2
+
+  The CI will then rebuild all specified versions.
