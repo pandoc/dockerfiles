@@ -44,12 +44,14 @@
 - [ ] Update the readme for each repository. This cannot be
   automated yet due to limitations of the Docker Hub API.
 
+    - [ ] Run `make docs-minimal | xclip -selection clipboard` (or
+          `| pbcopy` on mac)
     - [ ] Go to
           https://hub.docker.com/repository/docker/pandoc/minimal
     - [ ] Click the edit button next to "Readme".
-    - [ ] Select and delete the old contents.
-    - [ ] Run `make docs-minimal | xclip` (or `| pbcopy` on mac)
-    - [ ] Paste the result, then save.
+    - [ ] Paste the content from the clipboard, replacing the old
+          readme.
+    - [ ] Save.
 
   Repeat for `core` and `latex`.
 
