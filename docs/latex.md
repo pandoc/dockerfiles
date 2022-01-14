@@ -35,12 +35,22 @@ The default for `pandoc/latex` is `alpine`.
 [Alpine]: https://alpinelinux.org/
 [Ubuntu]: https://ubuntu.org/
 
+
 ``` include
 docs/sections/run.md
 ```
 
+TeXLive Version
+------------------------------------------------------------------
+
+The TeXLive version for each tag is fixed. See the table below
+for the version associated with a given tag / pandoc version.
+
+``` texlive-versions
+```
+
 Other images
------------------------------------------------------------------
+------------------------------------------------------------------
 
 If the images here do not fit your use-case, then checkout these
 alternatives:

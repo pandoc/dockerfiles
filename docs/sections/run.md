@@ -1,5 +1,5 @@
 Run the pandoc Docker container
-===================================================================
+------------------------------------------------------------------
 
 A common use of the image looks like this (linebreaks for
 readability):

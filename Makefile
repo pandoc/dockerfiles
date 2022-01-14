@@ -195,6 +195,7 @@ docs:
 	@pandoc "docs/$(REPO).md" \
 		--lua-filter="docs/filters/transclude.lua" \
 		--lua-filter="docs/filters/supported-tags.lua" \
+		--lua-filter="docs/filters/texlive-versions.lua" \
 		--lua-filter="docs/filters/fix-run.lua" \
 		--to=commonmark
 
