@@ -1,5 +1,8 @@
 local function tag_strings (row)
-  return row[2][1].content
+  return row[2][1].content:walk{
+    Space = function (_) return {pandoc.Str',', pandoc.Space()} end,
+    Str = function (str) return pandoc.Code(str.text) end,
+  }
 end
 function CodeBlock (cb)
   if not cb.classes:includes 'supported-tags' then
