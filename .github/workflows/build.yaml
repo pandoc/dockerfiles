@@ -6,12 +6,13 @@ on:
     branches:
       - master
     paths-ignore:
+      - '.dockerignore'
+      - '.github/FUNDING.yml'
       - 'docs/*'
       - 'LICENSE'
       - 'README.md'
       - 'SECURITY.md'
       - 'release-checklist.md'
-      - '.dockerignore'
   pull_request:
     # Build, but don't push on pull requests
   schedule:
