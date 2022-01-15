@@ -23,15 +23,15 @@ jobs:
     name: Configure
     runs-on: ubuntu-latest
     outputs:
-      pandoc-version: ${{ steps.config-from-commit-message.outputs.pandoc-version }}
-      stacks: ${{ steps.config-from-commit-message.outputs.stacks }}
-      build: ${{ steps.config-from-commit-message.outputs.build }}
+      pandoc-version: ${{ steps.config.outputs.pandoc-version }}
+      stacks: ${{ steps.config.outputs.stacks }}
+      build: ${{ steps.config.outputs.build }}
     steps:
       - uses: actions/checkout@v2
         with:
           ref: ${{ github.event.after }}
       - name: Configure build
-        id: config-from-commit-message
+        id: config
         run: |
           if [ 'schedule' = "${{ github.event_name }}" ]; then
               pandoc_versions="['edge']"
