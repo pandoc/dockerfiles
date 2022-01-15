@@ -2,11 +2,10 @@ name: Tidy
 
 on:
   push:
-    # Build and publish: configure built via commit message
-    branches:
-      - master
-  pull_request:
-    # Build, but don't push on pull requests
+    # Run every time a shell script changes
+    paths:
+      - '**/*.sh'
+  pull_request: {}
 
 jobs:
   lint:

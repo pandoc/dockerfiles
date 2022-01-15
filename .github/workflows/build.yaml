@@ -5,6 +5,13 @@ on:
     # Build and publish: configure build via commit message
     branches:
       - master
+    paths-ignore:
+      - 'docs/*'
+      - 'LICENSE'
+      - 'README.md'
+      - 'SECURITY.md'
+      - 'release-checklist.md'
+      - '.dockerignore'
   pull_request:
     # Build, but don't push on pull requests
   schedule:
