@@ -44,8 +44,11 @@ Other images
 If the images here do not fit your use-case, then checkout these
 alternatives:
 
--   pandoc/core: based on minimal images, but ships with
+-   [**pandoc/core**][]: based on minimal images, but ships with
     additional programs commonly used during conversions.
--   pandoc/latex: suitable for conversions to PDF via [LaTeX].
+-   [**pandoc/latex**][]: suitable for conversions to PDF via [LaTeX].
 
 [LaTeX]: https://latex-project.org/
+
+[**pandoc/core**]: https://hub.docker.com/r/pandoc/core
+[**pandoc/latex**]: https://hub.docker.com/r/pandoc/latex

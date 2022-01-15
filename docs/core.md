@@ -45,8 +45,10 @@ Other images
 If the images here do not fit your use-case, then checkout these
 alternatives:
 
--   pandoc/minimal: small images with the pandoc executable.
-
--   pandoc/latex: suitable for conversions to PDF via [LaTeX].
+-   [**pandoc/minimal**][]: small images with the pandoc executable.
+-   [**pandoc/latex**][]: suitable for conversions to PDF via [LaTeX].
 
 [LaTeX]: https://latex-project.org/
+
+[**pandoc/minimal**]: https://hub.docker.com/r/pandoc/minimal
+[**pandoc/latex**]: https://hub.docker.com/r/pandoc/latex

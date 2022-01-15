@@ -10,6 +10,7 @@ installation and contains all packages required to produce a PDF
 with pandoc's default options.
 
 [pandoc]: https://pandoc.org/
+[LaTeX]: https://latex-project.org/
 [TeX Live]: https://www.tug.org/texlive/
 
 ``` include
@@ -60,8 +61,9 @@ Other images
 If the images here do not fit your use-case, then checkout these
 alternatives:
 
--   pandoc/minimal: small images with the pandoc executable.
--   pandoc/core: based on minimal images, but ships with
+-   [**pandoc/minimal**][]: small images with the pandoc executable.
+-   [**pandoc/core**][]: based on minimal images, but ships with
     additional programs commonly used during conversions.
 
-[LaTeX]: https://latex-project.org/
+[**pandoc/minimal**]: https://hub.docker.com/r/pandoc/minimal
+[**pandoc/core**]: https://hub.docker.com/r/pandoc/core
