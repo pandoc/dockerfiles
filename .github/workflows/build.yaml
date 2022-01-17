@@ -129,7 +129,9 @@ jobs:
         run: make test-latex
 
       - name: Push
-        if: github.event_name == 'push' && github.repository == 'pandoc/dockerfiles'
+        if: >-
+          (github.event_name == 'push' || github.event_name == 'schedule') &&
+          github.repository == 'pandoc/dockerfiles'
         run: |
           # Log into registry
           echo "${{ secrets.DOCKER_HUB_TOKEN }}" |
