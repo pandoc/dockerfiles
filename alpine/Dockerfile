@@ -14,6 +14,7 @@ RUN apk --no-cache add \
         gmp-dev \
         lua5.3-dev \
         pkgconfig \
+        yaml \
         zlib-dev
 
 COPY cabal.root.config /root/.cabal/config
