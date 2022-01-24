@@ -134,6 +134,7 @@ fi
 # create freeze file with all desired constraints
 printf "Creating freeze file...\n"
 cabal v2-freeze \
+      --disable-tests \
       --constraint="pandoc ${pandoc_constraints}" \
       --constraint="lpeg ${lpeg_constraints}" \
       --constraint="aeson-pretty ${aeson_pretty_constraints}" \
