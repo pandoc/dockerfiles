@@ -75,14 +75,14 @@ cd "${tmpdir}"
 # Constraints
 #
 if [ "${stack}" = "static" ]; then
-    pandoc_constraints=" +embed_data_files -trypandoc"
     lua_constraints=" -system-lua -pkg-config +hardcode-reg-keys"
     lpeg_constraints=" -rely-on-shared-lpeg-library"
 else
-    pandoc_constraints=" +embed_data_files -trypandoc"
     lua_constraints=" +system-lua +pkg-config +hardcode-reg-keys"
     lpeg_constraints=" +rely-on-shared-lpeg-library"
 fi
+aeson_pretty_constraints=" +lib-only"
+pandoc_constraints=" +embed_data_files -trypandoc"
 
 uses_hslua_2 ()
 {
@@ -102,6 +102,7 @@ print_constraints_only ()
 {
     printf "constraints: %s %s,\n" "${lua_package}" "${lua_constraints}"
     printf "             lpeg %s,\n" "${lpeg_constraints}"
+    printf '             aeson-pretty %s,\n' "${aeson_pretty_constraints}"
     printf "             pandoc %s\n" "${pandoc_constraints}"
 }
 
@@ -135,6 +136,7 @@ printf "Creating freeze file...\n"
 cabal v2-freeze \
       --constraint="pandoc ${pandoc_constraints}" \
       --constraint="lpeg ${lpeg_constraints}" \
+      --constraint="aeson-pretty ${aeson_pretty_constraints}" \
       --constraint="${lua_package} ${lua_constraints}" \
       --allow-newer='pandoc'
 
