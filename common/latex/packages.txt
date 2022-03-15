@@ -39,6 +39,11 @@ ulem
 unicode-math
 xcolor
 
+# Required when using pandoc-crossref
+cleveref    # Intelligent cross-referencing
+float       # Improved interface for floating objects
+subfig      # Figures broken into subfigures
+
 # Needed for when `--highlight-style` is used with something other than
 # pygments.
 framed
