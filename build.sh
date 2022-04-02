@@ -3,21 +3,20 @@
 usage ()
 {
     printf 'Generates all parameters for the docker image\n'
-    printf 'Usage: %s ACTION [OPTIONS] [EXTRA ARGS]\n\n' "$0"
+    printf 'Usage: %s ACTION [OPTIONS] [EXTRA BUILD ARGS]\n\n' "$0"
     printf 'Actions:\n'
     printf '\tbuild: build and tag the image\n'
     printf '\tpush: push the tags to Docker Hub\n'
     printf 'Options:\n'
     printf '  -c: targeted pandoc commit, e.g. 2.9.2.1\n'
     printf '  -d: directory\n'
-    printf '  -o: docker build options\n'
     printf '  -r: targeted image repository/flavor, e.g. core or latex\n'
     printf '  -s: stack on which the image will be based\n'
     printf '  -t: docker build target\n'
     printf '  -v: increase verbosity\n'
 }
 
-if ! args=$(getopt 'c:d:o:pr:s:t:v' "$@"); then
+if ! args=$(getopt 'c:d:pr:s:t:v' "$@"); then
     usage && exit 1
 fi
 # The variable is intentionally left unquoted.
