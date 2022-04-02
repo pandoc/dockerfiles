@@ -139,6 +139,7 @@ cabal v2-freeze \
       --constraint="lpeg ${lpeg_constraints}" \
       --constraint="aeson-pretty ${aeson_pretty_constraints}" \
       --constraint="${lua_package} ${lua_constraints}" \
+      --flag=lua53 \
       --allow-newer='pandoc'
 
 printf "Copying freeze file to %s\n" "${outfile}"
