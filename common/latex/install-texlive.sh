@@ -2,7 +2,7 @@
 
 # NOTE TO MAINTAINERS: this must be updated each time a new texlive is
 # released!
-default_version=2021
+default_version=2022
 tlversion=${1:-"$default_version"}
 installer_archive=install-tl-unx.tar.gz
 
