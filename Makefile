@@ -62,7 +62,7 @@ define stack
 # setting the `STACK` variable directly and allows for convenient tab
 # completion.
 .PHONY: $(1) $(1)-minimal $(1)-core $(1)-freeze-file
-$(1) $(1)-minimal $(1)-core $(1)-latex $(1)-freeze-file: STACK = $(1)
+$(1) $(1)-minimal $(1)-freeze-file: STACK = $(1)
 $(1): $(1)-minimal
 $(1)-minimal: minimal
 $(1)-freeze-file: $(1)/$(stack_freeze_file)
@@ -114,7 +114,7 @@ freeze-file: $(STACK)/$(stack_freeze_file)
 		    -s "$(STACK)" \
 		    -o /app/$@
 # Minimal ###############################################################
-.PHONY: core
+.PHONY: minimal
 minimal: $(STACK)/$(stack_freeze_file)
 	./build.sh build -v \
 		-r minimal \
@@ -133,7 +133,7 @@ core: $(STACK)/$(stack_freeze_file)
 		-d "$(makefile_dir)" \
 		-t "$(STACK)-core" \
 		$(docker_cpu_options)
-# LaTeX ########################################################################
+# LaTeX #################################################################
 .PHONY: latex
 latex: $(STACK)/$(stack_freeze_file)
 	./build.sh build -v \
@@ -143,7 +143,7 @@ latex: $(STACK)/$(stack_freeze_file)
 		-d "$(makefile_dir)" \
 		-t "$(STACK)-latex" \
 		$(docker_cpu_options)
-# Test #########################################################################
+# Test ##################################################################
 .PHONY: test-core test-latex test-minimal
 test-minimal: IMAGE ?= pandoc/minimal:$(PANDOC_VERSION)-$(STACK)
 test-minimal:
