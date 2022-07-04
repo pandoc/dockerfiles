@@ -48,6 +48,7 @@ RUN cabal v2-update \
   && cabal v2-build \
       --allow-newer 'lib:pandoc' \
       --disable-tests \
+      --disable-bench \
       --jobs \
       . $extra_packages
 
