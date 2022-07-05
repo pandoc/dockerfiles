@@ -3,14 +3,26 @@ ARG base_image_version=focal
 FROM ubuntu:$base_image_version AS ubuntu-builder-base
 WORKDIR /app
 
+## Not sure why we have to repeat this, but apparently the arg is no
+## longer set after FROM.
+ARG base_image_version=focal
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get -q --no-allow-insecure-repositories update \
+  && if [ $base_image_version = "focal" ]; then \
+         apt-get install --assume-yes --no-install-recommends \
+                 software-properties-common \
+         && add-apt-repository ppa:hvr/ghc \
+         && apt-get install --assume-yes --no-install-recommends \
+                    ghc-8.8.4=\* \
+                    cabal-install-3.0=\* \
+         && ln -s /opt/ghc/bin/ghc /usr/bin/ghc \
+         && ln -s /opt/cabal/bin/cabal /usr/bin/cabal; \
+     else \
+         apt-get install --assume-yes --no-install-recommends \
+                 ghc=* \
+                 cabal-install=*; \
+     fi \
   && apt-get install --assume-yes --no-install-recommends \
-       software-properties-common \
-  && add-apt-repository ppa:hvr/ghc \
-  && apt-get install --assume-yes --no-install-recommends \
-       ghc-8.8.4=8.8.4-* \
-       cabal-install-3.0=3.0* \
        build-essential=* \
        ca-certificates=* \
        curl=* \
@@ -20,9 +32,7 @@ RUN apt-get -q --no-allow-insecure-repositories update \
        liblua5.3-dev=5.3.* \
        pkg-config=* \
        zlib1g-dev=1:1.2.11.* \
-  && rm -rf /var/lib/apt/lists/* \
-  && ln -s /opt/ghc/bin/ghc /usr/bin/ghc \
-  && ln -s /opt/cabal/bin/cabal /usr/bin/cabal
+  && rm -rf /var/lib/apt/lists/*
 
 COPY cabal.root.config /root/.cabal/config
 RUN cabal --version \
