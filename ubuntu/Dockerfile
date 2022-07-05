@@ -9,8 +9,8 @@ RUN apt-get -q --no-allow-insecure-repositories update \
        software-properties-common \
   && add-apt-repository ppa:hvr/ghc \
   && apt-get install --assume-yes --no-install-recommends \
-       ghc-8.8.3=8.8.3-* \
-       cabal-install-3.2=3.2* \
+       ghc-8.8.4=8.8.4-* \
+       cabal-install-3.0=3.0* \
        build-essential=* \
        ca-certificates=* \
        curl=* \
