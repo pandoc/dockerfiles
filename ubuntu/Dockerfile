@@ -74,7 +74,7 @@ RUN find dist-newstyle \
          -exec cp '{}' /usr/local/bin/ ';'
 
 # Minimal ###############################################################
-FROM ubuntu:focal AS ubuntu-minimal
+FROM ubuntu:$base_image_version AS ubuntu-minimal
 ARG pandoc_version=edge
 LABEL maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
 LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
@@ -92,14 +92,14 @@ COPY --from=ubuntu-builder \
 RUN apt-get -q --no-allow-insecure-repositories update \
   && DEBIAN_FRONTEND=noninteractive \
      apt-get install --assume-yes --no-install-recommends \
-       ca-certificates=* \
-       liblua5.3-0=5.3.3* \
-       lua-lpeg=1.0.* \
-       libatomic1=10* \
-       libgmp10=2:6.* \
-       libpcre3=2:8.39-* \
-       libyaml-0-2=0.2.* \
-       zlib1g=1:1.2.11.* \
+       ca-certificates=\* \
+       liblua5.3-0=\* \
+       lua-lpeg=\* \
+       libatomic1=\* \
+       libgmp10=\* \
+       libpcre3=\* \
+       libyaml-0-2=\* \
+       zlib1g=\* \
   && rm -rf /var/lib/apt/lists/*
 
 # Core ##################################################################
