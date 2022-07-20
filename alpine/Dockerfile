@@ -1,5 +1,5 @@
 # Base ##################################################################
-ARG base_image_version=3.14
+ARG base_image_version=3.16
 FROM alpine:$base_image_version AS alpine-builder-base
 WORKDIR /app
 
@@ -12,6 +12,8 @@ RUN apk --no-cache add \
         ghc \
         git \
         gmp-dev \
+        libffi \
+        libffi-dev \
         lua5.3-dev \
         pkgconfig \
         yaml \
