@@ -12,6 +12,7 @@ RUN apk --no-cache add \
         ghc \
         git \
         gmp-dev \
+        libffi-dev \
         zlib-dev \
         zlib-static
 
