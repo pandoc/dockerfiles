@@ -100,14 +100,17 @@ $(foreach img,$(image_stacks),$(eval $(call stack,$(img))))
 freeze-file: $(STACK)/$(stack_freeze_file)
 %/$(stack_freeze_file): STACK = $*
 %/$(stack_freeze_file):
-	docker build $(docker_cpu_options) \
-		--tag pandoc/$(STACK)-builder-base \
-		--target=$(STACK)-builder-base \
-		-f $(makefile_dir)/$(STACK)/Dockerfile $(makefile_dir)
+	./build.sh build -v \
+		-r "$(STACK)-builder-base" \
+		-s "$(STACK)" \
+		-c "$(PANDOC_COMMIT)" \
+		-d "$(makefile_dir)" \
+		-t "$(STACK)-builder-base" \
+		$(docker_cpu_options)
 	docker run --rm \
 		-v "$(makefile_dir):/app" \
 	  --env WITHOUT_CROSSREF=$(WITHOUT_CROSSREF) \
-		pandoc/$(STACK)-builder-base \
+		pandoc/$(STACK)-builder-base:latest-$(STACK) \
 		sh /app/common/pandoc-freeze.sh \
 		    -c $(PANDOC_COMMIT) \
 		    -u "$(shell id -u):$(shell id -g)" \
