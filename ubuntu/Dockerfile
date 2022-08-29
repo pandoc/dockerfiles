@@ -6,6 +6,7 @@ WORKDIR /app
 ## Not sure why we have to repeat this, but apparently the arg is no
 ## longer set after FROM.
 ARG base_image_version=focal
+ARG lua_version=5.4
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get -q --no-allow-insecure-repositories update \
   && if [ $base_image_version = "focal" ]; then \
@@ -29,7 +30,7 @@ RUN apt-get -q --no-allow-insecure-repositories update \
        fakeroot=* \
        git \
        libgmp-dev=2:6.* \
-       liblua5.3-dev=5.3.* \
+       liblua$lua_version-dev=* \
        pkg-config=* \
        zlib1g-dev=1:1.2.11.* \
   && rm -rf /var/lib/apt/lists/*
@@ -76,6 +77,7 @@ RUN find dist-newstyle \
 # Minimal ###############################################################
 FROM ubuntu:$base_image_version AS ubuntu-minimal
 ARG pandoc_version=edge
+ARG lua_version=5.4
 LABEL maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
 LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
 LABEL org.pandoc.author "John MacFarlane"
@@ -93,7 +95,7 @@ RUN apt-get -q --no-allow-insecure-repositories update \
   && DEBIAN_FRONTEND=noninteractive \
      apt-get install --assume-yes --no-install-recommends \
        ca-certificates=\* \
-       liblua5.3-0=\* \
+       liblua$lua_version-0=\* \
        lua-lpeg=\* \
        libatomic1=\* \
        libgmp10=\* \

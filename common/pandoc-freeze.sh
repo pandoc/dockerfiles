@@ -77,6 +77,9 @@ cd "${tmpdir}"
 if [ "${stack}" = "static" ]; then
     lua_constraints=" -system-lua -pkg-config +hardcode-reg-keys"
     lpeg_constraints=" -rely-on-shared-lpeg-library"
+elif [ "${stack}" = "ubuntu" ]; then
+    lua_constraints=" +system-lua +pkg-config +hardcode-reg-keys"
+    lpeg_constraints=" -rely-on-shared-lpeg-library"
 else
     lua_constraints=" +system-lua +pkg-config +hardcode-reg-keys"
     lpeg_constraints=" +rely-on-shared-lpeg-library"
@@ -139,7 +142,6 @@ cabal v2-freeze \
       --constraint="lpeg ${lpeg_constraints}" \
       --constraint="aeson-pretty ${aeson_pretty_constraints}" \
       --constraint="${lua_package} ${lua_constraints}" \
-      --flag=lua53 \
       --allow-newer='pandoc'
 
 printf "Copying freeze file to %s\n" "${outfile}"

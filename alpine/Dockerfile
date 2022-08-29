@@ -3,6 +3,7 @@ ARG base_image_version=3.16
 FROM alpine:$base_image_version AS alpine-builder-base
 WORKDIR /app
 
+ARG lua_version=5.4
 RUN apk --no-cache add \
         alpine-sdk \
         bash \
@@ -14,7 +15,7 @@ RUN apk --no-cache add \
         gmp-dev \
         libffi \
         libffi-dev \
-        lua5.3-dev \
+        lua$lua_version-dev \
         pkgconfig \
         yaml \
         zlib-dev
@@ -63,6 +64,7 @@ RUN find dist-newstyle \
 # Minimal ###############################################################
 FROM alpine:$base_image_version AS alpine-minimal
 ARG pandoc_version=edge
+ARG lua_version=5.4
 LABEL maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
 LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
 LABEL org.pandoc.author "John MacFarlane"
@@ -79,8 +81,8 @@ COPY --from=alpine-builder \
 RUN apk --no-cache add \
         gmp \
         libffi \
-        lua5.3 \
-        lua5.3-lpeg
+        lua$lua_version \
+        lua$lua_version-lpeg
 
 # Core ##################################################################
 FROM alpine-minimal AS alpine-core
