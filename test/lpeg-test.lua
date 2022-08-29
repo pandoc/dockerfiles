@@ -9,8 +9,8 @@ if PANDOC_VERSION < '2.16.2' then
   end
   lpeg = require 'lpeg'
 else
-  if not isstatic then
-    assert(lpeg and lpeg == require 'lpeg', 'lpeg not loaded from system lib')
+  if lpeg and lpeg == require 'lpeg' then
+    io.stderr:write '[NOTICE] lpeg not loaded from system lib\n'
   end
 end
 if lpeg.type(lpeg.P 'Hello') ~= 'pattern' then
