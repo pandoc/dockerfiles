@@ -34,7 +34,7 @@ RUN cabal v2-update \
       --disable-tests \
       --enable-executable-static \
       --ghc-options '-split-sections' \
-      pandoc \
+      pandoc-cli \
   && cabal v2-build \
       --jobs \
       .
