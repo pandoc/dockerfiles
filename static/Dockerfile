@@ -34,10 +34,10 @@ RUN cabal v2-update \
       --disable-tests \
       --enable-executable-static \
       --ghc-options '-split-sections' \
-      pandoc-cli \
+      . pandoc-cli \
   && cabal v2-build \
       --jobs \
-      .
+      . pandoc-cli
 
 # Cabal's exec stripping doesn't seem to work reliably, let's do it here.
 RUN find dist-newstyle \
