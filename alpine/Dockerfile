@@ -109,11 +109,16 @@ RUN apk --no-cache add \
         wget \
         xz
 
-# DANGER: this will vary for different distributions, particularly the
-# `linuxmusl` suffix. Alpine linux is a musl libc based distribution,
-# for other "more common" distributions, you likely want just `-linux`
-# suffix rather than `-linuxmusl` -----> vvvvvvvvv
-ENV PATH="/opt/texlive/texdir/bin/x86_64-linuxmusl:${PATH}"
+# TeXLive binaries location
+ARG texlive_bin="/opt/texlive/texdir/bin"
+
+RUN TEXLIVE_ARCH="$(uname -m)-linuxmusl" && \
+    mkdir -p ${texlive_bin} && \
+    ln -sf "${texlive_bin}/${TEXLIVE_ARCH}" "${texlive_bin}/default"
+
+# Modify PATH environment variable, prepending TexLive bin directory
+ENV PATH="${texlive_bin}/default:${PATH}"
+
 WORKDIR /root
 
 # Installer scripts and config
