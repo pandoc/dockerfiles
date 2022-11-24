@@ -112,6 +112,9 @@ RUN apk --no-cache add \
 # TeXLive binaries location
 ARG texlive_bin="/opt/texlive/texdir/bin"
 
+# The architecture suffix may vary based on different distributions,
+# particularly for musl libc based distrubions, like Alpine linux,
+# where the suffix is linuxmusl
 RUN TEXLIVE_ARCH="$(uname -m)-linuxmusl" && \
     mkdir -p ${texlive_bin} && \
     ln -sf "${texlive_bin}/${TEXLIVE_ARCH}" "${texlive_bin}/default"
