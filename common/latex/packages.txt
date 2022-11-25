@@ -35,7 +35,7 @@ parskip
 pdflscape   # landscape mode for single pages
 pgf         # for TikZ
 setspace
-ulem
+soul        # Used instead of ulem for strikeout, underline (https://github.com/jgm/pandoc/commit/144bf90ab92b517dd721baf80f121f86187ccd61)
 unicode-math
 xcolor
 
@@ -112,5 +112,4 @@ natbib
 # These packages were identified by the tests, they are likely
 # dependencies of dependencies that are not encoded well.
 footnotehyper
-soul
 xurl
