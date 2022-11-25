@@ -112,4 +112,5 @@ natbib
 # These packages were identified by the tests, they are likely
 # dependencies of dependencies that are not encoded well.
 footnotehyper
+soul
 xurl
