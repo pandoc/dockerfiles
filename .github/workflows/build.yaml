@@ -78,9 +78,9 @@ jobs:
           printf "  - stacks: %s\n" "$stacks"
           printf "  - build: %s\n" "$build"
 
-          printf '::set-output name=pandoc-version::%s\n' "$pandoc_versions"
-          printf '::set-output name=stacks::%s\n' "$stacks"
-          printf '::set-output name=build::%s\n' "$build"
+          printf 'pandoc-version=%s\n' "$pandoc_versions" >> $GITHUB_OUTPUT
+          printf 'stacks=%s\n' "$stacks" >> $GITHUB_OUTPUT
+          printf 'build=%s\n' "$build" >> $GITHUB_OUTPUT
 
   # Build images and store them as tar archive
   build:
