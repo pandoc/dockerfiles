@@ -53,7 +53,7 @@ COPY ./ubuntu/freeze/pandoc-$pandoc_commit.project.freeze \
 WORKDIR /usr/src/pandoc
 # Add pandoc-crossref to project
 ARG without_crossref=
-ARG extra_packages="pandoc-crossref"
+ARG extra_packages="pandoc-cli pandoc-crossref"
 RUN test -n "$without_crossref" || \
     printf "extra-packages: pandoc-crossref\n" > cabal.project.local;
 
@@ -66,7 +66,7 @@ RUN cabal v2-update \
       --disable-tests \
       --disable-bench \
       --jobs \
-      . pandoc-cli $extra_packages
+      . $extra_packages
 
 # Cabal's exec stripping doesn't seem to work reliably, let's do it here.
 RUN find dist-newstyle \

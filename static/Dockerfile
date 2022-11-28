@@ -28,16 +28,17 @@ COPY ./static/freeze/pandoc-$pandoc_commit.project.freeze \
      /usr/src/pandoc/cabal.project.freeze
 
 # Install Haskell dependencies
+ARG extra_packages="pandoc-cli"
 WORKDIR /usr/src/pandoc
 RUN cabal v2-update \
   && cabal v2-configure \
       --disable-tests \
       --enable-executable-static \
       --ghc-options '-split-sections' \
-      . pandoc-cli \
+      . $extra_packages \
   && cabal v2-build \
       --jobs \
-      . pandoc-cli
+      . $extra_packages
 
 # Cabal's exec stripping doesn't seem to work reliably, let's do it here.
 RUN find dist-newstyle \

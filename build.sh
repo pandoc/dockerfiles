@@ -134,6 +134,12 @@ if [ "$stack" = "static" ]; then
     without_crossref=true
 fi
 
+## The pandoc-cli package did not exist pre pandoc 3.
+## Do not try to build it if the commit starts with a 2.
+if [ "${pandoc_commit#2}" = "${pandoc_commit}" ]; then
+    extra_packages="pandoc-cli ${extra_packages}"
+fi
+
 # Debug output
 if [ "$verbosity" -gt 0 ]; then
     printf 'Building with these parameters:\n'

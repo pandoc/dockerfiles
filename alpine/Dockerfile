@@ -42,7 +42,7 @@ RUN test -n "$without_crossref" || \
     printf "extra-packages: pandoc-crossref\n" > cabal.project.local;
 
 # Additional projects to compile alongside pandoc
-ARG extra_packages="pandoc-crossref"
+ARG extra_packages="pandoc-cli pandoc-crossref"
 
 # Build pandoc and pandoc-crossref. The `allow-newer` is required for
 # when pandoc-crossref has not been updated yet, but we want to build
@@ -53,7 +53,7 @@ RUN cabal v2-update \
       --disable-tests \
       --disable-bench \
       --jobs \
-      . pandoc-cli $extra_packages
+      . $extra_packages
 
 # Cabal's exec stripping doesn't seem to work reliably, let's do it here.
 RUN find dist-newstyle \
