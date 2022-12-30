@@ -18,8 +18,7 @@ This repo contains a collection of Dockerfiles to build various
 Available Images
 ==================================================================
 
-Docker images hosted here have a the variants "minimal", "core",
-and "latex".
+Docker images hosted here have the following variants:
 
 - minimal: kept as small as possible. See the [pandoc/minimal][]
   repository.
@@ -29,10 +28,17 @@ and "latex".
   LaTeX installation in addition. This includes all packages that
   `pandoc` _might_ use, and any libraries needed by these
   packages. See the [pandoc/latex][] repository.
-  
+- extra: extends the latex image with a curated selection of templates,
+  filters, fonts, etc. See the [pandoc/extra][] repository.
+
+All images are based on the `alpine` stack. The [pandoc/minimal][],
+[pandoc/latex][] and [pandoc/extra][] images are also available with 
+an `ubuntu` stack.
+
 [pandoc/minimal]: https://hub.docker.com/r/pandoc/minimal
 [pandoc/core]: https://hub.docker.com/r/pandoc/core
 [pandoc/latex]: https://hub.docker.com/r/pandoc/latex
+[pandoc/extra]: https://hub.docker.com/r/pandoc/extra
 
 Usage
 ================================================================================

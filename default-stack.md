@@ -3,3 +3,4 @@
 | minimal    | static        |
 | core       | alpine        |
 | latex      | alpine        |
+| extra      | alpine        |

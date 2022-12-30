@@ -120,6 +120,10 @@ jobs:
         if: ${{ matrix.stack != 'static' }}
         run: make latex
 
+      - name: Build extra image
+        if: ${{ matrix.stack != 'static' }}
+        run: make extra
+
       - name: Test core image
         if: ${{ matrix.stack != 'static' }}
         run: make test-core
@@ -127,6 +131,10 @@ jobs:
       - name: Test LaTeX image
         if: ${{ matrix.stack != 'static' }}
         run: make test-latex
+
+      - name: Test extra image
+        if: ${{ matrix.stack != 'static' }}
+        run: make test-extra
 
       - name: Push
         if: >-

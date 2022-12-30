@@ -165,3 +165,42 @@ RUN /root/install-texlive.sh $texlive_version \
   && chmod -R o+w /opt/texlive/texdir/texmf-var
 
 WORKDIR /data
+
+# extra ##############################################################
+FROM ubuntu-latex as ubuntu-extra
+
+COPY common/latex/texlive.profile /root/texlive.profile
+COPY common/extra/packages.txt /root/extra_packages.txt
+COPY common/extra/requirements.txt /root/extra_requirements.txt
+
+RUN apt-get -q --no-allow-insecure-repositories update \
+  && apt-get install --assume-yes --no-install-recommends \
+        python3-pip
+
+RUN sed -e 's/ *#.*$//' -e '/^ *$/d' /root/extra_packages.txt | \
+    xargs tlmgr install \
+  && rm -f /root/texlive.profile \
+           /root/extra_packages.txt
+
+RUN pip3 --no-cache-dir install -r /root/extra_requirements.txt \
+  && rm -f /root/extra_requirements.txt
+
+# Templates
+#
+# If docker is run with the `--user` option, the $HOME var
+# is empty when the user does not exist inside the container.
+# This causes several problems for pandoc. We solve the issue
+# by putting the pandoc templates in a shared space (TEMPLATES_DIR)
+# and creating symbolic links inside the `/root` home so that
+# the templates and packages can be accessed by root and a
+# non-existent `--user`
+#
+ARG TEMPLATES_DIR=/.pandoc/templates
+
+RUN mkdir -p ${TEMPLATES_DIR} && \
+    ln -s /.pandoc /root/.pandoc
+
+# eisvogel
+ARG EISVOGEL_REPO=https://raw.githubusercontent.com/Wandmalfarbe/pandoc-latex-template
+ARG EISVOGEL_VERSION=v2.1.0
+RUN wget ${EISVOGEL_REPO}/${EISVOGEL_VERSION}/eisvogel.tex -O ${TEMPLATES_DIR}/eisvogel.latex

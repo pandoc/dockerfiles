@@ -1,0 +1,56 @@
+#
+# Latex packages required by the templates and filters
+#
+
+#########################################################################
+# Required by pandoc-latex-environment filter
+etoolbox
+environ
+pgf
+tcolorbox
+trimspaces
+
+#########################################################################
+# Required by eisvogel template
+# see https://github.com/Wandmalfarbe/pandoc-latex-template/blob/master/.github/workflows/build-examples.yml
+abstract
+adjustbox
+awesomebox
+babel-german
+background
+bidi
+catchfile
+collectbox
+csquotes
+everypage
+filehook
+fontawesome5
+footmisc
+footnotebackref
+framed
+fvextra
+hardwrap
+incgraph
+letltxmacro
+lineno
+listingsutf8
+ly1
+koma-script
+mdframed
+mweights
+needspace
+pagecolor
+sectsty
+sourcecodepro
+sourcesanspro
+titlesec
+titling
+transparent
+ucharcat
+ulem
+unicode-math
+upquote
+xecjk
+xurl
+zref
+
