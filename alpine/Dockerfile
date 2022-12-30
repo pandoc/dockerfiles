@@ -144,3 +144,30 @@ RUN echo "binary_x86_64-linuxmusl 1" >> /root/texlive.profile \
   && chmod -R o+w /opt/texlive/texdir/texmf-var
 
 WORKDIR /data
+
+# extra ##############################################################
+FROM alpine-latex as alpine-extra
+
+COPY common/latex/texlive.profile /root/texlive.profile
+COPY common/extra/packages.txt /root/extra_packages.txt
+COPY common/extra/requirements.txt /root/extra_requirements.txt
+
+RUN apk --no-cache add py-pip
+
+RUN sed -e 's/ *#.*$//' -e '/^ *$/d' /root/extra_packages.txt | \
+    xargs tlmgr install \
+  && rm -f /root/texlive.profile \
+           /root/extra_packages.txt
+
+RUN pip3 --no-cache-dir install -r /root/extra_requirements.txt \
+  && rm -f /root/extra_requirements.txt
+
+ARG TEMPLATES_DIR=/.pandoc/templates
+
+RUN mkdir -p ${TEMPLATES_DIR} && \
+    ln -s /.pandoc /root/.pandoc
+
+# eisvogel
+ARG EISVOGEL_REPO=https://raw.githubusercontent.com/Wandmalfarbe/pandoc-latex-template
+ARG EISVOGEL_VERSION=v2.1.0
+RUN wget ${EISVOGEL_REPO}/${EISVOGEL_VERSION}/eisvogel.tex -O ${TEMPLATES_DIR}/eisvogel.latex

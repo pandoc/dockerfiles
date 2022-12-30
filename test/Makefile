@@ -8,6 +8,7 @@
 #
 # 1. IMAGE=pandoc/image:tag make test-minimal
 # 2. IMAGE=pandoc/image:tag make test-latex
+# 3. IMAGE=pandoc/image:tag make test-extra
 ifndef IMAGE
 $(error IMAGE variable must be set to docker image to test)
 endif
@@ -18,7 +19,7 @@ DIFF ?= diff
 test_files_path := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 
 .PHONY: test
-test: test-minimal test-latex
+test: test-minimal test-latex test-extra
 
 #   ____
 #  / ___|___  _ __ ___
@@ -169,6 +170,27 @@ $(code_targets): output/code-highlight-%.pdf: code-highlight.md
 	$(LATEX_CMD) $< \
 	    --highlight-style=$* \
 	    --output=$@
+
+#
+#                 m
+#  mmm   m   m  mm#mm   m mm   mmm
+# #"  #   #m#     #     #"  " "   #
+# #""""   m#m     #     #     m"""#
+# "#mm"  m" "m    "mm   #     "mm"#
+#
+EXTRA_CMD = docker run --rm \
+	-v $(test_files_path):/data \
+	$(IMAGE) \
+	--fail-if-warnings
+
+.PHONY: test-extra
+test-extra: output/eisvogel.pdf
+
+output/eisvogel.pdf: eisvogel.md
+	$(EXTRA_CMD) $< \
+	    --output=$@ \
+	    --template=eisvogel \
+	    --pdf-engine=xelatex
 
 #   ____ _
 #  / ___| | ___  __ _ _ __
