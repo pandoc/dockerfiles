@@ -148,4 +148,5 @@ jobs:
           if [ "$STACK" != 'static' ]; then
               make push-core
               make push-latex
+              make push-extra
           fi
