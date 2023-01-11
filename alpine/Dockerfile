@@ -27,7 +27,7 @@ RUN cabal --version \
 
 # Builder ###############################################################
 FROM alpine-builder-base as alpine-builder
-ARG pandoc_commit=master
+ARG pandoc_commit=main
 RUN git clone --branch=$pandoc_commit --depth=1 --quiet \
   https://github.com/jgm/pandoc /usr/src/pandoc
 

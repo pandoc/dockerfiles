@@ -24,7 +24,7 @@ fi
 set -- $args
 
 directory=.
-pandoc_commit=master
+pandoc_commit=main
 repo=core
 stack=static
 target=${stack}-${repo}
@@ -73,7 +73,7 @@ action=${1}
 shift
 
 pandoc_version=${pandoc_commit}
-if [ "$pandoc_commit" = "master" ]; then
+if [ "$pandoc_commit" = "main" ]; then
     pandoc_version=edge
 fi
 

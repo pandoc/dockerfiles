@@ -20,7 +20,7 @@ COPY cabal.root.config /root/.cabal/config
 
 # Builder ###############################################################
 FROM static-builder-base as static-builder
-ARG pandoc_commit=master
+ARG pandoc_commit=main
 RUN git clone --branch=$pandoc_commit --depth=1 --quiet \
   https://github.com/jgm/pandoc /usr/src/pandoc
 

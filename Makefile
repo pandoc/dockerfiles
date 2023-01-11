@@ -1,7 +1,7 @@
 PANDOC_VERSION ?= edge
 
 ifeq ($(PANDOC_VERSION),edge)
-PANDOC_COMMIT          ?= master
+PANDOC_COMMIT          ?= main
 else
 PANDOC_COMMIT          ?= $(PANDOC_VERSION)
 endif

@@ -29,7 +29,7 @@ fi
 set -- $args
 
 stack=unknown
-pandoc_commit=master
+pandoc_commit=main
 user=$(id -u):$(id -g)
 outfile=cabal.project.freeze
 verbosity=0
@@ -91,7 +91,7 @@ uses_hslua_2 ()
 {
     major=$(printf "%s" "$pandoc_commit" | \
                 awk -F. '{ printf("%03d%03d\n", $1,$2); }')
-    test "${major}" -ge "002015" || [ "$pandoc_commit" = "master" ]
+    test "${major}" -ge "002015" || [ "$pandoc_commit" = "main" ]
     return $?
 }
 
@@ -109,9 +109,9 @@ print_constraints_only ()
     printf "             pandoc %s\n" "${pandoc_constraints}"
 }
 
-# Just write the constraints to the target file when targeting master
-if [ "$pandoc_commit" = "master" ]; then
-    printf "Writing freeze file for builds from master...\n"
+# Just write the constraints to the target file when targeting main
+if [ "$pandoc_commit" = "main" ]; then
+    printf "Writing freeze file for builds from main...\n"
     print_constraints_only > "${outfile}"
     printf "Changing freeze file owner to %s\n" "${user}"
     chown "${user}" "${outfile}"

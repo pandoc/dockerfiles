@@ -42,7 +42,7 @@ RUN cabal --version \
 
 # Builder ###############################################################
 FROM ubuntu-builder-base as ubuntu-builder
-ARG pandoc_commit=master
+ARG pandoc_commit=main
 RUN git clone --branch=$pandoc_commit --depth=1 --quiet \
   https://github.com/jgm/pandoc /usr/src/pandoc
 

@@ -3,7 +3,7 @@
 - [ ] Add a new row for the release to `versions.md`. Make sure
   that no tag in the `tags` column is listed twice; adjust other
   rows if necessary. Use the "Alpine" and "Ubuntu" releases that
-  are used for the dev (master) version.
+  are used for the dev (main) version.
 
 - [ ] Set the PANDOC_VERSION environment variable. This will save
   a good bit of typing and prevent mistakes further down.
