@@ -27,7 +27,7 @@ jobs:
       stacks: ${{ steps.config.outputs.stacks }}
       build: ${{ steps.config.outputs.build }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.after }}
       - name: Configure build
@@ -100,7 +100,7 @@ jobs:
       STACK: ${{ matrix.stack }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Show config
         run: make show-args
