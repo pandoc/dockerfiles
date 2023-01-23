@@ -4,12 +4,12 @@ Pandoc extra images
 These images contain [pandoc][], the universal document converter
 and a curated selection of components:
 
-* Templates: [eisvogel][]
+* Templates: [Eisvogel][]
 * Pandoc filters: [pandoc-latex-environment][]
 * Open Source Fonts: Font Awesome, Source Code Pro, Source Sans Pro
 
 
-[eivogel]: https://github.com/Wandmalfarbe/pandoc-latex-template
+[Eisvogel]: https://github.com/Wandmalfarbe/pandoc-latex-template
 [pandoc-latex-environment]: https://github.com/chdemko/pandoc-latex-environment
 
 [pandoc]: https://pandoc.org/
