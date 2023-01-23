@@ -54,3 +54,5 @@ xecjk
 xurl
 zref
 
+# https://github.com/pandoc/dockerfiles/issues/135
+enumitem
