@@ -86,6 +86,7 @@ else
 fi
 aeson_pretty_constraints=" +lib-only"
 pandoc_constraints=" +embed_data_files"
+pandoc_cli_constraints=" +lua -nightly +server"
 
 uses_hslua_2 ()
 {
@@ -107,6 +108,7 @@ print_constraints_only ()
     printf "             lpeg %s,\n" "${lpeg_constraints}"
     printf '             aeson-pretty %s,\n' "${aeson_pretty_constraints}"
     printf "             pandoc %s\n" "${pandoc_constraints}"
+    printf "             pandoc-cli %s\n" "${pandoc_cli_constraints}"
 }
 
 # Just write the constraints to the target file when targeting main
@@ -142,6 +144,7 @@ cabal v2-freeze \
       --disable-tests \
       --constraint="pandoc == ${pandoc_commit}" \
       --constraint="pandoc ${pandoc_constraints}" \
+      --constraint="pandoc-cli ${pandoc_cli_constraints}" \
       --constraint="lpeg ${lpeg_constraints}" \
       --constraint="aeson-pretty ${aeson_pretty_constraints}" \
       --constraint="${lua_package} ${lua_constraints}" \
