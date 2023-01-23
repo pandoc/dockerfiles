@@ -85,7 +85,7 @@ else
     lpeg_constraints=" +rely-on-shared-lpeg-library"
 fi
 aeson_pretty_constraints=" +lib-only"
-pandoc_constraints=" +embed_data_files -trypandoc"
+pandoc_constraints=" +embed_data_files"
 
 uses_hslua_2 ()
 {
@@ -118,13 +118,15 @@ if [ "$pandoc_commit" = "main" ]; then
     exit 0
 fi
 
+pandoc_cli_version=0.1
+
 # Download latest cabal database
 cabal update
 
 # get pandoc source code from Hackage
-cabal get pandoc-"${pandoc_commit}"
+cabal get pandoc-cli-${pandoc_cli_version}
 
-sourcedir=$PWD/pandoc-"${pandoc_commit}"
+sourcedir=$PWD/pandoc-cli-${pandoc_cli_version}
 printf "Switching directory to %s\n" "${sourcedir}"
 cd "${sourcedir}"
 
@@ -138,6 +140,7 @@ fi
 printf "Creating freeze file...\n"
 cabal v2-freeze \
       --disable-tests \
+      --constraint="pandoc == ${pandoc_commit}" \
       --constraint="pandoc ${pandoc_constraints}" \
       --constraint="lpeg ${lpeg_constraints}" \
       --constraint="aeson-pretty ${aeson_pretty_constraints}" \
