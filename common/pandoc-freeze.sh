@@ -75,13 +75,13 @@ cd "${tmpdir}"
 # Constraints
 #
 if [ "${stack}" = "static" ]; then
-    lua_constraints=" -system-lua -pkg-config +hardcode-reg-keys"
+    lua_constraints=" -system-lua -pkg-config +hardcode-reg-keys -export-dynamic"
     lpeg_constraints=" -rely-on-shared-lpeg-library"
 elif [ "${stack}" = "ubuntu" ]; then
-    lua_constraints=" +system-lua +pkg-config +hardcode-reg-keys"
+    lua_constraints=" +system-lua +pkg-config +hardcode-reg-keys -export-dynamic"
     lpeg_constraints=" -rely-on-shared-lpeg-library"
 else
-    lua_constraints=" +system-lua +pkg-config +hardcode-reg-keys"
+    lua_constraints=" +system-lua +pkg-config +hardcode-reg-keys -export-dynamic"
     lpeg_constraints=" +rely-on-shared-lpeg-library"
 fi
 aeson_pretty_constraints=" +lib-only"
