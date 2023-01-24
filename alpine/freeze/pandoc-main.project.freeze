@@ -1,4 +1,5 @@
-constraints: lua  +system-lua +pkg-config +hardcode-reg-keys,
+constraints: lua  +system-lua +pkg-config +hardcode-reg-keys -export-dynamic,
              lpeg  +rely-on-shared-lpeg-library,
              aeson-pretty  +lib-only,
-             pandoc  +embed_data_files -trypandoc
+             pandoc  +embed_data_files,
+             pandoc-cli  +lua +nightly +server

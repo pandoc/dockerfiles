@@ -1,4 +1,5 @@
-constraints: lua  +system-lua +pkg-config +hardcode-reg-keys,
-             lpeg  -rely-on-shared-lpeg-library,
-             vector <0.13,
-             pandoc  +embed_data_files -trypandoc
+constraints: lua  +system-lua +pkg-config +hardcode-reg-keys -export-dynamic,
+             lpeg  +rely-on-shared-lpeg-library,
+             aeson-pretty  +lib-only,
+             pandoc  +embed_data_files,
+             pandoc-cli  +lua +nightly +server
