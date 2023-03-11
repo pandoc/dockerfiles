@@ -1,11 +1,11 @@
 # Base ##################################################################
-ARG base_image_version=focal
+ARG base_image_version=jammy
 FROM ubuntu:$base_image_version AS ubuntu-builder-base
 WORKDIR /app
 
 ## Not sure why we have to repeat this, but apparently the arg is no
 ## longer set after FROM.
-ARG base_image_version=focal
+ARG base_image_version=jammy
 ARG lua_version=5.4
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get -q --no-allow-insecure-repositories update \
