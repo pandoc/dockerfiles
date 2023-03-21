@@ -101,8 +101,12 @@ code_targets = $(addsuffix .pdf, $(addprefix output/code-highlight-, $(styles)))
 .PHONY: test-latex
 test-latex: output/testsuite.pdf output/french.pdf output/german.pdf \
 		output/lorem-geometry.pdf output/lorem-optional-packages.pdf \
-		output/test-beamer.pdf output/test-natbib.pdf output/test-biblatex.pdf \
+		output/test-beamer.pdf output/test-natbib.pdf \
 		$(code_targets)
+
+## FIXME! This test fails in Alpine, but the reason is unclear. We are
+## disabling the test temporarily, as biblatex support is rarely used.
+#   output/test-biblatex.pdf
 
 output/testsuite.pdf: testsuite.native
 	$(LATEX_CMD) $< \
@@ -158,14 +162,12 @@ output/example.bib: example.bib
 output/baboon.png: baboon.png
 	cp $< $@
 
-## FIXME! This test fails in Alpine, but the reason is unclear. We are
-## disabling the test temporarily, as biblatex support is rarely used.
-# output/test-biblatex.pdf: output/test-biblatex.tex output/example.bib \
-# 		output/baboon.png
-# 	docker run --rm -v $(test_files_path):/data \
-# 	    --entrypoint=/data/pdf-via-biblatex.sh \
-# 	    $(IMAGE) \
-# 	    $(notdir $(basename $<))
+output/test-biblatex.pdf: output/test-biblatex.tex output/example.bib \
+		output/baboon.png
+	docker run --rm -v $(test_files_path):/data \
+	    --entrypoint=/data/pdf-via-biblatex.sh \
+	    $(IMAGE) \
+	    $(notdir $(basename $<))
 
 # Use every highlighter to make sure all needed packages are installed.
 $(code_targets): output/code-highlight-%.pdf: code-highlight.md
