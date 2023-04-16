@@ -54,5 +54,13 @@ xecjk
 xurl
 zref
 
+#########################################################################
+# Required by Beamer/Metropolis
+beamertheme-metropolis
+pgfopts
+tcolorbox
+environ
+tikzfill
+
 # https://github.com/pandoc/dockerfiles/issues/135
 enumitem
