@@ -53,6 +53,12 @@ upquote
 xecjk
 xurl
 zref
+cjk 
+cjk-ko 
+nanumtype1
+kotex-plain
+kotex-utf
+kotex-utils
 
 #########################################################################
 # Required by Beamer/Metropolis
