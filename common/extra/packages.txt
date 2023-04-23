@@ -55,6 +55,10 @@ xurl
 zref
 
 #########################################################################
+# Completes Source family
+sourceserifpro
+
+#########################################################################
 # Required by Beamer/Metropolis
 beamertheme-metropolis
 pgfopts
