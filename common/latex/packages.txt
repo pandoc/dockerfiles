@@ -81,6 +81,7 @@ babel-italian
 babel-norsk
 babel-polish
 babel-portuges
+babel-russian
 babel-spanish
 babel-swedish
 hyphen-basque
@@ -96,6 +97,7 @@ hyphen-italian
 hyphen-norwegian
 hyphen-polish
 hyphen-portuguese
+hyphen-russian
 hyphen-spanish
 hyphen-swedish
 # no longer needed in newer pandoc versions
