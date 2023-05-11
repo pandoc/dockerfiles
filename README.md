@@ -130,8 +130,17 @@ This won't matter for most uses, but if you want to write writing more
 complicated scripts you may want to refer to the [`ash`
 manual](https://linux.die.net/man/1/ash).
 
-Once you have stored this script, you must make it executable by running the
-following command on it (this may apply only to UNIX-type systems):
+Note that `/bin/sh` (and most other programs) are unavailable
+in the docker image assigned to `pandoc/minimal[:latest]` 'tag',
+as that is based on a
+[scratch](https://docs.docker.com/build/building/base-images/#creating-a-simple-parent-image-using-scratch)
+[image](https://hub.docker.com/_/scratch/)
+.
+
+Once you have stored this script,
+make sure it can be executed inside the docker container,
+by running the following command on it
+(this may apply only to UNIX-type systems):
 
 ```sh
 chmod +x script.sh
@@ -149,6 +158,18 @@ Notice that the above `script.sh` *did* specify `pandoc`, and you can't just
 omit it as in the simpler command above. This is because the `--entrypoint` flag
 *overrides* the `ENTRYPOINT` field in the docker file (`pandoc`, in our case),
 so you must include the command.
+
+The alpine version might be a lightweight alternative:
+
+```sh
+docker run --entrypoint "/data/script.sh" --rm --volume "${PWD-$(pwd)}:/data" pandoc/minimal:latest-alpine
+```
+
+Or the `pandoc/core`:
+
+```sh
+docker run --entrypoint "/data/script.sh" --rm --volume "${PWD-$(pwd)}:/data" pandoc/core
+```
 
 GitHub Actions
 --------------------------------------------------------------------------------
