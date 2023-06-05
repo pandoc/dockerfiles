@@ -214,6 +214,7 @@ case "$action" in
                --build-arg extra_packages="${extra_packages}"\
                --build-arg base_image_version="${base_image_version}" \
                --build-arg texlive_version="${texlive_version}" \
+               --build-arg texlive_mirror_url="${TEXLIVE_MIRROR_URL}" \
                --build-arg lua_version="${lua_version}" \
                --target "${target}"\
                -f "${directory}/${stack}/Dockerfile"\
