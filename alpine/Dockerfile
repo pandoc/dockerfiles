@@ -135,9 +135,12 @@ COPY common/latex/packages.txt /root/packages.txt
 # TeXLive version to install (leave empty to use the latest version).
 ARG texlive_version=
 
+# TeXLive mirror URL (leave empty to use the default mirror).
+ARG texlive_mirror_url=
+
 # Request musl precompiled binary access
 RUN echo "binary_x86_64-linuxmusl 1" >> /root/texlive.profile \
-  && /root/install-texlive.sh $texlive_version \
+  && /root/install-texlive.sh -t $texlive_version -m $texlive_mirror_url \
   && sed -e 's/ *#.*$//' -e '/^ *$/d' /root/packages.txt | \
      xargs tlmgr install \
   && rm -f /root/texlive.profile \

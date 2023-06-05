@@ -98,6 +98,8 @@ endef
 # Generate convenience targets for all supported stacks.
 $(foreach img,$(image_stacks),$(eval $(call stack,$(img))))
 
+export TEXLIVE_MIRROR_URL
+
 # Freeze ################################################################
 .PHONY: freeze-file
 freeze-file: $(STACK)/$(stack_freeze_file)
