@@ -11,17 +11,7 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get -q --no-allow-insecure-repositories update \
   && if [ $base_image_version = "focal" ]; then \
          apt-get install --assume-yes --no-install-recommends \
-                 software-properties-common \
-         && add-apt-repository ppa:hvr/ghc \
-         && apt-get install --assume-yes --no-install-recommends \
-                    ghc-8.8.4=\* \
-                    cabal-install-3.0=\* \
-         && ln -s /opt/ghc/bin/ghc /usr/bin/ghc \
-         && ln -s /opt/cabal/bin/cabal /usr/bin/cabal; \
-     else \
-         apt-get install --assume-yes --no-install-recommends \
-                 ghc=* \
-                 cabal-install=*; \
+                 software-properties-common; \
      fi \
   && apt-get install --assume-yes --no-install-recommends \
        build-essential=* \
@@ -29,11 +19,31 @@ RUN apt-get -q --no-allow-insecure-repositories update \
        curl=* \
        fakeroot=* \
        git \
+       libffi-dev \
+       libffi8ubuntu1 \
        libgmp-dev=2:6.* \
+       libgmp10 \
        liblua$lua_version-dev=* \
+       libncurses-dev \
+       libncurses5 \
+       libtinfo5 \
        pkg-config=* \
        zlib1g-dev=1:1.2.11.* \
   && rm -rf /var/lib/apt/lists/*
+
+# Install GHCup, GHC, Cabal
+RUN curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
+# Add ghcup to PATH
+ENV PATH=${PATH}:/root/.local/bin
+ENV PATH=${PATH}:/root/.ghcup/bin
+# Update Path to include Cabal and GHC exports
+RUN bash -c "echo PATH="$HOME/.local/bin:$PATH" >> $HOME/.bashrc"
+RUN bash -c "echo export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH" >> $HOME/.bashrc"
+RUN bash -c "source $HOME/.bashrc"
+
+# Use the same minor GHC version as Pandoc
+RUN ghcup install ghc --set 9.6
+RUN ghcup install cabal --set 3.10
 
 COPY cabal.root.config /root/.cabal/config
 RUN cabal --version \
@@ -128,6 +138,7 @@ FROM ubuntu-core as ubuntu-latex
 RUN apt-get -q --no-allow-insecure-repositories update \
   && DEBIAN_FRONTEND=noninteractive \
      apt-get install --assume-yes --no-install-recommends \
+        curl \
         fontconfig \
         gnupg \
         gzip \
@@ -135,7 +146,6 @@ RUN apt-get -q --no-allow-insecure-repositories update \
         libfreetype6 \
         perl \
         tar \
-        wget \
         xzdec \
   && rm -rf /var/lib/apt/lists/*
 
@@ -178,14 +188,16 @@ COPY common/extra/requirements.txt /root/extra_requirements.txt
 
 RUN apt-get -q --no-allow-insecure-repositories update \
   && apt-get install --assume-yes --no-install-recommends \
-        python3-pip
+        python3-pip python3-venv
 
 RUN sed -e 's/ *#.*$//' -e '/^ *$/d' /root/extra_packages.txt | \
     xargs tlmgr install \
   && rm -f /root/texlive.profile \
            /root/extra_packages.txt
 
-RUN pip3 --no-cache-dir install -r /root/extra_requirements.txt \
+RUN python3 -m venv .venv \
+  && . .venv/bin/activate \
+  && pip --no-cache-dir install -r /root/extra_requirements.txt \
   && rm -f /root/extra_requirements.txt
 
 # Templates
@@ -206,4 +218,4 @@ RUN mkdir -p ${TEMPLATES_DIR} && \
 # eisvogel
 ARG EISVOGEL_REPO=https://raw.githubusercontent.com/Wandmalfarbe/pandoc-latex-template
 ARG EISVOGEL_VERSION=v2.4.0
-RUN wget ${EISVOGEL_REPO}/${EISVOGEL_VERSION}/eisvogel.tex -O ${TEMPLATES_DIR}/eisvogel.latex
+RUN curl -o ${TEMPLATES_DIR}/eisvogel.latex ${EISVOGEL_REPO}/${EISVOGEL_VERSION}/eisvogel.tex

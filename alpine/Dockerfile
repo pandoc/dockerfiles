@@ -1,5 +1,5 @@
 # Base ##################################################################
-ARG base_image_version=3.16
+ARG base_image_version=3.19.0
 FROM alpine:$base_image_version AS alpine-builder-base
 WORKDIR /app
 
@@ -7,18 +7,42 @@ ARG lua_version=5.4
 RUN apk --no-cache add \
         alpine-sdk \
         bash \
+        binutils-gold \
         ca-certificates \
-        cabal \
+        curl \
         fakeroot \
-        ghc \
+        gcc \
         git \
         gmp-dev \
+        g++ \
+        libc-dev \
         libffi \
         libffi-dev \
         lua$lua_version-dev \
+        make \
+        musl-dev \
+        ncurses-dev \
+        perl \
         pkgconfig \
+        tar \
+        xz \
         yaml \
         zlib-dev
+
+# Install GHCup, GHC, Cabal
+RUN curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
+# Add ghcup to PATH
+ENV PATH=${PATH}:/root/.local/bin
+ENV PATH=${PATH}:/root/.ghcup/bin
+# Update Path to include Cabal and GHC exports
+RUN bash -c "echo PATH="$HOME/.local/bin:$PATH" >> $HOME/.bashrc"
+RUN bash -c "echo export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH" >> $HOME/.bashrc"
+RUN bash -c "source $HOME/.bashrc"
+
+# Use the same minor GHC version as Pandoc
+RUN ghcup install ghc --set 9.6
+RUN ghcup install cabal --set 3.10
+
 
 COPY cabal.root.config /root/.cabal/config
 RUN cabal --version \
@@ -103,13 +127,14 @@ FROM alpine-core as alpine-latex
 
 # NOTE: to maintainers, please keep this listing alphabetical.
 RUN apk --no-cache add \
+        bind-tools \
+        curl \
         fontconfig \
         freetype \
         gnupg \
         gzip \
         perl \
         tar \
-        wget \
         xz
 
 # TeXLive binaries location
@@ -162,7 +187,9 @@ RUN sed -e 's/ *#.*$//' -e '/^ *$/d' /root/extra_packages.txt | \
   && rm -f /root/texlive.profile \
            /root/extra_packages.txt
 
-RUN pip3 --no-cache-dir install -r /root/extra_requirements.txt \
+RUN python3 -m venv .venv \
+  && . .venv/bin/activate \
+  && pip --no-cache-dir install -r /root/extra_requirements.txt \
   && rm -f /root/extra_requirements.txt
 
 ARG TEMPLATES_DIR=/.pandoc/templates
@@ -173,4 +200,4 @@ RUN mkdir -p ${TEMPLATES_DIR} && \
 # eisvogel
 ARG EISVOGEL_REPO=https://raw.githubusercontent.com/Wandmalfarbe/pandoc-latex-template
 ARG EISVOGEL_VERSION=v2.4.0
-RUN wget ${EISVOGEL_REPO}/${EISVOGEL_VERSION}/eisvogel.tex -O ${TEMPLATES_DIR}/eisvogel.latex
+RUN curl -o ${TEMPLATES_DIR}/eisvogel.latex ${EISVOGEL_REPO}/${EISVOGEL_VERSION}/eisvogel.tex
