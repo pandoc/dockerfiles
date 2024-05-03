@@ -8,11 +8,11 @@ readability):
 docker run --rm \
        --volume "$(pwd):/data" \
        --user $(id -u):$(id -g) \
-       pandoc/latex README.md -o outfile.pdf
+       pandoc/latex README.md -o outfile.epub
 ```
 
 This will convert the file `README.md` in the current working
-directory into `outfile.pdf`. Note that Docker options go *before*
+directory into `outfile.epub`. Note that Docker options go *before*
 the image name, here `pandoc/latex`, while pandoc options come
 *after* it.
 
