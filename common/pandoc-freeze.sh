@@ -120,7 +120,13 @@ if [ "$pandoc_commit" = "main" ]; then
     exit 0
 fi
 
-pandoc_cli_version=0.1
+pandoc_cli_version=$pandoc_commit
+minor=$(printf "%s" "$pandoc_commit" | \
+            awk -F. '{ printf("%03d%03d%03d\n", $1,$2,$3); }')
+if test "${minor}" -le "003001010"; then
+    # pandoc versions before 3.1.11 used pandoc-cli-0.1
+   pandoc_cli_version=0.1
+fi
 
 # Download latest cabal database
 cabal update
