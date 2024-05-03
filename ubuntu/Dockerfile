@@ -32,7 +32,7 @@ RUN apt-get -q --no-allow-insecure-repositories update \
        libgmp-dev=2:6.* \
        liblua$lua_version-dev=* \
        pkg-config=* \
-       zlib1g-dev=1:1.2.11.* \
+       zlib1g-dev=* \
   && rm -rf /var/lib/apt/lists/*
 
 COPY cabal.root.config /root/.cabal/config
