@@ -20,7 +20,7 @@ if [ "$tlversion" = "$default_version" ]; then
     repository=
 else
     installer_url="\
-ftp://tug.org/historic/systems/texlive/$tlversion/tlnet-final"
+ftp://tug.org/historic/systems/texlive/$tlversion/tlnet-final/$installer_archive"
     repository="\
 ftp://tug.org/historic/systems/texlive/$tlversion/tlnet-final"
 fi
