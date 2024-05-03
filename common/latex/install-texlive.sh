@@ -14,7 +14,7 @@ if [ "$tlversion" = "$default_version" ]; then
     # in sync.
     installer_url=$(wget --quiet --output-document=/dev/null \
                          --server-response \
-                         http://mirror.ctan.org/systems/texlive/tlnet/ \
+                         http://mirror.ctan.org/systems/texlive/tlnet/$installer_archive \
                          2>&1 | \
                         sed -ne 's/.*Location: \(.*\)$/\1/p')
     repository=
@@ -27,9 +27,9 @@ fi
 
 # Download the install-tl perl script.
 wget --no-verbose \
-     "$installer_url/$installer_archive" \
-     "$installer_url/$installer_archive".sha512 \
-     "$installer_url/$installer_archive".sha512.asc \
+     "$installer_url" \
+     "$installer_url".sha512 \
+     "$installer_url".sha512.asc \
     || exit 1
 
 ## Verifiy installer integrity
