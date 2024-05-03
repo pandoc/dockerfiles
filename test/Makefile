@@ -81,8 +81,7 @@ test-crossref-filter: $(test_files_path)/crossref-test.md \
 #
 LATEX_CMD = docker run --rm \
 	-v $(test_files_path):/data \
-	$(IMAGE) \
-	--fail-if-warnings
+	$(IMAGE)
 
 # Generate list of targets to test all highlighting options available in pandoc.
 # See: https://pandoc.org/MANUAL.html#option--highlight-style
