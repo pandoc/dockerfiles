@@ -12,11 +12,11 @@ if [ "$tlversion" = "$default_version" ]; then
     # always use the mirror URL, we'd run into problems whenever we get
     # installer and signatures from different mirrors that are not 100%
     # in sync.
-    installer_url=$(wget --quiet --output-document=/dev/null \
+    installer_url=$(wget -4 --quiet --output-document=/dev/null \
                          --server-response \
                          http://mirror.ctan.org/systems/texlive/tlnet/ \
                          2>&1 | \
-                        sed -ne 's/.*Location: \(.*\)$/\1/p' | tail -1)
+                        sed -ne 's/.*Location: \(.*\)$/\1/p' | head -n 1)
     repository=
 else
     installer_url="\
@@ -30,7 +30,7 @@ printf 'installer URL: %s\n' "${installer_url}"
 printf 'repository: %s\n' "${repository}"
 
 # Download the install-tl perl script.
-wget --no-verbose \
+wget -4 --no-verbose \
      "$installer_url/$installer_archive" \
      "$installer_url/$installer_archive".sha512 \
      "$installer_url/$installer_archive".sha512.asc \

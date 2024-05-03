@@ -103,6 +103,7 @@ FROM alpine-core as alpine-latex
 
 # NOTE: to maintainers, please keep this listing alphabetical.
 RUN apk --no-cache add \
+        curl \
         fontconfig \
         freetype \
         gnupg \
