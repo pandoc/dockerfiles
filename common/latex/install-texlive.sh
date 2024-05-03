@@ -25,6 +25,10 @@ ftp://tug.org/historic/systems/texlive/$tlversion/tlnet-final/"
 ftp://tug.org/historic/systems/texlive/$tlversion/tlnet-final"
 fi
 
+# Log the installer and repository url
+printf 'installer URL: %s\n' "${installer_url}"
+printf 'repository: %s\n' "${repository}"
+
 # Download the install-tl perl script.
 wget --no-verbose \
      "$installer_url/$installer_archive" \
