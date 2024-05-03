@@ -88,23 +88,9 @@ aeson_pretty_constraints=" +lib-only"
 pandoc_constraints=" +embed_data_files"
 pandoc_cli_constraints=" +lua -nightly +server"
 
-uses_hslua_2 ()
-{
-    major=$(printf "%s" "$pandoc_commit" | \
-                awk -F. '{ printf("%03d%03d\n", $1,$2); }')
-    test "${major}" -ge "002015" || [ "$pandoc_commit" = "main" ]
-    return $?
-}
-
-if uses_hslua_2; then
-    lua_package=lua
-else
-    lua_package=hslua
-fi
-
 print_constraints_only ()
 {
-    printf "constraints: %s %s,\n" "${lua_package}" "${lua_constraints}"
+    printf "constraints: %s %s,\n" "lua" "${lua_constraints}"
     printf "             lpeg %s,\n" "${lpeg_constraints}"
     printf '             aeson-pretty %s,\n' "${aeson_pretty_constraints}"
     printf "             pandoc %s\n" "${pandoc_constraints}"
@@ -153,7 +139,7 @@ cabal v2-freeze \
       --constraint="pandoc-cli ${pandoc_cli_constraints}" \
       --constraint="lpeg ${lpeg_constraints}" \
       --constraint="aeson-pretty ${aeson_pretty_constraints}" \
-      --constraint="${lua_package} ${lua_constraints}" \
+      --constraint="lua ${lua_constraints}" \
       --allow-newer='pandoc'
 
 printf "Copying freeze file to %s\n" "${outfile}"
