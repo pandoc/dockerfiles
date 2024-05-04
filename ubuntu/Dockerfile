@@ -163,10 +163,12 @@ FROM ubuntu-latex as ubuntu-extra
 COPY common/extra/packages.txt /root/extra_packages.txt
 COPY common/extra/requirements.txt /root/extra_requirements.txt
 
+# The option `--break-system-packages` sounds bad but this is not
+# really a problem here because we are not using Python debian packages
+# anyway.
 RUN apt-get -q --no-allow-insecure-repositories update \
-  && apt-get install --assume-yes --no-install-recommends \
-       pipx \
-  && pipx install < /root/extra_requirements.txt \
+  && apt-get install --assume-yes --no-install-recommends python3-pip \
+  && pip3 install -r /root/extra_requirements.txt --break-system-packages \
   && rm -f /root/extra_requirements.txt
 
 RUN sed -e 's/ *#.*$//' -e '/^ *$/d' /root/extra_packages.txt | \
