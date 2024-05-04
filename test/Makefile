@@ -110,7 +110,7 @@ test-latex: output/testsuite.pdf output/french.pdf output/german.pdf \
 output/testsuite.pdf: testsuite.native
 	$(LATEX_CMD) $< \
 	    --output=$@ \
-	    --pdf-engine=xelatex
+	    --pdf-engine=latexmk
 
 output/french.pdf: french.md
 	$(LATEX_CMD) $< \
@@ -120,7 +120,7 @@ output/french.pdf: french.md
 output/german.pdf: german.md
 	$(LATEX_CMD) $< \
 	    --output=$@ \
-	    --pdf-engine=xelatex
+	    --pdf-engine=lualatex
 
 output/lorem-geometry.pdf: lorem.md geometry.yaml
 	$(LATEX_CMD) $< \
