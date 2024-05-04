@@ -152,6 +152,34 @@ Started guide](https://docs.docker.com/get-started/part2/).
 
 [spellcheck](https://github.com/pandoc/lua-filters/tree/master/spellcheck)
 
+### Internationalized LaTeX images
+
+This very method can be used to create images with support for
+additional fonts. This is of particular importance for the processing of
+documents written in a language that uses non-Latin characters.
+
+Below is an example Dockerfile that can be used to build a custom image with
+support for Ukrainian. It adds the necessary LaTeX packages via `tlmgr` and
+installs *Linux Libertine* as a font with support for Cyrillic.
+
+``` Dockerfile
+FROM pandoc/latex
+RUN tlmgr install babel-ukrainian
+RUN apk --no-cache add font-linux-libertine
+```
+
+After building a new image as described in the previous section, the
+image can then be used to convert documents such as:
+
+``` markdown
+---
+title: "Приклад українською"
+mainfont: Linux Libertine
+lang: uk
+---
+
+Цей текст не дуже цікавий.
+```
 
 License
 ================================================================================
