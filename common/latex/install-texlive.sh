@@ -29,8 +29,9 @@ fi
 printf 'installer URL: %s\n' "${installer_url}"
 printf 'repository: %s\n' "${repository}"
 
-# Download the install-tl perl script.
-wget -4 --no-verbose \
+# Download the install-tl perl script. The archive integrity and signature is
+# verified later, so it's ok if we use an insecure connection.
+wget -4 --no-verbose --no-check-certificate \
      "$installer_url/$installer_archive" \
      "$installer_url/$installer_archive".sha512 \
      "$installer_url/$installer_archive".sha512.asc \
