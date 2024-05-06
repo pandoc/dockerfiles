@@ -141,7 +141,7 @@ ARG texlive_mirror_url=
 
 # Request musl precompiled binary access
 RUN echo "binary_x86_64-linuxmusl 1" >> /root/texlive.profile \
-  && /root/install-texlive.sh -t $texlive_version -m $texlive_mirror_url \
+  && /root/install-texlive.sh -t "$texlive_version" -m "$texlive_mirror_url" \
   && sed -e 's/ *#.*$//' -e '/^ *$/d' /root/packages.txt | \
      xargs tlmgr install \
   && rm -f /root/texlive.profile \

@@ -149,7 +149,7 @@ ARG texlive_version=
 # TeXLive mirror URL (leave empty to use the default mirror).
 ARG texlive_mirror_url=
 
-RUN /root/install-texlive.sh -t $texlive_version -m $texlive_mirror_url \
+RUN /root/install-texlive.sh -t "$texlive_version" -m "$texlive_mirror_url" \
   && sed -e 's/ *#.*$//' -e '/^ *$/d' /root/packages.txt | \
      xargs tlmgr install \
   && rm -f /root/texlive.profile \
