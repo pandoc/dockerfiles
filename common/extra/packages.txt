@@ -21,6 +21,7 @@ background
 bidi
 catchfile
 collectbox
+cm-super
 csquotes
 everypage
 filehook
