@@ -135,3 +135,10 @@ quis lectus elementum fermentum.*
 
 [`pandoc-latex-environments`]: https://github.com/chdemko/pandoc-latex-environment/
 [`awesomebox`]: https://ctan.org/pkg/awesomebox
+
+
+## bug 216 : missing font error
+
+```
+Some block of `code` with `backticks`
+```
