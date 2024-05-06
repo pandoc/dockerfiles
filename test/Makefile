@@ -1,7 +1,8 @@
-# Two primary targets are defined by this Makefile:
+# Three primary targets are defined by this Makefile:
 #
 # 1. test-minimal: test a minimal base image
 # 2. test-latex: test a latex image
+# 3. test-extra: test an extra image
 #
 # The IMAGE variable is required to be defined in order to `docker run` the
 # various tests.  The parent Makefile test targets define this, or alternatively
@@ -187,13 +188,20 @@ EXTRA_CMD = docker run --rm \
 	--fail-if-warnings
 
 .PHONY: test-extra
-test-extra: output/eisvogel.pdf output/beamertheme-metropolis.pdf
+test-extra: output/eisvogel.pdf output/eisvogel_with_environment.pdf output/beamertheme-metropolis.pdf
 
 output/eisvogel.pdf: eisvogel.md
 	$(EXTRA_CMD) $< \
 	    --output=$@ \
 	    --template=eisvogel \
 	    --pdf-engine=xelatex
+
+output/eisvogel_with_environment.pdf: eisvogel.md
+	$(EXTRA_CMD) $< \
+	    --output=$@ \
+	    --template=eisvogel \
+	    --pdf-engine=xelatex \
+	    --filter=pandoc-latex-environment
 
 output/beamertheme-metropolis.pdf: beamertheme-metropolis.md
 	$(EXTRA_CMD) $< \
