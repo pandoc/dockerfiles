@@ -49,7 +49,7 @@ done
 
 [ -n "$tlversion" ] || tlversion="$default_version"
 
-if [ -z "$mirror_url" -a "$tlversion" != "$default_version" ]; then
+if [ -z "$mirror_url" ] && [ "$tlversion" != "$default_version" ]; then
     # Default mirror for historic releases
     mirror_url="ftp://tug.org/historic/"
 fi
@@ -67,7 +67,7 @@ if [ -z "$mirror_url" ]; then
 fi
 
 # Trim trailing slash(es)
-mirror_url=$(echo $mirror_url | sed -e 's/\/*$//')
+mirror_url=$(echo "$mirror_url" | sed -e 's/\/*$//')
 
 if [ "$tlversion" = "$default_version" ]; then
     installer_url="$mirror_url/systems/texlive/tlnet/"
