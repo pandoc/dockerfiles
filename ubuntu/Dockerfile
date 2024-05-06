@@ -206,3 +206,16 @@ ARG LUA_FILTERS_VERSION=v2021-11-05
 RUN wget ${LUA_FILTERS_REPO}/${LUA_FILTERS_VERSION}/lua-filters.tar.gz \
     && tar xzf lua-filters.tar.gz --strip-components=1 --one-top-level=/.pandoc \
     && rm -f lua-filters.tar.gz
+
+# tectonic
+ARG TARGETARCH
+ARG TECTONIC_REPO=https://github.com/tectonic-typesetting/tectonic/releases/download
+ARG TECTONIC_VERSION=0.15.0
+RUN if [ "$TARGETARCH" = "amd64" ] ; then TECTONIC_ARCH='x86_64'  ; \
+    elif [ "$TARGETARCH" = "arm64" ] ; then TECTONIC_ARCH='aarch64' ; \
+    else echo 'unsupported target arch for tectonic'; exit 1 ; \
+    fi \
+    && TECTONIC_TARBALL=tectonic-${TECTONIC_VERSION}-${TECTONIC_ARCH}-unknown-linux-gnu.tar.gz \
+    && wget ${TECTONIC_REPO}/tectonic%40${TECTONIC_VERSION}/${TECTONIC_TARBALL} \
+    && tar xzf ${TECTONIC_TARBALL} -C /usr/local/bin/ \
+    && rm -f ${TECTONIC_TARBALL}
