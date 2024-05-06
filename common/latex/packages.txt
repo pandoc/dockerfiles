@@ -54,6 +54,7 @@ embedfile
 fontspec
 hyperxmp
 ifmtarg
+latexmk
 luacode
 lualatex-math
 luatexbase

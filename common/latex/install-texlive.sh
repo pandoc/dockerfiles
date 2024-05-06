@@ -2,7 +2,8 @@
 
 # NOTE TO MAINTAINERS: this must be updated each time a new texlive is
 # released!
-default_version=2023
+default_version=2024
+tlversion=${1:-"$default_version"}
 installer_archive=install-tl-unx.tar.gz
 
 usage ()
@@ -58,11 +59,11 @@ if [ -z "$mirror_url" ]; then
     # always use the mirror URL, we'd run into problems whenever we get
     # installer and signatures from different mirrors that are not 100%
     # in sync.
-    mirror_url=$(wget --quiet --output-document=/dev/null \
+    mirror_url=$(wget -4 --quiet --output-document=/dev/null \
                       --server-response \
                       http://mirror.ctan.org/ \
                       2>&1 | \
-                      sed -ne 's/.*Location: \(.*\)$/\1/p')
+                      sed -ne 's/.*Location: \(.*\)$/\1/p' | head -n 1)
 fi
 
 # Trim trailing slash(es)
@@ -76,8 +77,13 @@ else
     repository=$installer_url
 fi
 
-# Download the install-tl perl script.
-wget --no-verbose \
+# Log the installer and repository url
+printf 'installer URL: %s\n' "${installer_url}"
+printf 'repository: %s\n' "${repository}"
+
+# Download the install-tl perl script. The archive integrity and signature is
+# verified later, so it's ok if we use an insecure connection.
+wget -4 --no-verbose --no-check-certificate \
      "$installer_url/$installer_archive" \
      "$installer_url/$installer_archive".sha512 \
      "$installer_url/$installer_archive".sha512.asc \

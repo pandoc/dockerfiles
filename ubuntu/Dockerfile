@@ -1,38 +1,26 @@
 # Base ##################################################################
-ARG base_image_version=jammy
+ARG base_image_version=noble
 FROM ubuntu:$base_image_version AS ubuntu-builder-base
 WORKDIR /app
 
 ## Not sure why we have to repeat this, but apparently the arg is no
 ## longer set after FROM.
-ARG base_image_version=jammy
+ARG base_image_version=noble
 ARG lua_version=5.4
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get -q --no-allow-insecure-repositories update \
-  && if [ $base_image_version = "focal" ]; then \
-         apt-get install --assume-yes --no-install-recommends \
-                 software-properties-common \
-         && add-apt-repository ppa:hvr/ghc \
-         && apt-get install --assume-yes --no-install-recommends \
-                    ghc-8.8.4=\* \
-                    cabal-install-3.0=\* \
-         && ln -s /opt/ghc/bin/ghc /usr/bin/ghc \
-         && ln -s /opt/cabal/bin/cabal /usr/bin/cabal; \
-     else \
-         apt-get install --assume-yes --no-install-recommends \
-                 ghc=* \
-                 cabal-install=*; \
-     fi \
   && apt-get install --assume-yes --no-install-recommends \
        build-essential=* \
        ca-certificates=* \
+       cabal-install=* \
        curl=* \
        fakeroot=* \
        git \
+       ghc=* \
        libgmp-dev=2:6.* \
        liblua$lua_version-dev=* \
        pkg-config=* \
-       zlib1g-dev=1:1.2.11.* \
+       zlib1g-dev=* \
   && rm -rf /var/lib/apt/lists/*
 
 COPY cabal.root.config /root/.cabal/config
@@ -175,21 +163,20 @@ WORKDIR /data
 # extra ##############################################################
 FROM ubuntu-latex as ubuntu-extra
 
-COPY common/latex/texlive.profile /root/texlive.profile
 COPY common/extra/packages.txt /root/extra_packages.txt
 COPY common/extra/requirements.txt /root/extra_requirements.txt
 
+# The option `--break-system-packages` sounds bad but this is not
+# really a problem here because we are not using Python debian packages
+# anyway.
 RUN apt-get -q --no-allow-insecure-repositories update \
-  && apt-get install --assume-yes --no-install-recommends \
-        python3-pip
+  && apt-get install --assume-yes --no-install-recommends python3-pip \
+  && pip3 install -r /root/extra_requirements.txt --break-system-packages \
+  && rm -f /root/extra_requirements.txt
 
 RUN sed -e 's/ *#.*$//' -e '/^ *$/d' /root/extra_packages.txt | \
     xargs tlmgr install \
-  && rm -f /root/texlive.profile \
-           /root/extra_packages.txt
-
-RUN pip3 --no-cache-dir install -r /root/extra_requirements.txt \
-  && rm -f /root/extra_requirements.txt
+  && rm -f /root/extra_packages.txt
 
 # Templates
 #

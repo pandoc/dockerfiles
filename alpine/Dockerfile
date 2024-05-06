@@ -103,6 +103,7 @@ FROM alpine-core as alpine-latex
 
 # NOTE: to maintainers, please keep this listing alphabetical.
 RUN apk --no-cache add \
+        curl \
         fontconfig \
         freetype \
         gnupg \
@@ -154,20 +155,19 @@ WORKDIR /data
 # extra ##############################################################
 FROM alpine-latex as alpine-extra
 
-COPY common/latex/texlive.profile /root/texlive.profile
 COPY common/extra/packages.txt /root/extra_packages.txt
 COPY common/extra/requirements.txt /root/extra_requirements.txt
 
-RUN apk --no-cache add py-pip
+# The option `--break-system-packages` sounds bad but this is not 
+# really a problem here because we are not using Python apk packages
+# anyway.
+RUN  apk --no-cache add py-pip \
+  && pip3 install -r /root/extra_requirements.txt --break-system-packages \
+  && rm -f /root/extra_requirements.txt
 
 RUN sed -e 's/ *#.*$//' -e '/^ *$/d' /root/extra_packages.txt | \
     xargs tlmgr install \
-  && rm -f /root/texlive.profile \
-           /root/extra_packages.txt
-
-RUN pip3 --no-cache-dir install -r /root/extra_requirements.txt \
-  && rm -f /root/extra_requirements.txt
-
+    && rm -f /root/extra_packages.txt
 ARG TEMPLATES_DIR=/.pandoc/templates
 
 RUN mkdir -p ${TEMPLATES_DIR} && \

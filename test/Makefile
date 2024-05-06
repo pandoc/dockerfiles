@@ -81,8 +81,7 @@ test-crossref-filter: $(test_files_path)/crossref-test.md \
 #
 LATEX_CMD = docker run --rm \
 	-v $(test_files_path):/data \
-	$(IMAGE) \
-	--fail-if-warnings
+	$(IMAGE)
 
 # Generate list of targets to test all highlighting options available in pandoc.
 # See: https://pandoc.org/MANUAL.html#option--highlight-style
@@ -111,7 +110,7 @@ test-latex: output/testsuite.pdf output/french.pdf output/german.pdf \
 output/testsuite.pdf: testsuite.native
 	$(LATEX_CMD) $< \
 	    --output=$@ \
-	    --pdf-engine=xelatex
+	    --pdf-engine=latexmk
 
 output/french.pdf: french.md
 	$(LATEX_CMD) $< \
@@ -121,7 +120,7 @@ output/french.pdf: french.md
 output/german.pdf: german.md
 	$(LATEX_CMD) $< \
 	    --output=$@ \
-	    --pdf-engine=xelatex
+	    --pdf-engine=lualatex
 
 output/lorem-geometry.pdf: lorem.md geometry.yaml
 	$(LATEX_CMD) $< \

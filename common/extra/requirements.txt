@@ -5,4 +5,4 @@
 # because minor versions (e.g. `1.3.6`) _should_ not break things
 #
 
-pandoc-latex-environment==1.1
+pandoc-latex-environment==1.1.*

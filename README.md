@@ -107,49 +107,6 @@ Basic Usage
    the next time. You don't have to worry about where/how Docker keeps these
    images.
 
-Pandoc Scripts
---------------------------------------------------------------------------------
-
-Pandoc commands have a way of getting pretty long, and so typing them into the
-command line can get a little unwieldy. To get a better handle of long pandoc
-commands, you can store them in a script file, a simple text file with an `*.sh`
-extension such as
-
-```sh
-#!/bin/sh
-pandoc README.md
-```
-
-The first line, known as the [*shebang*](https://stackoverflow.com/q/7366775)
-tells the container that the following commands are to be executed as shell
-commands. In our case, we really don't use a lot of shell magic, we just call
-pandoc in the second line (though you can get fancier, if you like). Notice that
-the `#!/bin/sh` will *not* get you a full bash shell, but only the more basic
-ash shell that comes with Alpine linux on which the pandoc containers are based.
-This won't matter for most uses, but if you want to write writing more
-complicated scripts you may want to refer to the [`ash`
-manual](https://linux.die.net/man/1/ash).
-
-Once you have stored this script, you must make it executable by running the
-following command on it (this may apply only to UNIX-type systems):
-
-```sh
-chmod +x script.sh
-```
-
-You only have to do this once for each script file.
-
-You can then run the completed script file in a pandoc docker container like so:
-
-```sh
-docker run --rm --volume "`pwd`:/data" --entrypoint "/data/script.sh" pandoc/latex:2.6
-```
-
-Notice that the above `script.sh` *did* specify `pandoc`, and you can't just
-omit it as in the simpler command above. This is because the `--entrypoint` flag
-*overrides* the `ENTRYPOINT` field in the docker file (`pandoc`, in our case),
-so you must include the command.
-
 GitHub Actions
 --------------------------------------------------------------------------------
 
@@ -195,6 +152,34 @@ Started guide](https://docs.docker.com/get-started/part2/).
 
 [spellcheck](https://github.com/pandoc/lua-filters/tree/master/spellcheck)
 
+### Internationalized LaTeX images
+
+This very method can be used to create images with support for
+additional fonts. This is of particular importance for the processing of
+documents written in a language that uses non-Latin characters.
+
+Below is an example Dockerfile that can be used to build a custom image with
+support for Ukrainian. It adds the necessary LaTeX packages via `tlmgr` and
+installs *Linux Libertine* as a font with support for Cyrillic.
+
+``` Dockerfile
+FROM pandoc/latex
+RUN tlmgr install babel-ukrainian
+RUN apk --no-cache add font-linux-libertine
+```
+
+After building a new image as described in the previous section, the
+image can then be used to convert documents such as:
+
+``` markdown
+---
+title: "Приклад українською"
+mainfont: Linux Libertine
+lang: uk
+---
+
+Цей текст не дуже цікавий.
+```
 
 License
 ================================================================================
