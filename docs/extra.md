@@ -6,13 +6,13 @@ and a curated selection of components:
 
 * Templates: [Eisvogel][]
 * Beamer Themes: [beamer-metropolis][]
-* Pandoc filters: [pandoc-latex-environment][]
+* Pandoc filters: [pandoc-latex-environment][] + [Lua filters][]
 * Open Source Fonts: Font Awesome, Source Code Pro, Source Sans Pro
-
 
 [Eisvogel]: https://github.com/Wandmalfarbe/pandoc-latex-template
 [beamer-metropolis]: https://github.com/matze/mtheme
 [pandoc-latex-environment]: https://github.com/chdemko/pandoc-latex-environment
+[Lua filters]: https://github.com/pandoc/lua-filters
 
 [pandoc]: https://pandoc.org/
 [LaTeX]: https://latex-project.org/

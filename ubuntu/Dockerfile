@@ -199,3 +199,10 @@ RUN mkdir -p ${TEMPLATES_DIR} && \
 ARG EISVOGEL_REPO=https://raw.githubusercontent.com/Wandmalfarbe/pandoc-latex-template
 ARG EISVOGEL_VERSION=v2.4.0
 RUN wget ${EISVOGEL_REPO}/${EISVOGEL_VERSION}/eisvogel.tex -O ${TEMPLATES_DIR}/eisvogel.latex
+
+# Lua Filters
+ARG LUA_FILTERS_REPO=https://github.com/pandoc/lua-filters/releases/download
+ARG LUA_FILTERS_VERSION=v2021-11-05
+RUN wget ${LUA_FILTERS_REPO}/${LUA_FILTERS_VERSION}/lua-filters.tar.gz \
+    && tar xzf lua-filters.tar.gz --strip-components=1 --one-top-level=/.pandoc \
+    && rm -f lua-filters.tar.gz
