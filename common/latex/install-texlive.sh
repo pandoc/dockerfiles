@@ -6,23 +6,75 @@ default_version=2024
 tlversion=${1:-"$default_version"}
 installer_archive=install-tl-unx.tar.gz
 
-# Do normal install for the default version.
-if [ "$tlversion" = "$default_version" ]; then
+usage ()
+{
+    printf 'Install TeXLive\n'
+    printf 'Usage: %s [OPTIONS]\n\n' "$0"
+    printf 'Options:\n'
+    printf '  -t: TeXLive version (default %s)\n' "$default_version"
+    printf '  -m: mirror URL\n'
+}
+
+if ! args=$(getopt 't:m:' "$@"); then
+    usage && exit 1
+fi
+# The variable is intentionally left unquoted.
+# shellcheck disable=SC2086
+set -- $args
+
+tlversion=
+mirror_url=
+
+while true; do
+    case "$1" in
+        (-t)
+            tlversion="${2}"
+            shift 2
+            ;;
+        (-m)
+            mirror_url="${2}"
+            shift 2
+            ;;
+        (--)
+            shift
+            break
+            ;;
+        (*)
+            printf 'Unknown option: %s\n' "$1"
+            usage
+            exit 1
+            ;;
+    esac
+done
+
+[ -n "$tlversion" ] || tlversion="$default_version"
+
+if [ -z "$mirror_url" ] && [ "$tlversion" != "$default_version" ]; then
+    # Default mirror for historic releases
+    mirror_url="ftp://tug.org/historic/"
+fi
+
+if [ -z "$mirror_url" ]; then
     # Get the mirror URL from the redirect. Otherwise, if we were to
     # always use the mirror URL, we'd run into problems whenever we get
     # installer and signatures from different mirrors that are not 100%
     # in sync.
-    installer_url=$(wget -4 --quiet --output-document=/dev/null \
-                         --server-response \
-                         http://mirror.ctan.org/systems/texlive/tlnet/ \
-                         2>&1 | \
-                        sed -ne 's/.*Location: \(.*\)$/\1/p' | head -n 1)
+    mirror_url=$(wget -4 --quiet --output-document=/dev/null \
+                      --server-response \
+                      http://mirror.ctan.org/ \
+                      2>&1 | \
+                      sed -ne 's/.*Location: \(.*\)$/\1/p' | head -n 1)
+fi
+
+# Trim trailing slash(es)
+mirror_url=$(echo "$mirror_url" | sed -e 's/\/*$//')
+
+if [ "$tlversion" = "$default_version" ]; then
+    installer_url="$mirror_url/systems/texlive/tlnet/"
     repository=
 else
-    installer_url="\
-ftp://tug.org/historic/systems/texlive/$tlversion/tlnet-final/"
-    repository="\
-ftp://tug.org/historic/systems/texlive/$tlversion/tlnet-final"
+    installer_url="$mirror_url/systems/texlive/$tlversion/tlnet-final/"
+    repository=$installer_url
 fi
 
 # Log the installer and repository url
