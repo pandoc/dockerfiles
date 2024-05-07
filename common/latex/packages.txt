@@ -1,74 +1,87 @@
 # Packages listed in https://pandoc.org/MANUAL.html#creating-a-pdf
 
-# NOTE: search left hand side on CTAN to see for yourself:
-#       graphicx  -> graphics
-#       grffile   -> oberdiek
-#       longtable -> tools
+#########################################################################
+### Packages required by pandoc
+amsfonts      # math fonts
+amsmath       # math commands
+babel         # required when pandoc is used with lang
+beamer        # for presentations
+bidi          # used by xelatex if the `dir` variable is set
+bookmark      # bookmarks with hyperref
+booktabs      # nicer-looking tables
+caption       # customize captions in floating envs; required for beamer
+csquotes      # used for typography if the `csquotes` variable is set to true
+euler         # use AMS Euler fonts for math
+eurosym       # Metafont and macros for Euro sign
+fancyvrb      # Verbatim environments for code blocks
+framed        # Needed with certain `--highlight-style` options
+geometry      # required if the `geometry` variable set
+graphics      # required if the document contains images
+hyperref      # hyperlinks
+listings      # if the `--listing` option is used
+lm            # Latin modern fonts
+lm-math       # Latin modern fonts for math
+memoir        # frequently used document class
+multirow      # Tabular cells spanning multiple rows
+pgf           # for TikZ and beamer
+setspace      # required if the `linestretch` variable is used
+soul          # required for underlined text
+subfig        # Figures broken into subfigures
+tools         # the LaTeX standard tools bundle; e.g., calc, longtable
+xcolor        # colors
 
-# Redundant, as included in `scheme-basic`
-amsfonts
-amsmath
-geometry
-graphics
-hyperref
-iftex
-lm
-luatex
-oberdiek
-pdftexcmds
-tools       # The LaTeX standard tools bundle; e.g., calc, longtable
-
-# Other basic packages
-beamer
-booktabs
-caption     # Customize captions in floating envs; required for beamer
-cmap        # Make PDF files searchable and copyable
-euler       # Use AMS Euler fonts for math
-eurosym     # Metafont and macros for Euro sign
-fancyvrb
-listings
-lm-math
-logreq
-memoir
-multirow    # Tabular cells spanning multiple rows
-parskip
-pdflscape   # landscape mode for single pages
-pgf         # for TikZ
-setspace
+# Deprecated! Only used by older pandoc versions before 3.0.
 ulem
-unicode-math
-xcolor
-
-# Required when using pandoc-crossref
-cleveref    # Intelligent cross-referencing
-float       # Improved interface for floating objects
-subfig      # Figures broken into subfigures
-
-# Needed for when `--highlight-style` is used with something other than
-# pygments.
-framed
 
 #########################################################################
-# Extra packages for XeTex, LuaTex, and BibLaTex.                     
-embedfile
-fontspec
-hyperxmp
-ifmtarg
+### Semi-optional packages
+#
+# The following packages will be used to improve output quality if
+# present, but pandoc does not require them to be present:
+footnotehyper # to allow footnotes in tables
+microtype     # for better spacing adjustments
+parskip       # for better inter-paragraph spaces
+upquote       # for straight quotes in verbatim environments
+xurl          # for better line breaks in URLs
+
+#########################################################################
+### Intentionally **NOT** installed due to size constraints.
+#
+#xeCJR         # If CJKmainfont is set, xeCJK is needed.
+
+#########################################################################
+### Required when using pandoc-crossref
+cleveref      # Intelligent cross-referencing
+float         # Improved interface for floating objects
+
+#########################################################################
+### Extra engines and packages for XeLaTeX and LuaLaTeX.
+fontspec      # required with xelatex or lualatex
+ifmtarg       # if-then-else commands used in the default template
+iftex         # Checks for the specific LaTeX engine being used
 latexmk
+lua-ul        # LuaLaTeX replacement of soul
 luacode
-lualatex-math
+lualatex-math # LuaTeX specific math patches
 luatexbase
-mathspec
-microtype
-selnolig
-upquote
+mathspec      # used by xelatex if the `mathspec` variable is set
+selnolig      # Used with LuaLaTeX to disable illegal typographic ligatures
+unicode-math  # Unicode math support for XeTeX and LuaTeX
 xetex
 
 #########################################################################
-# I18n and languages; the choice of selected languages is historic,
-# those were the ones installed by texlive by default for a long time.
+### Reference management tools
+biber
+biblatex
+bibtex
+natbib
+
+#########################################################################
+### I18n and languages
+#
+# The choice of selected languages is historic, those were the ones
+# installed by TeXLive by default for a long time.
 bidi
-csquotes
 babel-basque
 babel-czech
 babel-danish
@@ -99,19 +112,3 @@ hyphen-polish
 hyphen-portuguese
 hyphen-spanish
 hyphen-swedish
-# no longer needed in newer pandoc versions
-polyglossia
-
-#########################################################################
-# Reference backend options
-biber
-biblatex
-bibtex
-natbib
-
-#########################################################################
-# These packages were identified by the tests, they are likely
-# dependencies of dependencies that are not encoded well.
-footnotehyper
-soul
-xurl
