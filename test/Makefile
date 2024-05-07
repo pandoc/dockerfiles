@@ -116,6 +116,7 @@ output/testsuite.pdf: testsuite.native
 output/french.pdf: french.md
 	$(LATEX_CMD) $< \
 	    --output=$@ \
+	    --variable=csquotes \
 	    --pdf-engine=xelatex
 
 output/german.pdf: german.md
