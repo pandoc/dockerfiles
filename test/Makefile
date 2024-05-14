@@ -189,7 +189,8 @@ EXTRA_CMD = docker run --rm \
 	--fail-if-warnings
 
 .PHONY: test-extra
-test-extra: output/eisvogel.pdf output/eisvogel_with_environment.pdf output/beamertheme-metropolis.pdf
+test-extra: output/eisvogel.pdf output/eisvogel_with_environment.pdf \
+			output/beamertheme-metropolis.pdf output/lua.html
 
 output/eisvogel.pdf: eisvogel.md
 	$(EXTRA_CMD) $< \
@@ -210,6 +211,11 @@ output/beamertheme-metropolis.pdf: beamertheme-metropolis.md
 	    --to=beamer \
 	    --variable=theme:metropolis \
 	    --variable=themeoptions:numbering=none
+
+output/lua.html: eisvogel.md
+	$(EXTRA_CMD) $< \
+	    --output=$@ \
+	    --lua-filter=pagebreak.lua
 
 #   ____ _
 #  / ___| | ___  __ _ _ __
