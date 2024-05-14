@@ -190,7 +190,8 @@ EXTRA_CMD = docker run --rm \
 
 .PHONY: test-extra
 test-extra: output/eisvogel.pdf output/eisvogel_with_environment.pdf \
-			output/beamertheme-metropolis.pdf output/lua.html
+			output/beamertheme-metropolis.pdf output/lua.html \
+			output/eisvogel-tectonic.pdf
 
 output/eisvogel.pdf: eisvogel.md
 	$(EXTRA_CMD) $< \
@@ -216,6 +217,12 @@ output/lua.html: eisvogel.md
 	$(EXTRA_CMD) $< \
 	    --output=$@ \
 	    --lua-filter=pagebreak.lua
+
+output/eisvogel-tectonic.pdf: eisvogel.md
+	$(EXTRA_CMD) $< \
+	    --output=$@ \
+	    --template=eisvogel \
+	    --pdf-engine=tectonic
 
 #   ____ _
 #  / ___| | ___  __ _ _ __
