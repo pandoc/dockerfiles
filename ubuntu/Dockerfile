@@ -3,8 +3,9 @@ ARG base_image_version=noble
 FROM ubuntu:$base_image_version AS ubuntu-builder-base
 WORKDIR /app
 
-## Not sure why we have to repeat this, but apparently the arg is no
-## longer set after FROM.
+## An ARG instruction goes out of scope at the end of the build stage 
+## where it was defined. To use an argument in multiple stages, each stage 
+## must include the ARG instruction
 ARG base_image_version=noble
 ARG lua_version=5.4
 ENV DEBIAN_FRONTEND noninteractive
