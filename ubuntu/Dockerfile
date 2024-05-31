@@ -198,7 +198,7 @@ RUN mkdir -p ${TEMPLATES_DIR} && \
 
 # eisvogel
 ARG EISVOGEL_REPO=https://raw.githubusercontent.com/Wandmalfarbe/pandoc-latex-template
-ARG EISVOGEL_VERSION=v2.4.0
+ARG EISVOGEL_VERSION=2.4.2
 RUN wget ${EISVOGEL_REPO}/${EISVOGEL_VERSION}/eisvogel.tex -O ${TEMPLATES_DIR}/eisvogel.latex
 
 # Lua Filters
