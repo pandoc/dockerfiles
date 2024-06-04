@@ -53,7 +53,7 @@ docker_cpu_options=--cpu-period="100000" --cpu-quota="$$(( $(CORES) * 100000 ))"
 else
 docker_cpu_options=
 endif
- 
+
 # Generates the targets for a given image stack.
 # $1: base stack, one of the `supported_stacks`
 define stack
