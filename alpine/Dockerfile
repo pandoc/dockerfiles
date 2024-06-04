@@ -95,8 +95,9 @@ COPY --from=alpine-builder \
 
 # Additional packages frequently used during conversions
 # NOTE: `libsrvg`, pandoc uses `rsvg-convert` for working with svg images.
-RUN apk --no-cache add \
-        librsvg
+# FIXME: Alpine 3.17 and later ships the binary in the rsvg-convert package.
+RUN apk --no-cache add librsvg; \
+    apk --no-cache add rsvg-convert || true
 
 # LaTeX #################################################################
 FROM alpine-core as alpine-latex
