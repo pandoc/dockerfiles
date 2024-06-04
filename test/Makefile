@@ -103,6 +103,7 @@ code_targets = $(addsuffix .pdf, $(addprefix output/code-highlight-, $(styles)))
 test-latex: output/testsuite.pdf output/french.pdf output/german.pdf \
 		output/lorem-geometry.pdf output/lorem-optional-packages.pdf \
 		output/test-beamer.pdf output/test-natbib.pdf \
+		output/svg.pdf \
 		$(code_targets)
 
 ## FIXME! This test fails in Alpine, but the reason is unclear. We are
@@ -156,6 +157,11 @@ output/test-biblatex.tex: test-beamer.md
 	    --biblatex \
 	    --standalone \
 	    --bibliography=example.bib \
+	    --output=$@
+
+# Test SVG inclusion in PDF
+output/svg.pdf: svg.html
+	$(LATEX_CMD) $< \
 	    --output=$@
 
 output/example.bib: example.bib
