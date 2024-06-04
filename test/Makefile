@@ -19,6 +19,10 @@ DIFF ?= diff
 
 test_files_path := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 
+DOCKER_CMD = docker run --rm \
+	--user $(shell id -u):$(shell id -g) \
+	--volume $(test_files_path):/data
+
 .PHONY: test
 test: test-minimal test-latex test-extra
 
@@ -28,7 +32,6 @@ test: test-minimal test-latex test-extra
 # | |__| (_) | | |  __/
 #  \____\___/|_|  \___|
 #
-CORE_CMD = docker run --rm -v $(test_files_path):/data $(IMAGE)
 OUTPUT_FORMATS=markdown epub docx latex html
 
 .PHONY: test-minimal testsuite-to-% test-bib-conversion test-lua
@@ -37,10 +40,10 @@ test-minimal: test-lua \
 
 testsuite-to-%: testsuite.native
 	@# Pure HTML cannot represent fractions, use supported math rendering method.
-	$(CORE_CMD) $< --output=/dev/null --to=$* --mathml
+	$(DOCKER_CMD) $(IMAGE) $< --output=/dev/null --to=$* --mathml
 
 test-lua: testsuite.native lpeg-test.lua
-	docker run --rm -v $(test_files_path):/data $(IMAGE) \
+	$(DOCKER_CMD) $(IMAGE) \
 	    --lua-filter=lpeg-test.lua --to=json --output=/dev/null $<
 
 #   ____                             __
@@ -63,10 +66,10 @@ test-crossref-filter: $(test_files_path)/crossref-test.md \
 		$(test_files_path)/minversion.lua
 	@printf "\n### testing document conversion with pandoc-crossref filter...\n"
 
-	@if docker run --rm -v $(test_files_path):/data $(IMAGE) \
+	@if $(DOCKER_CMD) $(IMAGE) \
 	      --metadata=minversion=2.16 \
 	      --lua-filter=minversion.lua; then \
-	    docker run --rm -v $(test_files_path):/data $(IMAGE) \
+	    $(DOCKER_CMD) $(IMAGE) \
 	        --filter=pandoc-crossref \
 	        --to=native \
 	        crossref-test.md | $(DIFF) expected/crossref-test.native -; \
@@ -80,9 +83,7 @@ test-crossref-filter: $(test_files_path)/crossref-test.md \
 # | |__| (_| || |  __//  \
 # |_____\__,_||_|\___/_/\_\
 #
-LATEX_CMD = docker run --rm \
-	-v $(test_files_path):/data \
-	$(IMAGE)
+LATEX_CMD = $(DOCKER_CMD) $(IMAGE)
 
 # Generate list of targets to test all highlighting options available in pandoc.
 # See: https://pandoc.org/MANUAL.html#option--highlight-style
