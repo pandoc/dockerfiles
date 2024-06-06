@@ -80,12 +80,14 @@ COPY --from=alpine-builder \
   /usr/local/bin/pandoc \
   /usr/local/bin/
 
-# Reinstall any system packages required for runtime.
-RUN apk --no-cache add \
-        gmp \
-        libffi \
-        lua$lua_version \
-        lua$lua_version-lpeg
+# Add pandoc symlinks and install runtime dependencies
+RUN ln -s /usr/local/bin/pandoc /usr/local/bin/pandoc-lua && \
+    ln -s /usr/local/bin/pandoc /usr/local/bin/pandoc-server && \
+    apk --no-cache add \
+    gmp \
+    libffi \
+    lua$lua_version \
+    lua$lua_version-lpeg
 
 # Core ##################################################################
 FROM alpine-minimal AS alpine-core

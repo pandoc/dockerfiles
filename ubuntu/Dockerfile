@@ -82,8 +82,10 @@ COPY --from=ubuntu-builder \
   /usr/local/bin/pandoc \
   /usr/local/bin/
 
-# Reinstall any system packages required for runtime.
-RUN apt-get -q --no-allow-insecure-repositories update \
+# Add pandoc symlinks and install runtime dependencies
+RUN ln -s /usr/local/bin/pandoc /usr/local/bin/pandoc-lua \
+  && ln -s /usr/local/bin/pandoc /usr/local/bin/pandoc-server \
+  && apt-get -q --no-allow-insecure-repositories update \
   && DEBIAN_FRONTEND=noninteractive \
      apt-get install --assume-yes --no-install-recommends \
        ca-certificates=\* \
