@@ -62,6 +62,7 @@ iftex         # Checks for the specific LaTeX engine being used
 latexmk
 lua-ul        # LuaLaTeX replacement of soul
 luacode
+luacolor
 lualatex-math # LuaTeX specific math patches
 luatexbase
 mathspec      # used by xelatex if the `mathspec` variable is set
