@@ -23,7 +23,7 @@ RUN apk --no-cache add \
 COPY cabal.root.config /root/.cabal/config
 RUN cabal --version \
   && ghc --version \
-  && cabal v2-update
+  && cabal update
 
 # Builder ###############################################################
 FROM alpine-builder-base as alpine-builder
@@ -51,8 +51,8 @@ ARG extra_packages="pandoc-cli pandoc-crossref"
 # Build pandoc and pandoc-crossref. The `allow-newer` is required for
 # when pandoc-crossref has not been updated yet, but we want to build
 # anyway.
-RUN cabal v2-update \
-  && cabal v2-build \
+RUN cabal update \
+  && cabal build \
       --allow-newer 'lib:pandoc' \
       --disable-tests \
       --disable-bench \
