@@ -87,8 +87,7 @@ RUN ln -s /usr/local/bin/pandoc /usr/local/bin/pandoc-lua && \
     apk --no-cache add \
     gmp \
     libffi \
-    lua$lua_version \
-    lua$lua_version-lpeg
+    lua$lua_version
 
 # Core ##################################################################
 FROM alpine-minimal AS alpine-core

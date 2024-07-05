@@ -91,7 +91,6 @@ RUN ln -s /usr/local/bin/pandoc /usr/local/bin/pandoc-lua \
      apt-get install --assume-yes --no-install-recommends \
        ca-certificates=\* \
        liblua$lua_version-0=\* \
-       lua-lpeg=\* \
        libatomic1=\* \
        libgmp10=\* \
        libpcre3=\* \
