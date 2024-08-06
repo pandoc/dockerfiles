@@ -19,7 +19,7 @@ RUN apk --no-cache add \
 COPY cabal.root.config /root/.cabal/config
 
 # Builder ###############################################################
-FROM static-builder-base as static-builder
+FROM static-builder-base AS static-builder
 ARG pandoc_commit=main
 RUN git clone --branch=$pandoc_commit --depth=1 --quiet \
   https://github.com/jgm/pandoc /usr/src/pandoc
@@ -51,7 +51,7 @@ RUN find dist-newstyle \
          -exec cp '{}' /usr/local/bin/ ';'
 
 # Minimal ###############################################################
-FROM scratch as static-minimal
+FROM scratch AS static-minimal
 ARG pandoc_version=edge
 LABEL maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
 LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'

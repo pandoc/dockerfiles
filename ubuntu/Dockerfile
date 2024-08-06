@@ -30,7 +30,7 @@ RUN cabal --version \
   && cabal update
 
 # Builder ###############################################################
-FROM ubuntu-builder-base as ubuntu-builder
+FROM ubuntu-builder-base AS ubuntu-builder
 ARG pandoc_commit=main
 RUN git clone --branch=$pandoc_commit --depth=1 --quiet \
   https://github.com/jgm/pandoc /usr/src/pandoc
@@ -113,7 +113,7 @@ RUN apt-get -q --no-allow-insecure-repositories update \
   && rm -rf /var/lib/apt/lists/*
 
 # LaTeX ##############################################################
-FROM ubuntu-core as ubuntu-latex
+FROM ubuntu-core AS ubuntu-latex
 
 # NOTE: to maintainers, please keep this listing alphabetical.
 RUN apt-get -q --no-allow-insecure-repositories update \
@@ -166,7 +166,7 @@ RUN ( [ -z "$texlive_version"    ] || printf '-t\n%s\n"' "$texlive_version" \
 WORKDIR /data
 
 # extra ##############################################################
-FROM ubuntu-latex as ubuntu-extra
+FROM ubuntu-latex AS ubuntu-extra
 
 COPY common/extra/packages.txt /root/extra_packages.txt
 COPY common/extra/requirements.txt /root/extra_requirements.txt

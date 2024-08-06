@@ -26,7 +26,7 @@ RUN cabal --version \
   && cabal update
 
 # Builder ###############################################################
-FROM alpine-builder-base as alpine-builder
+FROM alpine-builder-base AS alpine-builder
 ARG pandoc_commit=main
 RUN git clone --branch=$pandoc_commit --depth=1 --quiet \
   https://github.com/jgm/pandoc /usr/src/pandoc
@@ -102,7 +102,7 @@ RUN apk --no-cache add librsvg; \
     apk --no-cache add rsvg-convert || true
 
 # LaTeX #################################################################
-FROM alpine-core as alpine-latex
+FROM alpine-core AS alpine-latex
 
 # NOTE: to maintainers, please keep this listing alphabetical.
 RUN apk --no-cache add \
@@ -159,7 +159,7 @@ RUN echo "binary_x86_64-linuxmusl 1" >> /root/texlive.profile \
 WORKDIR /data
 
 # extra ##############################################################
-FROM alpine-latex as alpine-extra
+FROM alpine-latex AS alpine-extra
 
 COPY common/extra/packages.txt /root/extra_packages.txt
 COPY common/extra/requirements.txt /root/extra_requirements.txt
