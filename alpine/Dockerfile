@@ -190,7 +190,9 @@ RUN wget ${EISVOGEL_REPO}/${EISVOGEL_VERSION}/eisvogel.tex -O ${TEMPLATES_DIR}/e
 ARG LUA_FILTERS_REPO=https://github.com/pandoc/lua-filters/releases/download
 ARG LUA_FILTERS_VERSION=v2021-11-05
 RUN wget ${LUA_FILTERS_REPO}/${LUA_FILTERS_VERSION}/lua-filters.tar.gz \
-    && tar xzf lua-filters.tar.gz --strip-components=1 --one-top-level=/.pandoc \
+    && tar xzf lua-filters.tar.gz \
+           --strip-components=1 \
+           --one-top-level=$TEMPLATES_DIR \
     && rm -f lua-filters.tar.gz
 
 # tectonic
