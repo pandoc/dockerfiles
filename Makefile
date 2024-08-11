@@ -66,9 +66,10 @@ $(1) $(1)-minimal $(1)-freeze-file: STACK = $(1)
 $(1): $(1)-minimal
 $(1)-minimal: minimal
 $(1)-freeze-file: $(1)/$(stack_freeze_file)
-# Only alpine and ubuntu support core and latex images
+# Only alpine and ubuntu support core, latex, and extra images
 ifeq ($(1),$(filter $(1),alpine ubuntu))
 .PHONY: $(1)-core $(1)-latex $(1)-extra
+$(1) $(1)-core $(1)-latex $(1)-extra: STACK = $(1)
 $(1)-core: core
 $(1)-latex: latex
 $(1)-extra: extra
