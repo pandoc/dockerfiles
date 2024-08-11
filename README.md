@@ -4,16 +4,6 @@ pandoc Dockerfiles
 This repo contains a collection of Dockerfiles to build various
 [pandoc](https://pandoc.org/) container images.
 
-**Contents**
-
-- [Available Images](#available-images)
-- [Usage](#usage)
-    - [Basic Usage](#basic-usage)
-    - [Pandoc Scripts](#pandoc-scripts)
-    - [GitHub Actions](#github-actions)
-- [Maintenance Notes](#maintenance-notes)
-    - [Managing new Pandoc Releases](#managing-new-pandoc-releases)
-- [License](#license)
 
 Available Images
 ==================================================================
