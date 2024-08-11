@@ -58,18 +58,23 @@ LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@tarleb.com>'
 LABEL org.pandoc.author "John MacFarlane"
 LABEL org.pandoc.version "$pandoc_version"
 
+# Create basic folders, including a /tmp folder with the correct
+# permissions and the folders /usr/local/bin and /usr/local/share/pandoc
+ADD static/tmp.tar /
+
 # Copy the pandoc binary
 COPY --from=static-builder \
     /usr/local/bin/pandoc \
-    /pandoc
+    /usr/local/bin/pandoc
 
-# Create a /tmp folder with the correct permissions
-ADD static/tmp.tar /
-
-# Create and set user data directory
+# Set user data directory
 ENV XDG_DATA_HOME=/usr/local/share
-WORKDIR $XDG_DATA_HOME/pandoc
+
+# Set PATH
+ENV PATH=/usr/local/bin
+
+# Set the executable
+ENTRYPOINT ["/usr/local/bin/pandoc"]
 
 # Set default working directory
 WORKDIR /data
-ENTRYPOINT ["/pandoc"]
