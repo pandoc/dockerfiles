@@ -179,12 +179,17 @@ RUN  apk --no-cache add py-pip \
 RUN sed -e 's/ *#.*$//' -e '/^ *$/d' /root/extra_packages.txt | \
     xargs tlmgr install \
     && rm -f /root/extra_packages.txt
-ARG TEMPLATES_DIR=$XDG_DATA_HOME/pandoc
+
+# Templates
+ARG PANDOC_DATA_DIR=$XDG_DATA_HOME/pandoc
+ARG TEMPLATES_DIR=$PANDOC_DATA_DIR/templates
+RUN mkdir -p $TEMPLATES_DIR
 
 # eisvogel
 ARG EISVOGEL_REPO=https://raw.githubusercontent.com/Wandmalfarbe/pandoc-latex-template
 ARG EISVOGEL_VERSION=2.4.2
-RUN wget ${EISVOGEL_REPO}/${EISVOGEL_VERSION}/eisvogel.tex -O ${TEMPLATES_DIR}/eisvogel.latex
+RUN wget ${EISVOGEL_REPO}/${EISVOGEL_VERSION}/eisvogel.tex \
+    -O ${TEMPLATES_DIR}/eisvogel.latex
 
 # Lua filters
 ARG LUA_FILTERS_REPO=https://github.com/pandoc/lua-filters/releases/download
