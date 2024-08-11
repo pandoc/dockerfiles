@@ -71,8 +71,8 @@ RUN find dist-newstyle \
 FROM ubuntu:$base_image_version AS ubuntu-minimal
 ARG pandoc_version=edge
 ARG lua_version=5.4
-LABEL maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
-LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
+LABEL maintainer='Albert Krewinkel <albert+pandoc@tarleb.com>'
+LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@tarleb.com>'
 LABEL org.pandoc.author "John MacFarlane"
 LABEL org.pandoc.version "$pandoc_version"
 

@@ -53,8 +53,8 @@ RUN find dist-newstyle \
 # Minimal ###############################################################
 FROM scratch AS static-minimal
 ARG pandoc_version=edge
-LABEL maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
-LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
+LABEL maintainer='Albert Krewinkel <albert+pandoc@tarleb.com>'
+LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@tarleb.com>'
 LABEL org.pandoc.author "John MacFarlane"
 LABEL org.pandoc.version "$pandoc_version"
 
