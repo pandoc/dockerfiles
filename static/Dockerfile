@@ -63,6 +63,9 @@ COPY --from=static-builder \
     /usr/local/bin/pandoc \
     /pandoc
 
+# Create a /tmp folder with the correct permissions
+ADD static/tmp.tar /
+
 # Create and set user data directory
 ENV XDG_DATA_HOME=/usr/local/share
 WORKDIR $XDG_DATA_HOME/pandoc
