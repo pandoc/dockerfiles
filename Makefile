@@ -115,7 +115,7 @@ freeze-file: $(STACK)/$(stack_freeze_file)
 	docker run --rm \
 		-v "$(makefile_dir):/app" \
 		--env WITHOUT_CROSSREF=$(WITHOUT_CROSSREF) \
-		pandoc/$(STACK)-builder-base:latest-$(STACK) \
+		pandoc/$(STACK)-builder-base:$(PANDOC_COMMIT)-$(STACK) \
 		sh /app/common/pandoc-freeze.sh \
 		    -c $(PANDOC_COMMIT) \
 		    -u "$(shell id -u):$(shell id -g)" \
