@@ -198,10 +198,7 @@ RUN sed -e 's/ *#.*$//' -e '/^ *$/d' /root/extra_packages.txt | \
 # the templates and packages can be accessed by root and a
 # non-existent `--user`
 #
-ARG TEMPLATES_DIR=/.pandoc/templates
-
-RUN mkdir -p ${TEMPLATES_DIR} && \
-    ln -s /.pandoc /root/.pandoc
+ARG TEMPLATES_DIR=$XDG_DATA_HOME/pandoc
 
 # eisvogel
 ARG EISVOGEL_REPO=https://raw.githubusercontent.com/Wandmalfarbe/pandoc-latex-template
