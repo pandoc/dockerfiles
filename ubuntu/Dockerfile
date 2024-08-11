@@ -76,6 +76,11 @@ LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@tarleb.com>'
 LABEL org.pandoc.author "John MacFarlane"
 LABEL org.pandoc.version "$pandoc_version"
 
+# Set and create user data directory
+ENV XDG_DATA_HOME=/usr/local/share
+WORKDIR $XDG_DATA_HOME/pandoc
+
+# Set default working directory
 WORKDIR /data
 ENTRYPOINT ["/usr/local/bin/pandoc"]
 

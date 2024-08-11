@@ -74,6 +74,11 @@ LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@tarleb.com>'
 LABEL org.pandoc.author "John MacFarlane"
 LABEL org.pandoc.version "$pandoc_version"
 
+# Set and create user data directory
+ENV XDG_DATA_HOME=/usr/local/share
+WORKDIR $XDG_DATA_HOME/pandoc
+
+# Set default working directory
 WORKDIR /data
 ENTRYPOINT ["/usr/local/bin/pandoc"]
 
@@ -85,9 +90,9 @@ COPY --from=alpine-builder \
 RUN ln -s /usr/local/bin/pandoc /usr/local/bin/pandoc-lua && \
     ln -s /usr/local/bin/pandoc /usr/local/bin/pandoc-server && \
     apk --no-cache add \
-    gmp \
-    libffi \
-    lua$lua_version
+        gmp \
+        libffi \
+        lua$lua_version
 
 # Core ##################################################################
 FROM alpine-minimal AS alpine-core
