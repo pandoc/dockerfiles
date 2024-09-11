@@ -197,8 +197,9 @@ ARG LUA_FILTERS_VERSION=v2021-11-05
 RUN wget ${LUA_FILTERS_REPO}/${LUA_FILTERS_VERSION}/lua-filters.tar.gz \
     && tar xzf lua-filters.tar.gz \
            --strip-components=1 \
-           --one-top-level=$TEMPLATES_DIR \
+           --one-top-level=$PANDOC_DATA_DIR \
     && rm -f lua-filters.tar.gz
 
 # tectonic
 RUN apk --no-cache add tectonic
+ 
