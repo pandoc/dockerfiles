@@ -1,12 +1,7 @@
 # Base ##################################################################
 ARG base_image_version=noble
 FROM ubuntu:$base_image_version AS ubuntu-builder-base
-WORKDIR /app
 
-## An ARG instruction goes out of scope at the end of the build stage 
-## where it was defined. To use an argument in multiple stages, each stage 
-## must include the ARG instruction
-ARG base_image_version=noble
 ARG lua_version=5.4
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get -q --no-allow-insecure-repositories update \
@@ -34,10 +29,6 @@ FROM ubuntu-builder-base AS ubuntu-builder
 ARG pandoc_commit=main
 RUN git clone --branch=$pandoc_commit --depth=1 --quiet \
   https://github.com/jgm/pandoc /usr/src/pandoc
-
-# Remove the settings that ship with pandoc, unless we're building the main
-# branch.
-RUN [ "${pandoc_commit}" = "main" ] || rm -f cabal.project
 
 COPY ./ubuntu/freeze/pandoc-$pandoc_commit.project.freeze \
      /usr/src/pandoc/cabal.project.freeze

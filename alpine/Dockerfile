@@ -1,5 +1,5 @@
 # Base ##################################################################
-ARG base_image_version=3.16
+ARG base_image_version=3.20
 FROM alpine:$base_image_version AS alpine-builder-base
 WORKDIR /app
 
@@ -30,10 +30,6 @@ FROM alpine-builder-base AS alpine-builder
 ARG pandoc_commit=main
 RUN git clone --branch=$pandoc_commit --depth=1 --quiet \
   https://github.com/jgm/pandoc /usr/src/pandoc
-
-# Remove the settings that ship with pandoc, unless we're building the main
-# branch.
-RUN [ "${pandoc_commit}" = "main" ] || rm -f cabal.project
 
 COPY ./alpine/freeze/pandoc-$pandoc_commit.project.freeze \
      /usr/src/pandoc/cabal.project.freeze
