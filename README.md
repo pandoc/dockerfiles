@@ -171,6 +171,15 @@ lang: uk
 Цей текст не дуже цікавий.
 ```
 
+### Adding files to pandoc's data directory
+
+A common goal of customized images is to make various templates,
+filters, or defaults files available to all users of the extended
+image. The images set the `XDG_DATA_HOME` variable to
+`/usr/local/share`, so the default pandoc data directory is
+`/usr/local/share/pandoc`. Extensions are best placed in that
+folder.
+
 License
 ================================================================================
 
