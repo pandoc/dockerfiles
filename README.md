@@ -70,7 +70,7 @@ Basic Usage
    convert to HTML.
 
    ```sh
-   docker run --rm --volume "`pwd`:/data" --user `id -u`:`id -g` pandoc/latex:2.6 README.md
+   docker run --rm --volume "`pwd`:/data" --user `id -u`:`id -g` pandoc/latex:3.4 README.md
    ```
 
    The `--volume` flag maps some directory on *your machine* (lefthand side of
@@ -83,12 +83,12 @@ Basic Usage
    It is hence a good idea to specify for docker the user and group IDs to use
    via the `--user` flag.
 
-   `pandoc/latex:2.6` declares the image that you're going to run. It's always a
+   `pandoc/latex:3.4` declares the image that you're going to run. It's always a
    good idea to hardcode the version, lest future releases break your code.
 
    It may look weird to you that you can just add `README.md` at the end of this
-   line, but that's just because the `pandoc/latex:2.6` will simply prepend
-   `pandoc` in front of anything you write after `pandoc/latex:2.6` (this is
+   line, but that's just because the `pandoc/latex:3.4` will simply prepend
+   `pandoc` in front of anything you write after `pandoc/latex:3.4` (this is
    known as the `ENTRYPOINT` field of the Dockerfile). So what you're really
    running here is `pandoc README.md`, which is a valid pandoc command.
 
