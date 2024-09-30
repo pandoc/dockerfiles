@@ -20,7 +20,10 @@ RUN apk --no-cache add \
         yaml \
         zlib-dev
 
-COPY cabal.root.config /root/.config/cabal/config
+# Setup and configure cabal
+ENV CABAL_CONFIG=/root/.config/cabal/config
+COPY cabal.root.config $CABAL_CONFIG
+
 RUN cabal --version \
   && ghc --version \
   && cabal update
