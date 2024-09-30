@@ -20,7 +20,7 @@ RUN apk --no-cache add \
         yaml \
         zlib-dev
 
-COPY cabal.root.config /root/.cabal/config
+COPY cabal.root.config /root/.config/cabal/config
 RUN cabal --version \
   && ghc --version \
   && cabal update
@@ -47,8 +47,7 @@ ARG extra_packages="pandoc-cli pandoc-crossref"
 # Build pandoc and pandoc-crossref. The `allow-newer` is required for
 # when pandoc-crossref has not been updated yet, but we want to build
 # anyway.
-RUN cabal update \
-  && cabal build \
+RUN cabal build \
       --allow-newer 'lib:pandoc' \
       --disable-tests \
       --disable-bench \
