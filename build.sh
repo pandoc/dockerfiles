@@ -132,6 +132,10 @@ without_crossref=
 if [ "$stack" = "static" ]; then
     extra_packages=
     without_crossref=true
+elif [ "$stack" = "alpine" ] && [ "$pandoc_commit" = "main" ]; then
+    # There's some kind of issue with pandoc-crossref on Alpine
+    extra_packages=
+    without_crossref=true
 fi
 
 ## The pandoc-cli package did not exist pre pandoc 3.

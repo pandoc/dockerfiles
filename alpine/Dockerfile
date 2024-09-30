@@ -60,6 +60,9 @@ RUN find dist-newstyle \
          -exec strip '{}' ';' \
          -exec cp '{}' /usr/local/bin/ ';'
 
+# Ensure the file exists
+RUN touch /usr/local/bin/pandoc-crossref
+
 # Minimal ###############################################################
 FROM alpine:$base_image_version AS alpine-minimal
 ARG pandoc_version=edge
