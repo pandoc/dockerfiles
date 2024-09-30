@@ -4,7 +4,6 @@ on:
   push:
     # Build and publish: configure build via commit message
     branches:
-      - master
     paths-ignore:
       - '.dockerignore'
       - '.github/FUNDING.yml'
