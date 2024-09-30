@@ -1,7 +1,6 @@
-# Base ##################################################################
+# Builder ###############################################################
 ARG base_image_version=3.20
-FROM alpine:$base_image_version AS alpine-builder-base
-WORKDIR /app
+FROM alpine:$base_image_version AS alpine-builder
 
 ARG lua_version=5.4
 RUN apk --no-cache add \
@@ -24,12 +23,10 @@ RUN apk --no-cache add \
 ENV CABAL_CONFIG=/root/.config/cabal/config
 COPY cabal.root.config $CABAL_CONFIG
 
-RUN cabal --version \
-  && ghc --version \
-  && cabal update
+RUN cabal --version && \
+    ghc --version && \
+    cabal update
 
-# Builder ###############################################################
-FROM alpine-builder-base AS alpine-builder
 ARG pandoc_commit=main
 RUN git clone --branch=$pandoc_commit --depth=1 --quiet \
   https://github.com/jgm/pandoc /usr/src/pandoc
