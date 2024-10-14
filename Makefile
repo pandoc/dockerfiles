@@ -61,14 +61,20 @@ define stack
 # `STACK` variable based on the chosen target. This is an alternative to
 # setting the `STACK` variable directly and allows for convenient tab
 # completion.
-.PHONY: $(1) $(1)-minimal $(1)-core $(1)-freeze-file
+.PHONY: \
+		$(1) \
+		$(1)-minimal \
+		$(1)-freeze-file
 $(1) $(1)-minimal $(1)-freeze-file: STACK = $(1)
 $(1): $(1)-minimal
 $(1)-minimal: minimal
 $(1)-freeze-file: $(1)/$(stack_freeze_file)
 # Only alpine and ubuntu support core, latex, and extra images
 ifeq ($(1),$(filter $(1),alpine ubuntu))
-.PHONY: $(1)-core $(1)-latex $(1)-extra
+.PHONY: \
+		$(1)-core \
+		$(1)-latex \
+		$(1)-extra
 $(1) $(1)-core $(1)-latex $(1)-extra: STACK = $(1)
 $(1)-core: core
 $(1)-latex: latex
@@ -76,7 +82,12 @@ $(1)-extra: extra
 endif
 
 # Do the same for test targets, again to allow for tab completion.
-.PHONY: test-$(1) test-$(1)-minimal test-$(1)-core test-$(1)-latex test-$(1)-extra
+.PHONY: \
+		test-$(1) \
+		test-$(1)-minimal \
+		test-$(1)-core \
+		test-$(1)-latex \
+		test-$(1)-extra
 test-$(1) test-$(1)-minimal test-$(1)-core test-$(1)-latex test-$(1)-extra: STACK = $(1)
 test-$(1): test-minimal
 test-$(1)-minimal: test-minimal
@@ -86,7 +97,12 @@ test-$(1)-latex: test-latex
 test-$(1)-extra: test-extra
 endif
 # And for push targets
-.PHONY: push-$(1) push-$(1)-minimal push-$(1)-core push-$(1)-latex push-$(1)-extra
+.PHONY: \
+		push-$(1) \
+		push-$(1)-minimal \
+		push-$(1)-core \
+		push-$(1)-latex \
+		push-$(1)-extra
 push-$(1) push-$(1)-minimal push-$(1)-core push-$(1)-latex push-$(1)-extra: STACK = $(1)
 push-$(1): push-minimal
 push-$(1)-minimal: push-minimal
