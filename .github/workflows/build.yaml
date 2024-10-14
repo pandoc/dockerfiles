@@ -120,6 +120,10 @@ jobs:
         if: ${{ matrix.stack != 'static' }}
         run: make latex
 
+      - name: Build Typst image
+        if: ${{ matrix.stack != 'static' }}
+        run: make typst
+
       - name: Build extra image
         if: ${{ matrix.stack != 'static' }}
         run: make extra
@@ -147,6 +151,7 @@ jobs:
           make push-minimal
           if [ "$STACK" != 'static' ]; then
               make push-core
+              make push-typst
               make push-latex
               make push-extra
           fi

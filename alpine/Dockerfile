@@ -50,7 +50,7 @@ ARG extra_packages="pandoc-cli pandoc-crossref"
 # Build pandoc and pandoc-crossref. The `allow-newer` is required for
 # when pandoc-crossref has not been updated yet, but we want to build
 # anyway.
-RUN cabal build \
+RUN cabal update && cabal build \
       --allow-newer 'lib:pandoc' \
       --disable-tests \
       --disable-bench \
@@ -160,6 +160,11 @@ RUN echo "binary_x86_64-linuxmusl 1" >> /root/texlive.profile \
   && chmod -R o+w /opt/texlive/texdir/texmf-var
 
 WORKDIR /data
+
+# Typst #################################################################
+FROM alpine-core AS alpine-typst
+
+RUN apk --no-cache add typst
 
 # extra ##############################################################
 FROM alpine-latex AS alpine-extra

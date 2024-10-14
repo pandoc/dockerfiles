@@ -69,15 +69,17 @@ $(1) $(1)-minimal $(1)-freeze-file: STACK = $(1)
 $(1): $(1)-minimal
 $(1)-minimal: minimal
 $(1)-freeze-file: $(1)/$(stack_freeze_file)
-# Only alpine and ubuntu support core, latex, and extra images
+# Only alpine and ubuntu support core, latex, typst, and extra images
 ifeq ($(1),$(filter $(1),alpine ubuntu))
 .PHONY: \
 		$(1)-core \
 		$(1)-latex \
+		$(1)-typst \
 		$(1)-extra
-$(1) $(1)-core $(1)-latex $(1)-extra: STACK = $(1)
+$(1) $(1)-core $(1)-latex $(1)-typst $(1)-extra: STACK = $(1)
 $(1)-core: core
 $(1)-latex: latex
+$(1)-typst: typst
 $(1)-extra: extra
 endif
 
@@ -167,6 +169,16 @@ latex: $(STACK)/$(stack_freeze_file)
 		-c "$(PANDOC_COMMIT)" \
 		-d "$(makefile_dir)" \
 		-t "$(STACK)-latex" \
+		$(docker_cpu_options)
+# Typst #################################################################
+.PHONY: typst
+typst: $(STACK)/$(stack_freeze_file)
+	./build.sh build -v \
+		-r typst \
+		-s "$(STACK)" \
+		-c "$(PANDOC_COMMIT)" \
+		-d "$(makefile_dir)" \
+		-t "$(STACK)-typst" \
 		$(docker_cpu_options)
 # Extra #################################################################
 .PHONY: extra
