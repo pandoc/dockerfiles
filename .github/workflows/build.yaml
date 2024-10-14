@@ -35,7 +35,7 @@ jobs:
         run: |
           if [ 'schedule' = "${{ github.event_name }}" ]; then
               pandoc_versions="['edge']"
-              stacks="['alpine','ubuntu','static']"
+              stacks="['ubuntu','static']"
               build=true
           else
               # Determine PANDOC_VERSION for Makefile based on commit message.
@@ -62,7 +62,11 @@ jobs:
                        tr '\n' ',')
 
               if [ -z "$stacks" ]; then
-                  stacks="'alpine', 'ubuntu', 'static'"
+                  if [ "$pandoc_versions" = "['edge']" ]; then
+                      stacks="'ubuntu', 'static'"
+                  else
+                      stacks="'alpine', 'ubuntu', 'static'"
+                  fi
               fi
               stacks="[${stacks}]"
 
