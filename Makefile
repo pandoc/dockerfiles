@@ -104,6 +104,7 @@ endif
 		push-$(1)-minimal \
 		push-$(1)-core \
 		push-$(1)-latex \
+		push-$(1)-typst \
 		push-$(1)-extra
 push-$(1) push-$(1)-minimal push-$(1)-core push-$(1)-latex push-$(1)-extra: STACK = $(1)
 push-$(1): push-minimal
@@ -111,6 +112,7 @@ push-$(1)-minimal: push-minimal
 ifeq ($(1),$(filter $(1),alpine ubuntu))
 push-$(1)-core: push-core
 push-$(1)-latex: push-latex
+push-$(1)-typst: push-typst
 push-$(1)-extra: push-extra
 endif
 endef
@@ -240,6 +242,14 @@ push-latex:
 		-c "$(PANDOC_COMMIT)" \
 		-d "$(makefile_dir)" \
 		-t "$(STACK)-latex"
+push-typst: REPO ?= typst
+push-typst:
+	./build.sh push -v \
+		-r $(REPO) \
+		-s "$(STACK)" \
+		-c "$(PANDOC_COMMIT)" \
+		-d "$(makefile_dir)" \
+		-t "$(STACK)-typst"
 push-extra: REPO ?= extra
 push-extra:
 	./build.sh push -v \
