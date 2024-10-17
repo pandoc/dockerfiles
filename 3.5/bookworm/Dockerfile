@@ -109,7 +109,6 @@ RUN set -eux; \
     --constraint='any.bsb-http-chunked ==0.0.0.4' \
     --constraint='any.byteorder ==1.0.4' \
     --constraint='any.bytestring ==0.10.12.1 || ==0.12.1.0' \
-    --constraint='bytestring -pure-haskell' \
     --constraint='any.cabal-doctest ==1.0.10' \
     --constraint='any.call-stack ==0.4.0' \
     --constraint='any.case-insensitive ==1.2.1.0' \
