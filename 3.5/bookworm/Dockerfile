@@ -57,7 +57,7 @@ RUN set -eux; \
     --prefix=/usr/local \
     --flags='+server +lua' \
     --sysconfdir=/etc \
-    --ghc-options='-O1 -optc-Os -optl=-pthread -fPIC -j +RTS -A128m -n2m -RTS' \
+    --ghc-options='-optc-Os -optl=-pthread -fPIC -j +RTS -A256m -RTS' \
     --constraint='any.Cabal ==3.4.1.0' \
     --constraint='any.Glob ==0.10.2' \
     --constraint='any.HUnit ==1.6.2.0' \
