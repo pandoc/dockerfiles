@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: Build
+    name: Debian
     runs-on: ubuntu-latest
 
     env:
@@ -38,6 +38,6 @@ jobs:
         with:
           file: '3.5/bookworm/Dockerfile'
           context: '.'
-          platforms: linux/amd64,linux/arm64/v8
+          platforms: linux/arm64/v8
           push: ${{ env.PUSH_IMAGE }}
           tags: 'pandoc/core:3.5-debian'
