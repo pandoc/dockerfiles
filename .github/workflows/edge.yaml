@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - edge/alpine/Dockerfile
+      - .github/workflows/edge.yaml
   schedule:
     # Rebuild on the 17th of each month
     - cron: '19 1 17 * *'
@@ -47,21 +48,46 @@ jobs:
           driver: cloud
           endpoint: "pandoc/multiarch"
 
-      - name: Docker meta
-        id: meta
+      - name: Meta for minimal
+        id: meta-minimal
         uses: docker/metadata-action@v5
         with:
           images: |
             pandoc/minimal
             ghcr.io/pandoc/minimal
 
-      - name: Build and push edge image
-        uses: docker/build-push-action@v5
+      - name: 'pandoc/minimal:edge-alpine'
+        uses: docker/build-push-action@v6
         with:
           context: '.'
           file: 'edge/alpine/Dockerfile'
-          labels: ${{ steps.meta.outputs.labels }}
+          labels: ${{ steps.meta-minimal.outputs.labels }}
           platforms: linux/amd64,linux/arm64
           push: ${{ env.PUSH_IMAGE }}
-          tags: 'pandoc/minimal:edge-alpine'
+          target: minimal
+          tags: |
+            pandoc/minimal:edge-alpine
+            ghcr.io/pandoc/minimal:edge-alpine
+
+      - name: Meta for core
+        id: meta-core
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            pandoc/core
+            ghcr.io/pandoc/core
+
+      - name: 'pandoc/core:edge-alpine'
+        uses: docker/build-push-action@v6
+        with:
+          file: 'edge/alpine/Dockerfile'
+          labels: ${{ steps.meta-core.outputs.labels }}
+          platforms: linux/amd64,linux/arm64
+          push: ${{ env.PUSH_IMAGE }}
+          target: core
+          tags: |
+            pandoc/core:edge
+            pandoc/core:edge-alpine
+            ghcr.io/pandoc/core:edge
+            ghcr.io/pandoc/core:edge-alpine
 

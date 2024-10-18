@@ -17,7 +17,6 @@ RUN apk --no-cache add \
         yaml \
         zlib-dev
 
-RUN cabal update
 RUN <<EOF
 set -ex;
 curl -sSL \
@@ -31,6 +30,7 @@ printf 'extra-packages: pandoc-crossref\n' > cabal.project.local;
 # Build pandoc and pandoc-crossref. The `allow-newer` is required for
 # when pandoc-crossref has not been updated yet, but we want to build
 # anyway.
+cabal update
 cabal build \
     --jobs \
     --disable-tests \
@@ -51,10 +51,12 @@ find dist-newstyle \
     -name 'pandoc*' -type f -perm -u+x \
     -exec strip '{}' ';' \
     -exec cp '{}' /usr/local/bin/ ';'
+
+rm -rf /root/.cabal
 EOF
 
 # Minimal ###############################################################
-FROM alpine:$base_image_version AS alpine-minimal
+FROM alpine:$base_image_version AS minimal
 ARG pandoc_version=edge
 LABEL maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
 LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@zeitkraut.de>'
@@ -76,3 +78,13 @@ RUN ln -s /usr/local/bin/pandoc /usr/local/bin/pandoc-lua && \
         gmp \
         libffi \
         lua5.4
+
+# Core ##################################################################
+FROM minimal AS core
+COPY --from=alpine-builder \
+  /usr/local/bin/pandoc-crossref \
+  /usr/local/bin/
+
+# Additional packages frequently used during conversions
+# NOTE: `libsrvg`, pandoc uses `rsvg-convert` for working with svg images.
+RUN apk --no-cache add rsvg-convert
