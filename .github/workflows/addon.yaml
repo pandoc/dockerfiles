@@ -1,10 +1,6 @@
 name: Addon images
 
 on:
-  push:
-    paths:
-      - '**/typst/Dockerfile'
-      - .github/workflows/addon.yaml
   workflow_call:
     inputs:
       addon:

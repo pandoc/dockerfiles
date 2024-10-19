@@ -5,6 +5,7 @@ on:
     paths:
       - '**/latex/Dockerfile'
       - .github/workflows/latex.yaml
+      - .github/workflows/addon.yaml
   workflow_dispatch:
     inputs:
       pandoc_version:
