@@ -1,0 +1,27 @@
+name: LaTeX images
+
+on:
+  push:
+    paths:
+      - '**/latex/Dockerfile'
+      - .github/workflows/latex.yaml
+  workflow_dispatch:
+    inputs:
+      pandoc_version:
+        type: string
+        default: edge
+      build_stack:
+        type: string
+        default: alpine
+
+jobs:
+  build:
+    uses: ./.github/workflows/addon.yaml
+    with:
+      addon: latex
+      pandoc_version: ${{ inputs.pandoc_version }}
+      build_stack: ${{ inputs.build_stack }}
+    secrets:
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
+
