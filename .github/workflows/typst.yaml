@@ -1,0 +1,123 @@
+name: Typst images
+
+on:
+  push:
+    paths:
+      - '**/typst/Dockerfile'
+      - .github/workflows/typst.yaml
+  workflow_call:
+    inputs:
+      pandoc_version:
+        type: string
+        default: edge
+      build_stack:
+        type: string
+        default: alpine
+    secrets:
+      DOCKER_HUB_USERNAME:
+        required: true
+      DOCKER_HUB_TOKEN:
+        required: true
+  workflow_dispatch:
+    inputs:
+      pandoc_version:
+        type: string
+        default: edge
+      build_stack:
+        type: string
+        default: alpine
+
+jobs:
+  conf:
+    name: Configure
+    runs-on: ubuntu-latest
+    outputs:
+      pandoc_version: ${{ steps.params.outputs.pandoc_version }}
+      build_stack: ${{ steps.params.outputs.build_stack }}
+    steps:
+      - name: Parameters
+        id: params
+        run: |
+          pandoc_version=${{ inputs.pandoc_version }}
+          build_stack=${{ inputs.build_stack }}
+          if [ -z "${pandoc_version}" ]; then
+              pandoc_version=edge
+          fi
+          if [ -z "${build_stack}" ]; then
+              build_stack=alpine
+          fi
+          pandoc_version="['${pandoc_version}']"
+          build_stack="['${build_stack}']"
+          printf 'pandoc_version=%s\n' "$pandoc_version"
+          printf 'build_stack=%s\n' "$build_stack"
+          printf 'pandoc_version=%s\n' "$pandoc_version" >> $GITHUB_OUTPUT
+          printf 'build_stack=%s\n' "$build_stack"       >> $GITHUB_OUTPUT
+
+  build:
+    name: Typst
+    runs-on: ubuntu-latest
+    needs: conf
+
+    strategy:
+      fail-fast: false
+      matrix:
+        build_stack: ${{ fromJSON( needs.conf.outputs.build_stack ) }}
+        pandoc_version: ${{ fromJSON( needs.conf.outputs.pandoc_version ) }}
+
+    env:
+      PUSH_IMAGE: ${{ github.repository == 'pandoc/dockerfiles' &&
+                      (github.ref == 'refs/heads/main' ||
+                       github.ref_type == 'tag' ||
+                       github.event_name != 'pull_request') }}
+      PANDOC_VERSION: ${{ matrix.pandoc_version }}
+      FULL_TAG: >-
+        ${{ matrix.pandoc_version }}-${{ matrix.build_stack }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        if: ${{ env.PUSH_IMAGE }}
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        if: ${{ env.PUSH_IMAGE }}
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          version: "lab:latest"
+          driver: cloud
+          endpoint: "pandoc/multiarch"
+
+      - name: Meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            pandoc/typst
+            ghcr.io/pandoc/typst
+
+      - name: pandoc/typst:${{ env.FULL_TAG }}
+        uses: docker/build-push-action@v6
+        with:
+          build-args: |
+            base_image_tag=${{ env.FULL_TAG }}
+          context: '.'
+          file: ${{ matrix.build_stack }}/typst/Dockerfile
+          labels: ${{ steps.meta.outputs.labels }}
+          platforms: linux/amd64,linux/arm64
+          push: ${{ env.PUSH_IMAGE }}
+          tags: |
+            pandoc/typst:${{ env.FULL_TAG }}
+            ghcr.io/pandoc/typst:${{ env.FULL_TAG }}
+
