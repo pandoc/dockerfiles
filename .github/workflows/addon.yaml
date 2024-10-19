@@ -123,7 +123,7 @@ jobs:
             pandoc/${{ matrix.image_type }}
             ghcr.io/pandoc/${{ matrix.image_type }}
 
-      - name: pandoc/typst:${{ env.FULL_TAG }}
+      - name: pandoc/${{ matrix.image_type }}:${{ env.FULL_TAG }}
         uses: docker/build-push-action@v6
         with:
           build-args: |
@@ -135,6 +135,6 @@ jobs:
           platforms: linux/amd64
           push: ${{ env.PUSH_IMAGE }}
           tags: |
-            pandoc/typst:${{ env.FULL_TAG }}
-            ghcr.io/pandoc/typst:${{ env.FULL_TAG }}
+            pandoc/${{ matrix.image_type }}:${{ env.FULL_TAG }}
+            ghcr.io/pandoc/${{ matrix.image_type }}:${{ env.FULL_TAG }}
 
