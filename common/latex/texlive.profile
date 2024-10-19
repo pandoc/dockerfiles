@@ -2,8 +2,8 @@
 # It will NOT be updated and reflects only the
 # installation profile at installation time.
 #
-# NOTE: see also alpine/latex.Dockerfile which appends
-# `binary_x86_64-linuxmusl 1` to this file, use for non-glibc distributions.
+# NOTE: see also alpine/latex/Dockerfile which appends
+# `binary_${ARCH}-linuxmusl 1` to this file, use for non-glibc distributions.
 selected_scheme scheme-basic
 TEXDIR         /opt/texlive/texdir
 TEXMFLOCAL     /opt/texlive/texmf-local
