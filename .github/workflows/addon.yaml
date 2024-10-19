@@ -110,10 +110,10 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-        with:
-          version: "lab:latest"
-          driver: cloud
-          endpoint: "pandoc/multiarch"
+        # with:
+        #   version: "lab:latest"
+        #   driver: cloud
+        #   endpoint: "pandoc/multiarch"
 
       - name: Meta
         id: meta
@@ -131,7 +131,8 @@ jobs:
           context: '.'
           file: ${{ matrix.build_stack }}/${{ matrix.image_type }}/Dockerfile
           labels: ${{ steps.meta.outputs.labels }}
-          platforms: linux/amd64,linux/arm64
+          #platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           push: ${{ env.PUSH_IMAGE }}
           tags: |
             pandoc/typst:${{ env.FULL_TAG }}
