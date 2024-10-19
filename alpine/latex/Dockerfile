@@ -36,7 +36,7 @@ ENV PATH="${texlive_bin}/default:${PATH}"
 RUN ARCH="$(uname -m)" && \
     case "$ARCH" in \
         ('aarch64') \
-            TEXLIVE_ARCH="binary-aarch64-linux"; \
+            TEXLIVE_ARCH="binary-aarch64-linuxmusl"; \
             ;; \
         ('x86_64') \
             TEXLIVE_ARCH="binary-x86_64-linuxmusl"; \
