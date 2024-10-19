@@ -128,7 +128,7 @@ jobs:
           file: ${{ matrix.build_stack }}/${{ matrix.image_type }}/Dockerfile
           labels: ${{ steps.meta.outputs.labels }}
           #platforms: linux/amd64,linux/arm64
-          platforms: linux/amd64
+          platforms: linux/arm64
           push: ${{ env.PUSH_IMAGE }}
           tags: |
             pandoc/${{ matrix.image_type }}:${{ env.FULL_TAG }}
