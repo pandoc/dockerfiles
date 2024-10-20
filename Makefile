@@ -98,24 +98,8 @@ test-$(1)-core: test-core
 test-$(1)-latex: test-latex
 test-$(1)-extra: test-extra
 endif
-# And for push targets
-.PHONY: \
-		push-$(1) \
-		push-$(1)-minimal \
-		push-$(1)-core \
-		push-$(1)-latex \
-		push-$(1)-typst \
-		push-$(1)-extra
-push-$(1) push-$(1)-minimal push-$(1)-core push-$(1)-latex push-$(1)-extra: STACK = $(1)
-push-$(1): push-minimal
-push-$(1)-minimal: push-minimal
-ifeq ($(1),$(filter $(1),alpine ubuntu))
-push-$(1)-core: push-core
-push-$(1)-latex: push-latex
-push-$(1)-typst: push-typst
-push-$(1)-extra: push-extra
-endif
 endef
+
 # Generate convenience targets for all supported stacks.
 $(foreach img,$(image_stacks),$(eval $(call stack,$(img))))
 
@@ -220,48 +204,6 @@ test-typst:
 .PHONY: lint
 lint:
 	shellcheck $(shell find . -name "*.sh")
-
-.PHONY: push-minimal push-core push-latex push-extra
-push-minimal: REPO ?= minimal
-push-minimal:
-	./build.sh push -v \
-		-r $(REPO) \
-		-s "$(STACK)" \
-		-c "$(PANDOC_COMMIT)" \
-		-d "$(makefile_dir)" \
-		-t "$(STACK)-minimal"
-push-core: REPO ?= core
-push-core:
-	./build.sh push -v \
-		-r $(REPO) \
-		-s "$(STACK)" \
-		-c "$(PANDOC_COMMIT)" \
-		-d "$(makefile_dir)" \
-		-t "$(STACK)-core"
-push-latex: REPO ?= latex
-push-latex:
-	./build.sh push -v \
-		-r $(REPO) \
-		-s "$(STACK)" \
-		-c "$(PANDOC_COMMIT)" \
-		-d "$(makefile_dir)" \
-		-t "$(STACK)-latex"
-push-typst: REPO ?= typst
-push-typst:
-	./build.sh push -v \
-		-r $(REPO) \
-		-s "$(STACK)" \
-		-c "$(PANDOC_COMMIT)" \
-		-d "$(makefile_dir)" \
-		-t "$(STACK)-typst"
-push-extra: REPO ?= extra
-push-extra:
-	./build.sh push -v \
-		-r $(REPO) \
-		-s "$(STACK)" \
-		-c "$(PANDOC_COMMIT)" \
-		-d "$(makefile_dir)" \
-		-t "$(STACK)-extra"
 
 .PHONY: docs docs-minimal
 docs:
