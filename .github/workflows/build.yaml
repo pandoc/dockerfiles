@@ -34,56 +34,57 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Show config
-        run: make show-args
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
-      - name: Build minimal image
-        run: make minimal
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Test minimal image
-        run: make test-minimal
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      # We can't build statically linked core or latex images
-      - name: Build core image
+      - name: minimal
+        uses: ./.github/actions/build
+        with:
+          image_type: minimal
+          base_system: ${{ matrix.stack }}
+          pandoc_version: ${{ env.PANDOC_VERSION }}
+
+      - name: core
+        uses: ./.github/actions/build
         if: ${{ matrix.stack != 'static' }}
-        run: make core
+        with:
+          image_type: core
+          base_system: ${{ matrix.stack }}
+          pandoc_version: ${{ env.PANDOC_VERSION }}
 
-      - name: Build LaTeX image
+      - name: typst
+        uses: ./.github/actions/build
         if: ${{ matrix.stack != 'static' }}
-        run: make latex
+        with:
+          image_type: minimal
+          base_system: ${{ matrix.stack }}
+          pandoc_version: ${{ env.PANDOC_VERSION }}
 
-      - name: Build Typst image
+      - name: latex
+        uses: ./.github/actions/build
         if: ${{ matrix.stack != 'static' }}
-        run: make typst
+        with:
+          image_type: latex
+          base_system: ${{ matrix.stack }}
+          pandoc_version: ${{ env.PANDOC_VERSION }}
 
-      - name: Build extra image
+      - name: extra
+        uses: ./.github/actions/build
         if: ${{ matrix.stack != 'static' }}
-        run: make extra
-
-      - name: Test core image
-        if: ${{ matrix.stack != 'static' }}
-        run: make test-core
-
-      - name: Test LaTeX image
-        if: ${{ matrix.stack != 'static' }}
-        run: make test-latex
-
-      - name: Test extra image
-        if: ${{ matrix.stack != 'static' }}
-        run: make test-extra
-
-      - name: Push
-        if: >-
-          (github.event_name == 'push' || github.event_name == 'schedule') &&
-          github.repository == 'pandoc/dockerfiles'
-        run: |
-          # Log into registry
-          echo "${{ secrets.DOCKER_HUB_TOKEN }}" |
-            docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
-          make push-minimal
-          if [ "$STACK" != 'static' ]; then
-              make push-core
-              make push-typst
-              make push-latex
-              make push-extra
-          fi
+        with:
+          image_type: extra
+          base_system: ${{ matrix.stack }}
+          pandoc_version: ${{ env.PANDOC_VERSION }}
