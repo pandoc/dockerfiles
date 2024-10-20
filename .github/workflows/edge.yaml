@@ -50,11 +50,13 @@ jobs:
 
       - name: Meta for minimal
         id: meta-minimal
-        uses: docker/metadata-action@v5
+        uses: ./.github/workflows/meta.yaml
         with:
           images: |
             pandoc/minimal
             ghcr.io/pandoc/minimal
+          pandoc_version: main
+          build_stack: alpine
 
       - name: Config minimal
         id: config-minimal
@@ -74,11 +76,13 @@ jobs:
 
       - name: Meta for core
         id: meta-core
-        uses: docker/metadata-action@v5
+        uses: ./.github/workflows/meta.yaml
         with:
           images: |
             pandoc/core
             ghcr.io/pandoc/core
+          pandoc_version: main
+          build_stack: alpine
 
       - name: Config core
         id: config-core
