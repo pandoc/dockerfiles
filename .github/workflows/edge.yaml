@@ -26,6 +26,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Meta for minimal
+        id: meta-minimal
+        uses: ./.github/actions/meta
+        with:
+          images: |
+            pandoc/minimal
+            ghcr.io/pandoc/minimal
+          pandoc_version: main
+          build_stack: alpine
+
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         if: ${{ env.PUSH_IMAGE }}
@@ -48,16 +58,6 @@ jobs:
         #   driver: cloud
         #   endpoint: "pandoc/multiarch"
 
-      - name: Meta for minimal
-        id: meta-minimal
-        uses: ./.github/workflows/meta.yaml
-        with:
-          images: |
-            pandoc/minimal
-            ghcr.io/pandoc/minimal
-          pandoc_version: main
-          build_stack: alpine
-
       - name: Config minimal
         id: config-minimal
         run: |
@@ -76,7 +76,7 @@ jobs:
 
       - name: Meta for core
         id: meta-core
-        uses: ./.github/workflows/meta.yaml
+        uses: ./.github/actions/meta
         with:
           images: |
             pandoc/core

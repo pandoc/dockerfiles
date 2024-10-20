@@ -1,0 +1,52 @@
+name: 'Pandoc Docker Meta'
+author: 'Albert Krewinkel'
+description: 'Compute Docker image metadata values'
+inputs:
+  images:
+    type: string
+    required: true
+  pandoc_version:
+    type: string
+    default: main
+  build_stack:
+    type: string
+    default: alpine
+outputs:
+  base_image:
+    description: "name of the base image"
+    value: ${{ steps.config.outputs.base_image }}
+  base_image_version:
+    description: "version of the base image"
+    value: ${{ steps.config.outputs.base_image_version }}
+  labels:
+    description: "Docker image labels"
+    value: ${{ steps.meta.outputs.labels }}
+  tags:
+    description: "Docker image tags"
+    value: ${{ steps.config.outputs.tags }}
+  texlive_version:
+    description: "TeXLive version to be use for LaTeX images"
+    value: ${{ steps.config.outputs.texlive_version }}
+
+runs:
+  using: composite
+  steps:
+    - name: Config
+      id: config
+      shell: bash
+      run: |
+        ./scripts/config.sh \
+            ${{ inputs.pandoc_version }} \
+            ${{ inputs.build_stack }} \
+            "${{ inputs.images }}"
+        ./scripts/config.sh \
+            "${{ inputs.pandoc_version }}" \
+            "${{ inputs.build_stack }}" \
+            "${{ inputs.images }}" \
+            >> $GITHUB_OUTPUT
+
+    - name: Docker Meta
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ inputs.images }}
