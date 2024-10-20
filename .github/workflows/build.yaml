@@ -25,11 +25,10 @@ jobs:
       fail-fast: false
       matrix:
         stack: ${{ fromJSON( inputs.base_system ) }}
-        version: ${{ inputs.pandoc_version == 'main' && 'edge' ||
-                     inputs.pandoc_version}}
 
     env:
-      PANDOC_VERSION: ${{ matrix.version }}
+      PANDOC_VERSION: >-
+        ${{ inputs.pandoc_version == 'main' && 'edge' || inputs.pandoc_version}}
       STACK: ${{ matrix.stack }}
 
     steps:
