@@ -56,18 +56,21 @@ jobs:
             pandoc/minimal
             ghcr.io/pandoc/minimal
 
-      - name: 'pandoc/minimal:edge-alpine'
+      - name: Config minimal
+        id: config-minimal
+        run: |
+          ./scripts/config.sh main alpine pandoc/minimal >> $GITHUB_OUTPUT
+
+      - name: minimal
         uses: docker/build-push-action@v6
         with:
           context: '.'
           file: 'edge/alpine/Dockerfile'
           labels: ${{ steps.meta-minimal.outputs.labels }}
           platforms: linux/amd64,linux/arm64
-          push: ${{ env.PUSH_IMAGE }}
+          push: ${{ steps.config-minimal.outputs.tags }}
           target: minimal
-          tags: |
-            pandoc/minimal:edge-alpine
-            ghcr.io/pandoc/minimal:edge-alpine
+          tags: steps.config-minimal.outputs.tags
 
       - name: Meta for core
         id: meta-core
@@ -77,7 +80,13 @@ jobs:
             pandoc/core
             ghcr.io/pandoc/core
 
-      - name: 'pandoc/core:edge-alpine'
+      - name: Config core
+        id: config-core
+        run: |
+          ./scripts/config.sh main alpine pandoc/core \
+              >> $GITHUB_OUTPUT
+
+      - name: core
         uses: docker/build-push-action@v6
         with:
           file: 'edge/alpine/Dockerfile'
@@ -85,9 +94,5 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: ${{ env.PUSH_IMAGE }}
           target: core
-          tags: |
-            pandoc/core:edge
-            pandoc/core:edge-alpine
-            ghcr.io/pandoc/core:edge
-            ghcr.io/pandoc/core:edge-alpine
+          tags: ${{ steps.config-core.outputs.tags }}
 
