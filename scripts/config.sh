@@ -15,6 +15,12 @@ version="${1:-main}"
 build_stack="${2:-alpine}"
 images="${3}"
 
+# Translate the `edge` version used for Docker code version into the correct
+# branch name used internally.
+if [ "$version" = "edge" ]; then
+    version="main"
+fi
+
 versions_file=versions.md
 row="$(grep "^| $version " "$versions_file")"
 

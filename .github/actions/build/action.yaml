@@ -11,7 +11,15 @@ inputs:
     default: alpine
     type: string
   pandoc_version:
+    description: "Pandoc version to build."
     default: main
+    type: string
+  dockerfile:
+    description: "Dockerfile to build"
+    required: true
+    type: string
+  target:
+    description: "Dockerfile target"
     type: string
   push:
     description: "Whether to push the image to the registry"
@@ -21,7 +29,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: pandoc commit
+    - name: Env variables
       shell: bash
       run: |
         if [ "${{ inputs.pandoc_version }}" = 'edge' ]; then
@@ -34,8 +42,8 @@ runs:
             inputs.image_type,
             inputs.base_system,
             inputs.pandoc_version
-          ) }} >> $GITHUB_ENV
-
+          ) }}
+        printf 'TEST_IMAGE<<EOF\n%s\nEOF\n' "$TEST_IMAGE" >> $GITHUB_ENV
 
     - name: Meta
       id: meta
@@ -53,10 +61,10 @@ runs:
       uses: docker/build-push-action@v6
       with:
         context: '.'
-        file: '${{ inputs.base_system }}/Dockerfile'
+        file: ${{ inputs.dockerfile }}
         load: true
         push: false
-        target: ${{ inputs.base_system }}-${{ inputs.image_type }}
+        target: ${{ inputs.target }}
         tags: ${{ env.TEST_IMAGE }}
         build-args: ${{ steps.meta.outputs.build_args }}
 
@@ -70,9 +78,9 @@ runs:
       uses: docker/build-push-action@v6
       with:
         context: '.'
-        file: '${{ inputs.base_system }}/Dockerfile'
+        file: ${{ inputs.dockerfile }}
         labels: ${{ steps.meta.outputs.labels }}
         push: true
-        target: ${{ inputs.base_system }}-${{ inputs.image_type }}
+        target: ${{ inputs.target }}
         tags: ${{ steps.meta.outputs.tags }}
         build-args: ${{ steps.meta.outputs.build_args }}

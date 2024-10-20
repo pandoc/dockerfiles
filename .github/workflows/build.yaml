@@ -9,27 +9,17 @@ on:
         default: main
         type: string
       base_system:
-        description: Docker base systems (JSON array)
-        default: "['static','ubuntu','alpine']"
+        description: Docker base system
+        default: alpine
         type: string
   schedule:
     - cron: '33 6 * * 1,4'
 
 jobs:
   # Build images and store them as tar archive
-  build:
-    name: Build
+  core:
+    name: minimal and core
     runs-on: ubuntu-latest
-
-    strategy:
-      fail-fast: false
-      matrix:
-        stack: ${{ fromJSON( inputs.base_system ) }}
-
-    env:
-      PANDOC_VERSION: >-
-        ${{ inputs.pandoc_version == 'main' && 'edge' || inputs.pandoc_version}}
-      STACK: ${{ matrix.stack }}
 
     steps:
       - uses: actions/checkout@v4
@@ -54,37 +44,49 @@ jobs:
         uses: ./.github/actions/build
         with:
           image_type: minimal
-          base_system: ${{ matrix.stack }}
-          pandoc_version: ${{ env.PANDOC_VERSION }}
+          base_system: ${{ inputs.base_system }}
+          pandoc_version: ${{ inputs.pandoc_version }}
+          dockerfile: ${{ inputs.base_system }}/Dockerfile
+          target: minimal
 
       - name: core
         uses: ./.github/actions/build
         if: ${{ matrix.stack != 'static' }}
         with:
           image_type: core
-          base_system: ${{ matrix.stack }}
-          pandoc_version: ${{ env.PANDOC_VERSION }}
+          base_system: ${{ inputs.base_system }}
+          pandoc_version: ${{ inputs.pandoc_version }}
+          dockerfile: ${{ inputs.base_system }}/Dockerfile
+          target: core
 
-      - name: typst
-        uses: ./.github/actions/build
-        if: ${{ matrix.stack != 'static' }}
-        with:
-          image_type: minimal
-          base_system: ${{ matrix.stack }}
-          pandoc_version: ${{ env.PANDOC_VERSION }}
+  typst:
+    name: Typst
+    if: ${{ inputs.base_system != 'static' }}
+    needs: core
+    uses: ./.github/workflows/addon.yaml
+    secrets: inherit
+    with:
+      addon: typst
+      base_system: ${{ inputs.base_system }}
+      pandoc_version: ${{ inputs.pandoc_version }}
 
-      - name: latex
-        uses: ./.github/actions/build
-        if: ${{ matrix.stack != 'static' }}
-        with:
-          image_type: latex
-          base_system: ${{ matrix.stack }}
-          pandoc_version: ${{ env.PANDOC_VERSION }}
+  latex:
+    name: LaTeX
+    if: ${{ inputs.base_system != 'static' }}
+    needs: core
+    uses: ./.github/workflows/addon.yaml
+    secrets: inherit
+    with:
+      addon: latex
+      base_system: ${{ inputs.base_system }}
+      pandoc_version: ${{ inputs.pandoc_version }}
 
-      - name: extra
-        uses: ./.github/actions/build
-        if: ${{ matrix.stack != 'static' }}
-        with:
-          image_type: extra
-          base_system: ${{ matrix.stack }}
-          pandoc_version: ${{ env.PANDOC_VERSION }}
+  extra:
+    name: Extra
+    needs: latex
+    uses: ./.github/workflows/addon.yaml
+    secrets: inherit
+    with:
+      addon: extra
+      base_system: ${{ inputs.base_system }}
+      pandoc_version: ${{ inputs.pandoc_version }}
