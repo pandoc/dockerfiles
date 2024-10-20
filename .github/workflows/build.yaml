@@ -1,103 +1,32 @@
 name: Image Builder
 
 on:
-  push:
-    # Build and publish: configure build via commit message
-    branches:
-      - master
-    paths-ignore:
-      - '.dockerignore'
-      - '.github/FUNDING.yml'
-      - 'docs/*'
-      - 'LICENSE'
-      - 'README.md'
-      - 'SECURITY.md'
-      - 'release-checklist.md'
-  pull_request:
-    # Build, but don't push on pull requests
+  workflow_dispatch:
+    inputs:
+      pandoc_version:
+        description: >-
+          Pandoc version; must be either `main` or a release number
+        default: main
+        type: string
+      base_system:
+        description: Docker base systems (JSON array)
+        default: "['static','ubuntu','alpine']"
+        type: string
   schedule:
     - cron: '33 6 * * 1,4'
 
 jobs:
-  configure:
-    name: Configure
-    runs-on: ubuntu-latest
-    outputs:
-      pandoc-version: ${{ steps.config.outputs.pandoc-version }}
-      stacks: ${{ steps.config.outputs.stacks }}
-      build: ${{ steps.config.outputs.build }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.after }}
-      - name: Configure build
-        id: config
-        run: |
-          if [ 'schedule' = "${{ github.event_name }}" ]; then
-              pandoc_versions="['edge']"
-              stacks="['ubuntu','static']"
-              build=true
-          else
-              # Determine PANDOC_VERSION for Makefile based on commit message.
-              # We are looking for if the string `release=...`. If it exists,
-              # and if it is followed by a comma-separated list of versions,
-              # then those should be built. Otherwise, build the `master` branch
-              # (which is # the `edge` image).
-              versions=$(git log --pretty='%B' -1 | \
-                         sed -ne 's#.*\brelease=\(.*\)$#\1#p' | \
-                         sed -e  's# *, *#\n#g' | \
-                         sed -ne 's#^\([0-9]*\(\.[0-9]*\)*\)*$#"\1"#p' | \
-                         tr '\n' ',')
-
-              if [ -z "$versions" ]; then
-                  versions="'edge'"
-              fi
-              pandoc_versions="[${versions}]"
-
-              # Get and clean stacks
-              stacks=$(git log --pretty='%B' -1 | \
-                       sed -ne 's#.*\bstack=\(.*\)$#\1#p' | \
-                       sed -e  's# *, *#\n#g' | \
-                       sed -ne 's#^\(alpine\|ubuntu\|static\)$#"\1"#p' | \
-                       tr '\n' ',')
-
-              if [ -z "$stacks" ]; then
-                  if [ "$pandoc_versions" = "['edge']" ]; then
-                      stacks="'ubuntu', 'static'"
-                  else
-                      stacks="'alpine', 'ubuntu', 'static'"
-                  fi
-              fi
-              stacks="[${stacks}]"
-
-              # Don't build if commit message has a line 'skip build'
-              build=true
-              if git log --pretty='%B' -1 | grep -ie '^skip[ -]build$'; then
-                  build=false
-              fi
-          fi
-
-          printf "Setting outputs:\n"
-          printf "  - pandoc-versions: %s\n" "$pandoc_versions"
-          printf "  - stacks: %s\n" "$stacks"
-          printf "  - build: %s\n" "$build"
-
-          printf 'pandoc-version=%s\n' "$pandoc_versions" >> $GITHUB_OUTPUT
-          printf 'stacks=%s\n' "$stacks" >> $GITHUB_OUTPUT
-          printf 'build=%s\n' "$build" >> $GITHUB_OUTPUT
-
   # Build images and store them as tar archive
   build:
-    if: ${{ fromJSON( needs.configure.outputs.build ) }}
     name: Build
     runs-on: ubuntu-latest
-    needs: configure
 
     strategy:
       fail-fast: false
       matrix:
-        stack: ${{ fromJSON( needs.configure.outputs.stacks ) }}
-        version: ${{ fromJSON( needs.configure.outputs.pandoc-version ) }}
+        stack: ${{ fromJSON( inputs.base_system ) }}
+        version: ${{ inputs.pandoc_version == 'main' && 'edge' ||
+                     inputs.pandoc_version}}
 
     env:
       PANDOC_VERSION: ${{ matrix.version }}
