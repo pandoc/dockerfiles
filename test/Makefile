@@ -237,6 +237,23 @@ output/eisvogel-tectonic.pdf: eisvogel.md
 	    --template=eisvogel \
 	    --pdf-engine=tectonic
 
+#  _____                _
+# |_   _|   _ _ __  ___| |_
+#   | || | | | '_ \/ __| __|
+#   | || |_| | |_) \__ \ |_
+#   |_| \__, | .__/|___/\__|
+#       |___/|_|
+
+.PHONY: test-typst
+test-typst: \
+		output/typst-testsuite.pdf
+
+output/typst-testsuite.pdf: testsuite.native
+	$(DOCKER_CMD) $(IMAGE) $< \
+	    --output=$@ \
+	    --pdf-engine=typst
+
+
 #   ____ _
 #  / ___| | ___  __ _ _ __
 # | |   | |/ _ \/ _` | '_ \

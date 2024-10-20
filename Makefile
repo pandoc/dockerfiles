@@ -193,7 +193,7 @@ extra: $(STACK)/$(stack_freeze_file)
 		-t "$(STACK)-extra" \
 		$(docker_cpu_options)
 # Test ##################################################################
-.PHONY: test-core test-extra test-latex test-minimal
+.PHONY: test-core test-extra test-latex test-minimal test-typst
 test-minimal: IMAGE ?= pandoc/minimal:$(PANDOC_VERSION)-$(STACK)
 test-minimal:
 	IMAGE=$(IMAGE) make -C test test-minimal
@@ -209,6 +209,10 @@ test-latex:
 test-extra: IMAGE ?= pandoc/extra:$(PANDOC_VERSION)-$(STACK)
 test-extra:
 	IMAGE=$(IMAGE) make -C test test-extra
+
+test-typst: IMAGE ?= pandoc/typst:$(PANDOC_VERSION)-$(STACK)
+test-typst:
+	IMAGE=$(IMAGE) make -C test test-typst
 
 ########################################################################
 # Developer targets                                                    #
