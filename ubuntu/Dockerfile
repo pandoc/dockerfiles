@@ -2,7 +2,6 @@
 ARG base_image_version=noble
 FROM ubuntu:$base_image_version AS ubuntu-builder-base
 
-ARG lua_version=5.4
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get -q --no-allow-insecure-repositories update \
   && apt-get install --assume-yes --no-install-recommends \
@@ -14,7 +13,7 @@ RUN apt-get -q --no-allow-insecure-repositories update \
        git \
        ghc=* \
        libgmp-dev=2:6.* \
-       liblua$lua_version-dev=* \
+       liblua5.4-dev=* \
        pkg-config=* \
        zlib1g-dev=* \
   && rm -rf /var/lib/apt/lists/*
@@ -61,7 +60,6 @@ RUN find dist-newstyle \
 # Minimal ###############################################################
 FROM ubuntu:$base_image_version AS ubuntu-minimal
 ARG pandoc_version=edge
-ARG lua_version=5.4
 LABEL maintainer='Albert Krewinkel <albert+pandoc@tarleb.com>'
 LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@tarleb.com>'
 LABEL org.pandoc.author "John MacFarlane"
@@ -86,7 +84,7 @@ RUN ln -s /usr/local/bin/pandoc /usr/local/bin/pandoc-lua \
   && DEBIAN_FRONTEND=noninteractive \
      apt-get install --assume-yes --no-install-recommends \
        ca-certificates=\* \
-       liblua$lua_version-0=\* \
+       liblua5.4-0=\* \
        libatomic1=\* \
        libgmp10=\* \
        libpcre3=\* \

@@ -122,7 +122,6 @@ esac
 
 tag_versions=$(version_table_field 3)
 texlive_version=$(version_table_field 6)
-lua_version=$(version_table_field 7)
 
 # Crossref
 extra_packages=pandoc-crossref
@@ -148,7 +147,6 @@ if [ "$verbosity" -gt 0 ]; then
     printf '\tbase_image_version: %s\n' "$base_image_version"
     printf '\ttag_versions: %s\n' "$tag_versions"
     printf '\ttexlive_version: %s\n' "$texlive_version"
-    printf '\tlua_version: %s\n' "$lua_version"
     printf '\tverbosity: %s\n' "${verbosity}"
     printf '\textra_packages: %s\n' "$extra_packages"
     printf '\twithout_crossref: %s\n' "${without_crossref}"
@@ -215,7 +213,6 @@ case "$action" in
                --build-arg base_image_version="${base_image_version}" \
                --build-arg texlive_version="${texlive_version}" \
                --build-arg texlive_mirror_url="${TEXLIVE_MIRROR_URL}" \
-               --build-arg lua_version="${lua_version}" \
                --target "${target}"\
                -f "${directory}/${stack}/Dockerfile"\
                "${directory}"
