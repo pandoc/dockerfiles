@@ -48,11 +48,27 @@ RUN wget ${LUA_FILTERS_REPO}/${LUA_FILTERS_VERSION}/lua-filters.tar.gz \
 ARG TARGETARCH
 ARG TECTONIC_REPO=https://github.com/tectonic-typesetting/tectonic/releases/download
 ARG TECTONIC_VERSION=0.15.0
-RUN if [ "$TARGETARCH" = "amd64" ] ; then TECTONIC_ARCH='x86_64'  ; \
-    elif [ "$TARGETARCH" = "arm64" ] ; then TECTONIC_ARCH='aarch64' ; \
-    else echo 'unsupported target arch for tectonic'; exit 1 ; \
-    fi \
-    && TECTONIC_TARBALL=tectonic-${TECTONIC_VERSION}-${TECTONIC_ARCH}-unknown-linux-gnu.tar.gz \
-    && wget ${TECTONIC_REPO}/tectonic%40${TECTONIC_VERSION}/${TECTONIC_TARBALL} \
-    && tar xzf ${TECTONIC_TARBALL} -C /usr/local/bin/ \
-    && rm -f ${TECTONIC_TARBALL}
+RUN <<EOF
+set -ex;
+case "$TARGETARCH" in
+    (amd64)
+        TECTONIC_ARCH='x86_64';
+        TECTONIC_CLIB='gnu';
+        ;;
+    (arm64)
+        TECTONIC_ARCH='aarch64' ;
+        TECTONIC_CLIB='musl';
+        ;;
+    (*)
+        printf 'unsupported target arch for tectonic: %s\n' "$TARGETARCH";
+        exit 1 ;
+        ;;
+esac
+TECTONIC_TARBALL_FMT='tectonic-%s-%s-unknown-linux-%s.tar.gz'
+TECTONIC_TARBALL="$(printf "$TECTONIC_TARBALL_FMT" \
+    "${TECTONIC_VERSION}" "${TECTONIC_ARCH}" "${TECTONIC_CLIB}" \
+)"
+wget ${TECTONIC_REPO}/tectonic%40${TECTONIC_VERSION}/${TECTONIC_TARBALL}
+tar xzf ${TECTONIC_TARBALL} -C /usr/local/bin/
+rm -f ${TECTONIC_TARBALL}
+EOF
