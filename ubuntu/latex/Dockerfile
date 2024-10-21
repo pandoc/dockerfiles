@@ -55,7 +55,7 @@ RUN cd /root && \
           /root/install-texlive.sh \
           /root/packages.txt && \
     TERM=dumb luaotfload-tool --update && \
-    chmod -R o+w /opt/texlive/texdir/texmf-var
+    chmod -R o+w /opt/texlive/texdir/texmf-var && \
     mkdir -p ${texlive_bin} && \
     ln -sf "${texlive_bin}/${TEXLIVE_ARCH}" "${texlive_bin}/default"
 
