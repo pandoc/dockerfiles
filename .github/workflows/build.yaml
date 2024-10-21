@@ -59,7 +59,7 @@ jobs:
 
       - name: core
         uses: ./.github/actions/build
-        if: ${{ matrix.stack != 'static' }}
+        if: ${{ inputs.base_system != 'static' }}
         with:
           image_type: core
           base_system: ${{ inputs.base_system }}
