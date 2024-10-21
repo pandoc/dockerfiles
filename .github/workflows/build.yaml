@@ -47,7 +47,7 @@ jobs:
           base_system: ${{ inputs.base_system }}
           pandoc_version: ${{ inputs.pandoc_version }}
           dockerfile: ${{ inputs.base_system }}/Dockerfile
-          target: minimal
+          target: ${{ inputs.base_system }}-minimal
 
       - name: core
         uses: ./.github/actions/build
@@ -57,7 +57,7 @@ jobs:
           base_system: ${{ inputs.base_system }}
           pandoc_version: ${{ inputs.pandoc_version }}
           dockerfile: ${{ inputs.base_system }}/Dockerfile
-          target: core
+          target: ${{ inputs.base_system }}-core
 
   typst:
     name: Typst
