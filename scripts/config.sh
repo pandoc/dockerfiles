@@ -70,12 +70,18 @@ for name in $(printf '%s\n' "$images" | tr ',' ' '); do
         tags="${tags},${image_tags}"
     fi
 done
+if [ "$build_stack" = 'static' ]; then
+    extra_packages='pandoc-cli'
+else
+    extra_packages='pandoc-cli pandoc-crossref'
+fi
+
 tags=$(printf '%s\n' "$tags" | sed -e 's/^,//')
 texlive_version="$(field 5)"
 build_args="$(cat <<EOF
 pandoc_commit=${version}
 base_image_version=${base_image_version}
-extra_packages=pandoc-cli pandoc-crossref
+extra_packages=${extra_packages}
 texlive_version=${texlive_version}
 EOF
 )"
@@ -83,5 +89,6 @@ EOF
 printf 'tags=%s\n' "$tags"
 printf 'base_image=%s\n' "$base_image"
 printf 'base_image_version=%s\n' "$base_image_version"
+printf 'extra_packages=%s\n' "${extra_packages}"
 printf 'texlive_version=%s\n' "${texlive_version}"
 printf 'build_args<<EOF\n%s\nEOF\n' "${build_args}"
