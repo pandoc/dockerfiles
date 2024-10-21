@@ -70,9 +70,8 @@ LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@tarleb.com>'
 LABEL org.pandoc.author "John MacFarlane"
 LABEL org.pandoc.version "$pandoc_version"
 
-# Set and create user data directory
+# Set user data directory
 ENV XDG_DATA_HOME=/usr/local/share
-WORKDIR $XDG_DATA_HOME/pandoc
 
 # Set default working directory
 WORKDIR /data
@@ -82,13 +81,16 @@ COPY --from=alpine-builder \
   /usr/local/bin/pandoc \
   /usr/local/bin/
 
-# Add pandoc symlinks and install runtime dependencies
+# Add pandoc symlinks
 RUN ln -s /usr/local/bin/pandoc /usr/local/bin/pandoc-lua && \
     ln -s /usr/local/bin/pandoc /usr/local/bin/pandoc-server && \
+# Install runtime dependencies
     apk --no-cache add \
         gmp \
         libffi \
-        lua5.4
+        lua5.4 && \
+# Create user data directory
+    mkdir -p "$XDG_DATA_HOME"/pandoc
 
 # Core ##################################################################
 FROM alpine-minimal AS alpine-core
