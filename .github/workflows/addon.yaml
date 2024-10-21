@@ -62,10 +62,10 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-        # with:
-        #   version: "lab:latest"
-        #   driver: cloud
-        #   endpoint: "pandoc/multiarch"
+        with:
+          version: "lab:latest"
+          driver: cloud
+          endpoint: "pandoc/multiarch"
 
       - name: ${{ inputs.addon }}/${{ inputs.base_system }}
         uses: ./.github/actions/build
