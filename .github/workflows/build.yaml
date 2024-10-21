@@ -11,7 +11,10 @@ on:
       base_system:
         description: Docker base system
         default: alpine
-        type: string
+        type: choice
+        options:
+          - alpine
+          - ubuntu
   schedule:
     - cron: '33 6 * * 1,4'
 
