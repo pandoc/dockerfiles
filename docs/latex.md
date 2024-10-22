@@ -21,7 +21,7 @@ docs/sections/quick-reference.md
 docs/sections/supported-tags.md
 ```
 
-Supported stacks <a name="supported-stacks"></a>
+Supported stacks
 ------------------------------------------------------------------
 
 All tags can be suffixed with a stack-identifier, e.g.,
@@ -55,15 +55,6 @@ derivative images may experience problems if the TeXLive version
 has been newly frozen. This can be resolved by pulling the
 updated base image again.
 
-Other images
-------------------------------------------------------------------
-
-If the images here do not fit your use-case, then checkout these
-alternatives:
-
--   [**pandoc/minimal**][]: small images with the pandoc executable.
--   [**pandoc/core**][]: based on minimal images, but ships with
-    additional programs commonly used during conversions.
-
-[**pandoc/minimal**]: https://hub.docker.com/r/pandoc/minimal
-[**pandoc/core**]: https://hub.docker.com/r/pandoc/core
+``` include
+docs/sections/other-images.md
+```

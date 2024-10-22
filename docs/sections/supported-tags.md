@@ -15,10 +15,9 @@ The *latest* tag refers to the most recently released version;
 there may be a minor lag between the time a pandoc version is
 released and a new image is released.
 
-A recent development version is provided under the *edge* tag. 
+A recent development version is provided under the *edge* tag.
 
-All tags can be suffixed with a stack identifier (see [Supported
-stacks](#supported-stacks)).
+All tags can be suffixed with a stack identifier.
 
 ### A note on pandoc versioning
 

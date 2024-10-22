@@ -1,16 +1,12 @@
-Core pandoc images
+Pandoc Typst images
 ==================================================================
 
 These images contain [pandoc][], the universal document converter,
-and a minimal operating system with all tools required for common
-conversion tasks.
-
-E.g., the images also contain a program to convert SVG graphics
-(svg-convert), as well as the [pandoc-crossref] filter, often used
-to number figures, equations, tables and to cross-reference them.
+and [Typst][], a fast and modern typesetting system that can be
+used to produce PDFs.
 
 [pandoc]: https://pandoc.org/
-[pandoc-crossref]: https://lierdakil.github.io/pandoc-crossref/
+[Typst]: https://typst.app
 
 ``` include
 docs/sections/quick-reference.md
@@ -30,12 +26,19 @@ Available stacks are
 - *alpine*: [Alpine] Linux.
 - *ubuntu*: [Ubuntu] Linux.
 
-The default for `pandoc/core` is `alpine`.
+The default for `pandoc/typst` is `alpine`.
 
 [Alpine]: https://alpinelinux.org/
 [Ubuntu]: https://ubuntu.org/
 
+
 ``` include
 docs/sections/run.md
+```
+
+Use the `--pdf-engine=typst` pandoc option to generate a PDF via
+Typst.
+
+``` include
 docs/sections/other-images.md
 ```

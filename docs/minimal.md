@@ -17,7 +17,7 @@ docs/sections/quick-reference.md
 docs/sections/supported-tags.md
 ```
 
-Supported stacks <a name="supported-stacks"></a>
+Supported stacks
 ------------------------------------------------------------------
 
 All tags can be suffixed with a stack-identifier, e.g.,
@@ -36,19 +36,5 @@ The default for `pandoc/minimal` is `static`.
 
 ``` include
 docs/sections/run.md
+docs/sections/other-images.md
 ```
-
-Other images
------------------------------------------------------------------
-
-If the images here do not fit your use-case, then checkout these
-alternatives:
-
--   [**pandoc/core**][]: based on minimal images, but ships with
-    additional programs commonly used during conversions.
--   [**pandoc/latex**][]: suitable for conversions to PDF via [LaTeX].
-
-[LaTeX]: https://latex-project.org/
-
-[**pandoc/core**]: https://hub.docker.com/r/pandoc/core
-[**pandoc/latex**]: https://hub.docker.com/r/pandoc/latex

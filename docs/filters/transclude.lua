@@ -4,8 +4,14 @@ function CodeBlock (cb)
     return nil
   end
 
-  -- open file
-  local fh = io.open(cb.text:match '[^\n]+')
-
-  return pandoc.read(fh:read 'a', FORMAT, PANDOC_READER_OPTIONS).blocks
+  local blocks = pandoc.Blocks{}
+  for filename in cb.text:gmatch '[^\n]+' do
+    -- open file
+    local fh = io.open(filename)
+    blocks:extend(
+      pandoc.read(fh:read 'a', 'markdown', PANDOC_READER_OPTIONS).blocks
+    )
+    fh:close()
+  end
+  return blocks
 end

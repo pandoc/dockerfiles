@@ -205,7 +205,13 @@ test-typst:
 lint:
 	shellcheck $(shell find . -name "*.sh")
 
-.PHONY: docs docs-minimal
+.PHONY: docs \
+		docs-minimal \
+		docs-core \
+		docs-latex \
+		docs-extra \
+		docs-typst \
+
 docs:
 	@pandoc "docs/$(REPO).md" \
 		--lua-filter="docs/filters/transclude.lua" \
@@ -225,6 +231,9 @@ docs-latex: docs
 
 docs-extra: REPO = extra
 docs-extra: docs
+
+docs-typst: REPO = typst
+docs-typst: docs
 
 .PHONY: clean
 clean:
