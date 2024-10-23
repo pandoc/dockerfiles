@@ -4,8 +4,8 @@
 # | |__| (_| || |  __//  \
 # |_____\__,_||_|\___/_/\_\
 #
-ARG base_image_tag=edge-ubuntu
-FROM pandoc/core:$base_image_tag
+ARG pandoc_version=edge
+FROM pandoc/core:${pandoc_version}-ubuntu
 
 # NOTE: to maintainers, please keep this listing alphabetical.
 RUN apt-get -q --no-allow-insecure-repositories update \

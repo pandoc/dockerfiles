@@ -4,8 +4,8 @@
 # |  __/>  <| |_| | | (_| |
 #  \___/_/\_\\__|_|  \__,_|
 #
-ARG base_image_tag=edge-ubuntu
-FROM pandoc/latex:$base_image_tag
+ARG pandoc_version=edge
+FROM pandoc/latex:${pandoc_version}-ubuntu
 
 COPY common/extra/packages.txt /root/extra_packages.txt
 COPY common/extra/requirements.txt /root/extra_requirements.txt

@@ -17,12 +17,16 @@ images="${3}"
 
 # Translate the `edge` version used for Docker code version into the correct
 # branch name used internally.
-if [ "$version" = "edge" ]; then
-    version="main"
+if [ "$version" = "edge" ] || [ "$version" = "main" ]; then
+    pandoc_commit="main"
+    pandoc_version="edge"
+else
+    pandoc_commit="$version"
+    pandoc_version="$version"
 fi
 
 versions_file=versions.md
-row="$(grep "^| $version " "$versions_file")"
+row="$(grep "^| $pandoc_commit " "$versions_file")"
 
 if [ -z "$row" ]; then
     printf 'Unknown or unsupported version "%s"\n' "$version"
@@ -79,7 +83,8 @@ fi
 tags=$(printf '%s\n' "$tags" | sed -e 's/^,//')
 texlive_version="$(field 5)"
 build_args="$(cat <<EOF
-pandoc_commit=${version}
+pandoc_commit=${pandoc_commit}
+pandoc_version=${pandoc_version}
 base_image_version=${base_image_version}
 extra_packages=${extra_packages}
 texlive_version=${texlive_version}

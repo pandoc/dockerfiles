@@ -4,8 +4,8 @@
 # | |__| (_| || |  __//  \
 # |_____\__,_||_|\___/_/\_\
 #
-ARG base_image_tag=edge-alpine
-FROM pandoc/core:$base_image_tag
+ARG pandoc_version=edge
+FROM pandoc/core:${pandoc_version}-alpine
 
 # NOTE: to maintainers, please keep this listing alphabetical.
 RUN apk --no-cache add \
