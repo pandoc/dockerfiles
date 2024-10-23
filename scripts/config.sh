@@ -62,8 +62,8 @@ for name in $(printf '%s\n' "$images" | tr ',' ' '); do
         printf '%s\n' "$version_tags" | sed -e "s#\([^,]*\)#${name}:\1#g" \
     )"
     image_tags="$(printf '%s' "$image_tags_base" | \
-                    sed -e 's#\([^,]*\)#\1-'${base_image}'#g')"
-    image_name=$(printf '%s\n' "$name" | sed -e 's#.*\([^/]\+/[^/]\+\)$#\1#')
+                    sed -e 's#\([^,]*\)#\1-'${build_stack}'#g')"
+    image_name=$(printf '%s\n' "$name" | sed -e 's#^.*/\([^/]\+/[^/]\+\)$#\1#')
     if { [ "$image_name" != 'pandoc/minimal' ] && \
          [ "$build_stack" = 'alpine' ]; } ||
        { [ "$image_name"  = 'pandoc/minimal' ] && \
