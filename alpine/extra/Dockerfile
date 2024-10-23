@@ -5,7 +5,7 @@
 #  \___/_/\_\\__|_|  \__,_|
 #
 ARG pandoc_version=edge
-FROM pandoc/core:${pandoc_version}-alpine
+FROM pandoc/latex:${pandoc_version}-alpine
 
 COPY common/extra/packages.txt /root/extra_packages.txt
 COPY common/extra/requirements.txt /root/extra_requirements.txt
