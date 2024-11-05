@@ -7,3 +7,4 @@
 
 pandoc-latex-environment==1.1.*
 pandocfilters==1.5.*
+pandoc-include==1.4.*

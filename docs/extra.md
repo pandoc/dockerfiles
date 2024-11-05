@@ -6,7 +6,7 @@ and a curated selection of components:
 
 * Templates: [Eisvogel][]
 * Beamer Themes: [beamer-metropolis][]
-* Pandoc filters: [pandoc-latex-environment][] + [Lua filters][]
+* Pandoc filters: [pandoc-latex-environment][] + [Lua filters][], [pandoc-include][]
 * Open Source Fonts: Font Awesome, Source Code Pro, Source Sans Pro
 * PDF engines: [Tectonic][]
 
@@ -14,6 +14,7 @@ and a curated selection of components:
 [beamer-metropolis]: https://github.com/matze/mtheme
 [pandoc-latex-environment]: https://github.com/chdemko/pandoc-latex-environment
 [Lua filters]: https://github.com/pandoc/lua-filters
+[pandoc-include]: https://github.com/DCsunset/pandoc-include
 [Tectonic]: tectonic-typesetting.github.io
 
 [pandoc]: https://pandoc.org/
