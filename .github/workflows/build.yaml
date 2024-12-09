@@ -16,8 +16,6 @@ on:
           - alpine
           - ubuntu
           - static
-  schedule:
-    - cron: '33 6 * * 1,4'
 
 jobs:
   # Build images and store them as tar archive
