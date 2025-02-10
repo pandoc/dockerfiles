@@ -47,6 +47,7 @@ jobs:
           endpoint: "pandoc/multiarch"
 
       - name: minimal
+        timeout-minutes: 25
         uses: ./.github/actions/build
         with:
           image_type: minimal
