@@ -1,0 +1,53 @@
+name: Update Docker Hub Description
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - versions.md
+      - README.md
+      - docs/**/*
+
+  workflow_dispatch:
+
+jobs:
+  updateDescriptions:
+    name: Update description
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image:
+          - minimal
+          - core
+          - latex
+          - extra
+          - typst
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pandoc
+        uses: pandoc/actions/setup@v1
+
+      - name: Short description
+        id: config
+        run: |
+          printf 'short_description=%s\n' \
+            "$(pandoc lua docs/scripts/short-description.lua \
+                      ${{ matrix.image }})" \
+            >> $GITHUB_OUTPUT
+
+
+      - name: Generate README files
+        run: |
+          make docs-${{ matrix.image }} > /tmp/README.${{ matrix.image }}.md
+
+      - name: Update ${{ matrix.image }}
+        uses: peter-evans/dockerhub-description@e98e4d1628a5f3be2be7c231e50981aee98723ae
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+          repository: pandoc/${{ matrix.image }}
+          readme-filepath: /tmp/README.${{ matrix.image }}.md
+          short-description: ${{ steps.config.outputs.short_description }}
