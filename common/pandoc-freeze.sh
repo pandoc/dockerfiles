@@ -115,7 +115,7 @@ fi
 cabal update
 
 # get pandoc source code from Hackage
-cabal get pandoc-cli-${pandoc_cli_version}
+cabal get "pandoc-cli-${pandoc_cli_version}"
 
 sourcedir=$PWD/pandoc-cli-${pandoc_cli_version}
 printf "Switching directory to %s\n" "${sourcedir}"
