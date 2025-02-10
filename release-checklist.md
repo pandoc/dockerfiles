@@ -41,20 +41,6 @@
   we'll have to be patient and wait for an updated
   pandoc-crossref.
 
-- [ ] Update the readme for each repository. This cannot be
-  automated yet due to limitations of the Docker Hub API.
-
-    - [ ] Run `make docs-minimal | xclip -selection clipboard` (or
-          `| pbcopy` on mac)
-    - [ ] Go to
-          https://hub.docker.com/repository/docker/pandoc/minimal
-    - [ ] Click the edit button next to "Readme".
-    - [ ] Paste the content from the clipboard, replacing the old
-          readme.
-    - [ ] Save.
-
-  Repeat for `core` and `latex`.
-
 - [ ] Done.
 
 
