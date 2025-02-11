@@ -50,8 +50,8 @@ FROM scratch AS static-minimal
 ARG pandoc_version=edge
 LABEL maintainer='Albert Krewinkel <albert+pandoc@tarleb.com>'
 LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@tarleb.com>'
-LABEL org.pandoc.author "John MacFarlane"
-LABEL org.pandoc.version "$pandoc_version"
+LABEL org.pandoc.author="John MacFarlane"
+LABEL org.pandoc.version="$pandoc_version"
 
 # Create basic folders, including a /tmp folder with the correct
 # permissions and the folders /usr/local/bin and /usr/local/share/pandoc
