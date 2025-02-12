@@ -1,6 +1,13 @@
 name: Image Builder
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - alpine/freeze/**
+      - static/freeze/**
+      - ubuntu/freeze/**
   workflow_dispatch:
     inputs:
       pandoc_version:
@@ -18,11 +25,51 @@ on:
           - static
 
 jobs:
+
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      base_system: ${{ steps.set-stack.outputs.stack }}
+      pandoc_version: ${{ steps.set-version.outputs.version }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - id: set-stack
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "stack=${{ inputs.base_system }}" >> $GITHUB_OUTPUT
+          else
+            # Extract stack from the changed files paths
+            CHANGED_FILES=${{ git diff --name-only ${{ github.event.before }} ${{ github.event.after }}}
+            if echo "$CHANGED_FILES" | grep -q "^alpine/"; then
+              echo "stack=alpine" >> $GITHUB_OUTPUT
+            elif echo "$CHANGED_FILES" | grep -q "^ubuntu/"; then
+              echo "stack=ubuntu" >> $GITHUB_OUTPUT
+            elif echo "$CHANGED_FILES" | grep -q "^static/"; then
+              echo "stack=static" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+      - id: set-version
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "version=${{ inputs.pandoc_version }}" >> $GITHUB_OUTPUT
+          else
+            # Extract version directly from the changed freeze file name
+            CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }})
+            FREEZE_FILE=$(echo "$CHANGED_FILES" | grep '\.project\.freeze$' | head -1)
+            VERSION=$(basename "$FREEZE_FILE" | sed -E 's/pandoc-(.*)\.project\.freeze/\1/')
+            
+            # If no version found from freeze file, default to main
+            echo "version=${VERSION:-main}" >> $GITHUB_OUTPUT
+          fi
+
   # Build images and store them as tar archive
   core:
     name: minimal and core
+    needs: prepare
     runs-on: ubuntu-latest
-
+    
     steps:
       - uses: actions/checkout@v4
 
@@ -51,49 +98,49 @@ jobs:
         uses: ./.github/actions/build
         with:
           image_type: minimal
-          base_system: ${{ inputs.base_system }}
-          pandoc_version: ${{ inputs.pandoc_version }}
-          dockerfile: ${{ inputs.base_system }}/Dockerfile
-          target: ${{ inputs.base_system }}-minimal
+          base_system: ${{ needs.prepare.outputs.base_system }}
+          pandoc_version: ${{ needs.prepare.outputs.pandoc_version }}
+          dockerfile: ${{ needs.prepare.outputs.base_system }}/Dockerfile
+          target: ${{ needs.prepare.outputs.base_system }}-minimal
 
       - name: core
         uses: ./.github/actions/build
-        if: ${{ inputs.base_system != 'static' }}
+        if: ${{ needs.prepare.outputs.base_system != 'static' }}
         with:
           image_type: core
-          base_system: ${{ inputs.base_system }}
-          pandoc_version: ${{ inputs.pandoc_version }}
-          dockerfile: ${{ inputs.base_system }}/Dockerfile
-          target: ${{ inputs.base_system }}-core
+          base_system: ${{ needs.prepare.outputs.base_system }}
+          pandoc_version: ${{ needs.prepare.outputs.pandoc_version }}
+          dockerfile: ${{ needs.prepare.outputs.base_system }}/Dockerfile
+          target: ${{ needs.prepare.outputs.base_system }}-core
 
   typst:
     name: Typst
-    if: ${{ inputs.base_system != 'static' }}
-    needs: core
+    if: ${{ needs.prepare.outputs.base_system != 'static' }}
+    needs: [prepare, core]
     uses: ./.github/workflows/addon.yaml
     secrets: inherit
     with:
       addon: typst
-      base_system: ${{ inputs.base_system }}
-      pandoc_version: ${{ inputs.pandoc_version }}
+      base_system: ${{ needs.prepare.outputs.base_system }}
+      pandoc_version: ${{ needs.prepare.outputs.pandoc_version }}
 
   latex:
     name: LaTeX
-    if: ${{ inputs.base_system != 'static' }}
-    needs: core
+    if: ${{ needs.prepare.outputs.base_system != 'static' }}
+    needs: [prepare, core]
     uses: ./.github/workflows/addon.yaml
     secrets: inherit
     with:
       addon: latex
-      base_system: ${{ inputs.base_system }}
-      pandoc_version: ${{ inputs.pandoc_version }}
+      base_system: ${{ needs.prepare.outputs.base_system }}
+      pandoc_version: ${{ needs.prepare.outputs.pandoc_version }}
 
   extra:
     name: Extra
-    needs: latex
+    needs: [prepare, latex]
     uses: ./.github/workflows/addon.yaml
     secrets: inherit
     with:
       addon: extra
-      base_system: ${{ inputs.base_system }}
-      pandoc_version: ${{ inputs.pandoc_version }}
+      base_system: ${{ needs.prepare.outputs.base_system }}
+      pandoc_version: ${{ needs.prepare.outputs.pandoc_version }}
