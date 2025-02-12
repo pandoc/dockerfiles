@@ -25,50 +25,49 @@ on:
           - static
 
 jobs:
-
   prepare:
     runs-on: ubuntu-latest
     outputs:
-      base_system: ${{ steps.set-stack.outputs.stack }}
-      pandoc_version: ${{ steps.set-version.outputs.version }}
-
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    
     steps:
       - uses: actions/checkout@v4
-      - id: set-stack
+      
+      - id: set-matrix
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "stack=${{ inputs.base_system }}" >> $GITHUB_OUTPUT
+            echo "matrix={\"include\":[{\"stack\":\"${{ inputs.base_system }}\",\"version\":\"${{ inputs.pandoc_version }}\"}]}" >> $GITHUB_OUTPUT
           else
-            # Extract stack from the changed files paths
-            CHANGED_FILES=${{ git diff --name-only ${{ github.event.before }} ${{ github.event.after }}}
-            if echo "$CHANGED_FILES" | grep -q "^alpine/"; then
-              echo "stack=alpine" >> $GITHUB_OUTPUT
-            elif echo "$CHANGED_FILES" | grep -q "^ubuntu/"; then
-              echo "stack=ubuntu" >> $GITHUB_OUTPUT
-            elif echo "$CHANGED_FILES" | grep -q "^static/"; then
-              echo "stack=static" >> $GITHUB_OUTPUT
-            fi
-          fi
-
-      - id: set-version
-        run: |
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "version=${{ inputs.pandoc_version }}" >> $GITHUB_OUTPUT
-          else
-            # Extract version directly from the changed freeze file name
             CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }})
-            FREEZE_FILE=$(echo "$CHANGED_FILES" | grep '\.project\.freeze$' | head -1)
-            VERSION=$(basename "$FREEZE_FILE" | sed -E 's/pandoc-(.*)\.project\.freeze/\1/')
+            MATRIX="{\"include\":["
+            FIRST=true
             
-            # If no version found from freeze file, default to main
-            echo "version=${VERSION:-main}" >> $GITHUB_OUTPUT
+            for STACK in alpine ubuntu static; do
+              if echo "$CHANGED_FILES" | grep -q "^$STACK/"; then
+                FREEZE_FILE=$(echo "$CHANGED_FILES" | grep "^$STACK/.*\.project\.freeze$" | head -1)
+                if [ -n "$FREEZE_FILE" ]; then
+                  VERSION=$(basename "$FREEZE_FILE" | sed -E 's/pandoc-(.*)\.project\.freeze/\1/')
+                  if [ "$FIRST" = true ]; then
+                    FIRST=false
+                  else
+                    MATRIX="${MATRIX},"
+                  fi
+                  MATRIX="${MATRIX}{\"stack\":\"{$STACK:-alpine}\",\"version\":\"${VERSION:-main}\"}"
+                fi
+              fi
+            done
+            
+            MATRIX="${MATRIX}]}"
+            echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
           fi
 
-  # Build images and store them as tar archive
   core:
-    name: minimal and core
+    name: minimal and core (${{ matrix.stack }})
     needs: prepare
     runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+      fail-fast: false
     
     steps:
       - uses: actions/checkout@v4
@@ -98,49 +97,58 @@ jobs:
         uses: ./.github/actions/build
         with:
           image_type: minimal
-          base_system: ${{ needs.prepare.outputs.base_system }}
-          pandoc_version: ${{ needs.prepare.outputs.pandoc_version }}
-          dockerfile: ${{ needs.prepare.outputs.base_system }}/Dockerfile
-          target: ${{ needs.prepare.outputs.base_system }}-minimal
+          base_system: ${{ matrix.stack }}
+          pandoc_version: ${{ matrix.version }}
+          dockerfile: ${{ matrix.stack }}/Dockerfile
+          target: ${{ matrix.stack }}-minimal
 
       - name: core
         uses: ./.github/actions/build
-        if: ${{ needs.prepare.outputs.base_system != 'static' }}
+        if: ${{ matrix.stack != 'static' }}
         with:
           image_type: core
-          base_system: ${{ needs.prepare.outputs.base_system }}
-          pandoc_version: ${{ needs.prepare.outputs.pandoc_version }}
-          dockerfile: ${{ needs.prepare.outputs.base_system }}/Dockerfile
-          target: ${{ needs.prepare.outputs.base_system }}-core
+          base_system: ${{ matrix.stack }}
+          pandoc_version: ${{ matrix.version }}
+          dockerfile: ${{ matrix.stack }}/Dockerfile
+          target: ${{ matrix.stack }}-core
 
   typst:
-    name: Typst
-    if: ${{ needs.prepare.outputs.base_system != 'static' }}
+    name: Typst (${{ matrix.stack }})
+    if: ${{ matrix.stack != 'static' }}
     needs: [prepare, core]
+    strategy:
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+      fail-fast: false
     uses: ./.github/workflows/addon.yaml
     secrets: inherit
     with:
       addon: typst
-      base_system: ${{ needs.prepare.outputs.base_system }}
-      pandoc_version: ${{ needs.prepare.outputs.pandoc_version }}
+      base_system: ${{ matrix.stack }}
+      pandoc_version: ${{ matrix.version }}
 
   latex:
-    name: LaTeX
-    if: ${{ needs.prepare.outputs.base_system != 'static' }}
+    name: LaTeX (${{ matrix.stack }})
+    if: ${{ matrix.stack != 'static' }}
     needs: [prepare, core]
+    strategy:
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+      fail-fast: false
     uses: ./.github/workflows/addon.yaml
     secrets: inherit
     with:
       addon: latex
-      base_system: ${{ needs.prepare.outputs.base_system }}
-      pandoc_version: ${{ needs.prepare.outputs.pandoc_version }}
+      base_system: ${{ matrix.stack }}
+      pandoc_version: ${{ matrix.version }}
 
   extra:
-    name: Extra
+    name: Extra (${{ matrix.stack }})
     needs: [prepare, latex]
+    strategy:
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+      fail-fast: false
     uses: ./.github/workflows/addon.yaml
     secrets: inherit
     with:
       addon: extra
-      base_system: ${{ needs.prepare.outputs.base_system }}
-      pandoc_version: ${{ needs.prepare.outputs.pandoc_version }}
+      base_system: ${{ matrix.stack }}
+      pandoc_version: ${{ matrix.version }}
