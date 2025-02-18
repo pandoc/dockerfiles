@@ -15,6 +15,7 @@ The following pandoc images are available:
 
 [**pandoc/minimal**]: https://hub.docker.com/r/pandoc/minimal
 [**pandoc/core**]: https://hub.docker.com/r/pandoc/core
+[**pandoc/latex**]: https://hub.docker.com/r/pandoc/latex
 [**pandoc/extra**]: https://hub.docker.com/r/pandoc/extra
 [**pandoc/typst**]: https://hub.docker.com/r/pandoc/typst
 [Eisvogel template]: https://github.com/Wandmalfarbe/pandoc-latex-template
