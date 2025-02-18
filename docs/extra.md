@@ -15,7 +15,7 @@ and a curated selection of components:
 [pandoc-latex-environment]: https://github.com/chdemko/pandoc-latex-environment
 [Lua filters]: https://github.com/pandoc/lua-filters
 [pandoc-include]: https://github.com/DCsunset/pandoc-include
-[Tectonic]: tectonic-typesetting.github.io
+[Tectonic]: https://tectonic-typesetting.github.io
 
 [pandoc]: https://pandoc.org/
 [LaTeX]: https://latex-project.org/
