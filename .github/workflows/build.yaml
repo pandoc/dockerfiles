@@ -52,7 +52,7 @@ jobs:
                   else
                     MATRIX="${MATRIX},"
                   fi
-                  MATRIX="${MATRIX}{\"stack\":\"{$STACK:-alpine}\",\"version\":\"${VERSION:-main}\"}"
+                  MATRIX="${MATRIX}{\"stack\":\"${STACK:-alpine}\",\"version\":\"${VERSION:-main}\"}"
                 fi
               fi
             done
@@ -114,7 +114,7 @@ jobs:
 
   typst:
     name: Typst (${{ matrix.stack }})
-    if: ${{ matrix.stack != 'static' }}
+    if: ${{ !contains(toJSON(needs.prepare.outputs.matrix), '"stack":"static"') }}
     needs: [prepare, core]
     strategy:
       matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
@@ -128,7 +128,7 @@ jobs:
 
   latex:
     name: LaTeX (${{ matrix.stack }})
-    if: ${{ matrix.stack != 'static' }}
+    if: ${{ !contains(toJSON(needs.prepare.outputs.matrix), '"stack":"static"') }}
     needs: [prepare, core]
     strategy:
       matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
@@ -142,6 +142,7 @@ jobs:
 
   extra:
     name: Extra (${{ matrix.stack }})
+    if: ${{ !contains(toJSON(needs.prepare.outputs.matrix), '"stack":"static"') }}
     needs: [prepare, latex]
     strategy:
       matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
