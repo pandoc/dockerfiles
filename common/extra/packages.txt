@@ -69,3 +69,6 @@ tikzfill
 
 # https://github.com/pandoc/dockerfiles/issues/135
 enumitem
+
+# https://github.com/pandoc/dockerfiles/issues/262
+draftwatermark
