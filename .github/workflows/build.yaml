@@ -31,7 +31,12 @@ jobs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # A depth of ten should be enough to get the "github.event.before"
+          # commit. However, pushing more commits might cause issues.
+          fetch-depth: 10
 
       - id: set-matrix
         run: |
