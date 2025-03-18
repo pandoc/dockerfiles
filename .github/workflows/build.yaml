@@ -29,10 +29,10 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - id: set-matrix
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
@@ -41,7 +41,7 @@ jobs:
             CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }})
             MATRIX="{\"include\":["
             FIRST=true
-            
+
             for STACK in alpine ubuntu static; do
               if echo "$CHANGED_FILES" | grep -q "^$STACK/"; then
                 FREEZE_FILE=$(echo "$CHANGED_FILES" | grep "^$STACK/.*\.project\.freeze$" | head -1)
@@ -56,7 +56,7 @@ jobs:
                 fi
               fi
             done
-            
+
             MATRIX="${MATRIX}]}"
             echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
           fi
@@ -68,7 +68,7 @@ jobs:
     strategy:
       matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
       fail-fast: false
-    
+
     steps:
       - uses: actions/checkout@v4
 
