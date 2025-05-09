@@ -31,7 +31,7 @@ RUN mkdir -p $TEMPLATES_DIR
 
 # eisvogel
 ARG EISVOGEL_REPO=https://raw.githubusercontent.com/Wandmalfarbe/pandoc-latex-template
-ARG EISVOGEL_VERSION=v2.5.0
+ARG EISVOGEL_VERSION=v3.2.0
 RUN wget ${EISVOGEL_REPO}/refs/tags/${EISVOGEL_VERSION}/eisvogel.tex \
         -O ${TEMPLATES_DIR}/eisvogel.latex
 
