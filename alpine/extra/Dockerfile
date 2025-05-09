@@ -10,12 +10,11 @@ FROM pandoc/latex:${pandoc_version}-alpine
 COPY common/extra/packages.txt /root/extra_packages.txt
 COPY common/extra/requirements.txt /root/extra_requirements.txt
 
-# The option `--break-system-packages` sounds bad but this is not
-# really a problem here because we are not using Python apk packages
-# anyway.
-RUN  apk --no-cache add py-pip \
-  && pip3 install -r /root/extra_requirements.txt --break-system-packages \
-  && rm -f /root/extra_requirements.txt
+# uv is our preferred manager for Python packages
+# but we keep pip for compatibility with downstream images
+RUN apk --no-cache add py-pip uvx \
+    && uvx pip install -r /root/extra_requirements.txt \
+    && rm -f /root/extra_requirements.txt
 
 RUN sed -e 's/ *#.*$//' -e '/^ *$/d' /root/extra_packages.txt | \
     xargs tlmgr install \
