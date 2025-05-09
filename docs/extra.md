@@ -5,7 +5,7 @@ These images contain [pandoc][], the universal document converter
 and a curated selection of components:
 
 * Templates: [Eisvogel][]
-* Beamer Themes: [beamer-metropolis][]
+* Beamer Themes: [Eisvogel][], [beamer-metropolis][]
 * Pandoc filters: [pandoc-latex-environment][] + [Lua filters][], [pandoc-include][]
 * Open Source Fonts: Font Awesome, Source Code Pro, Source Sans Pro
 * PDF engines: [Tectonic][]

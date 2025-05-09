@@ -28,19 +28,22 @@ ARG TEMPLATES_DIR=$PANDOC_DATA_DIR/templates
 RUN mkdir -p $TEMPLATES_DIR
 
 # eisvogel
-ARG EISVOGEL_REPO=https://raw.githubusercontent.com/Wandmalfarbe/pandoc-latex-template
-ARG EISVOGEL_VERSION=v3.2.0
-RUN wget ${EISVOGEL_REPO}/refs/tags/${EISVOGEL_VERSION}/eisvogel.tex \
-    -O ${TEMPLATES_DIR}/eisvogel.latex
+ARG EISVOGEL_REPO=https://github.com/Wandmalfarbe/pandoc-latex-template/releases/download
+ARG EISVOGEL_VERSION=3.2.0
+RUN wget -qO- ${EISVOGEL_REPO}/v{EISVOGEL_VERSION}/Eisvogel.tar.gz \
+    | tar xz \
+        --strip-components=1 \
+        --one-top-level= ${PANDOC_DATA_DIR} \
+        Eisvogel-${EISVOGEL_VERSION}/eisvogel.latex \
+        Eisvogel-${EISVOGEL_VERSION}/eisvogel.beamer
 
-# Lua filters
+# Lua Filters
 ARG LUA_FILTERS_REPO=https://github.com/pandoc/lua-filters/releases/download
-ARG LUA_FILTERS_VERSION=v2021-11-05
-RUN wget ${LUA_FILTERS_REPO}/${LUA_FILTERS_VERSION}/lua-filters.tar.gz \
-    && tar xzf lua-filters.tar.gz \
-           --strip-components=1 \
-           --one-top-level=$PANDOC_DATA_DIR \
-    && rm -f lua-filters.tar.gz
-
+ARG LUA_FILTERS_VERSION=2021-11-05
+RUN wget -qO- ${LUA_FILTERS_REPO}/v${LUA_FILTERS_VERSION}/lua-filters.tar.gz \
+    | tar xz \
+        --strip-components=1 \
+        --one-top-level=${PANDOC_DATA_DIR}
+        
 # tectonic
 RUN apk --no-cache add tectonic
