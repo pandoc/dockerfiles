@@ -24,16 +24,16 @@ RUN sed -e 's/ *#.*$//' -e '/^ *$/d' /root/extra_packages.txt | \
 
 # Templates
 #
-ENV XDG_DATA_HOME=/usr/local/share
-ARG PANDOC_DATA_DIR=$XDG_DATA_HOME/pandoc
-ARG TEMPLATES_DIR=$PANDOC_DATA_DIR/templates
-RUN mkdir -p $TEMPLATES_DIR
+
+ENV PANDOC_DATA_HOME=${XDG_DATA_HOME}/pandoc
+ENV PANDOC_TEMPLATES_DIR=${PANDOC_DATA_HOME}/templates
+RUN mkdir -p {PANDOC_TEMPLATES_DIR}
 
 # eisvogel
 ARG EISVOGEL_REPO=https://raw.githubusercontent.com/Wandmalfarbe/pandoc-latex-template
 ARG EISVOGEL_VERSION=v3.2.0
 RUN wget ${EISVOGEL_REPO}/refs/tags/${EISVOGEL_VERSION}/eisvogel.tex \
-        -O ${TEMPLATES_DIR}/eisvogel.latex
+        -O ${PANDOC_TEMPLATES_DIR}/eisvogel.latex
 
 # Lua Filters
 ARG LUA_FILTERS_REPO=https://github.com/pandoc/lua-filters/releases/download
