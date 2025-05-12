@@ -30,10 +30,10 @@ RUN mkdir -p $TEMPLATES_DIR
 # eisvogel
 ARG EISVOGEL_REPO=https://github.com/Wandmalfarbe/pandoc-latex-template/releases/download
 ARG EISVOGEL_VERSION=3.2.0
-RUN wget -qO- ${EISVOGEL_REPO}/v{EISVOGEL_VERSION}/Eisvogel.tar.gz \
+RUN wget -qO- ${EISVOGEL_REPO}/v${EISVOGEL_VERSION}/Eisvogel.tar.gz \
     | tar xz \
         --strip-components=1 \
-        --one-top-level= ${PANDOC_DATA_DIR} \
+        --one-top-level=${PANDOC_DATA_DIR} \
         Eisvogel-${EISVOGEL_VERSION}/eisvogel.latex \
         Eisvogel-${EISVOGEL_VERSION}/eisvogel.beamer
 
