@@ -40,7 +40,7 @@ on:
 
 jobs:
   build:
-    name: Addon
+    name: Addon ${{ inputs.addon }}/${{ inputs.base_system }}
     runs-on: ubuntu-latest
 
     steps:
