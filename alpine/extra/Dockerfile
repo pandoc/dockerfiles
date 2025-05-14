@@ -29,10 +29,9 @@ RUN sed -e 's/ *#.*$//' -e '/^ *$/d' /root/extra_packages.txt | \
     && rm -f /root/extra_packages.txt
 
 # Templates
-ENV XDG_DATA_HOME=/usr/local/share
-ARG PANDOC_DATA_DIR=$XDG_DATA_HOME/pandoc
-ARG TEMPLATES_DIR=$PANDOC_DATA_DIR/templates
-RUN mkdir -p $TEMPLATES_DIR
+ENV PANDOC_DATA_HOME=/usr/local/share/pandoc
+ENV PANDOC_TEMPLATES_DIR=${PANDOC_DATA_HOME}/templates
+RUN mkdir -p ${PANDOC_TEMPLATES_DIR}
 
 # eisvogel
 ARG EISVOGEL_REPO=https://github.com/Wandmalfarbe/pandoc-latex-template/releases/download
