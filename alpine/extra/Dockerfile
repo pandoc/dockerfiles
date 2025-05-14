@@ -12,8 +12,16 @@ COPY common/extra/requirements.txt /root/extra_requirements.txt
 
 # uv is our preferred manager for Python packages
 # but we keep pip for compatibility with downstream images
-RUN apk --no-cache add py-pip uvx \
-    && uvx pip install -r /root/extra_requirements.txt \
+#
+# NOTE: the uv package will be available in alpine 3.1
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+ENV UV_TOOL_BIN_DIR=/usr/local/bin/
+ENV UV_TOOL_DIR=/usr/local/share/uv/tools
+
+RUN apk --no-cache add py-pip \
+    && sed -e 's/ *#.*$//' -e '/^ *$/d' /root/extra_requirements.txt | \
+       xargs -n1 uv tool install \
     && rm -f /root/extra_requirements.txt
 
 RUN sed -e 's/ *#.*$//' -e '/^ *$/d' /root/extra_packages.txt | \
@@ -43,6 +51,6 @@ RUN wget -qO- ${LUA_FILTERS_REPO}/v${LUA_FILTERS_VERSION}/lua-filters.tar.gz \
     | tar xz \
         --strip-components=1 \
         --one-top-level=${PANDOC_DATA_DIR}
-        
+
 # tectonic
 RUN apk --no-cache add tectonic

@@ -6,5 +6,4 @@
 #
 
 pandoc-latex-environment==1.2.*
-pandocfilters==1.5.*
 pandoc-include==1.4.*
