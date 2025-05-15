@@ -29,8 +29,8 @@ RUN sed -e 's/ *#.*$//' -e '/^ *$/d' /root/extra_packages.txt | \
     && rm -f /root/extra_packages.txt
 
 # Templates
-#
-ENV PANDOC_DATA_HOME=/usr/local/share/pandoc
+ENV XDG_DATA_HOME=/usr/local/share
+ENV PANDOC_DATA_HOME=${XDG_DATA_HOME}/pandoc
 ENV PANDOC_TEMPLATES_DIR=${PANDOC_DATA_HOME}/templates
 RUN mkdir -p ${PANDOC_TEMPLATES_DIR}
 
@@ -40,7 +40,7 @@ ARG EISVOGEL_VERSION=3.2.0
 RUN wget -qO- ${EISVOGEL_REPO}/v${EISVOGEL_VERSION}/Eisvogel.tar.gz \
     | tar xz \
         --strip-components=1 \
-        --one-top-level=${PANDOC_DATA_DIR} \
+        --one-top-level=${PANDOC_TEMPLATES_DIR} \
         Eisvogel-${EISVOGEL_VERSION}/eisvogel.latex \
         Eisvogel-${EISVOGEL_VERSION}/eisvogel.beamer
 
@@ -50,7 +50,7 @@ ARG LUA_FILTERS_VERSION=2021-11-05
 RUN wget -qO- ${LUA_FILTERS_REPO}/v${LUA_FILTERS_VERSION}/lua-filters.tar.gz \
     | tar xz \
         --strip-components=1 \
-        --one-top-level=${PANDOC_DATA_DIR}
+        --one-top-level=${PANDOC_DATA_HOME}
 
 # tectonic
 RUN apk --no-cache add tectonic
