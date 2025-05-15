@@ -62,8 +62,8 @@ FROM ubuntu:$base_image_version AS ubuntu-minimal
 ARG pandoc_version=edge
 LABEL maintainer='Albert Krewinkel <albert+pandoc@tarleb.com>'
 LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@tarleb.com>'
-LABEL org.pandoc.author "John MacFarlane"
-LABEL org.pandoc.version "$pandoc_version"
+LABEL org.pandoc.author="John MacFarlane"
+LABEL org.pandoc.version="$pandoc_version"
 
 # Set user data directory
 ENV XDG_DATA_HOME=/usr/local/share
