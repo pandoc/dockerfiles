@@ -90,5 +90,3 @@ runs:
             (inputs.image_type == 'latex' || inputs.image_type == 'extra') )
           && 'linux/amd64'
           || 'linux/amd64,linux/arm64' }}
-        type: string
-        default: 'linux/amd64,linux/arm64'
