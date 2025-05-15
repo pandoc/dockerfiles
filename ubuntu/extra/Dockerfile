@@ -10,8 +10,6 @@ FROM pandoc/latex:${pandoc_version}-ubuntu
 COPY common/extra/packages.txt /root/extra_packages.txt
 COPY common/extra/requirements.txt /root/extra_requirements.txt
 
-
-
 # uv is our preferred manager for Python packages
 # but we keep pip for compatibility with downstream images
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
@@ -31,8 +29,7 @@ RUN sed -e 's/ *#.*$//' -e '/^ *$/d' /root/extra_packages.txt | \
 
 # Templates
 #
-
-ENV PANDOC_DATA_HOME=${XDG_DATA_HOME}/pandoc
+ENV PANDOC_DATA_HOME=/usr/local/share/pandoc
 ENV PANDOC_TEMPLATES_DIR=${PANDOC_DATA_HOME}/templates
 RUN mkdir -p ${PANDOC_TEMPLATES_DIR}
 

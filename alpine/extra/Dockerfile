@@ -29,6 +29,7 @@ RUN sed -e 's/ *#.*$//' -e '/^ *$/d' /root/extra_packages.txt | \
     && rm -f /root/extra_packages.txt
 
 # Templates
+#
 ENV PANDOC_DATA_HOME=/usr/local/share/pandoc
 ENV PANDOC_TEMPLATES_DIR=${PANDOC_DATA_HOME}/templates
 RUN mkdir -p ${PANDOC_TEMPLATES_DIR}
