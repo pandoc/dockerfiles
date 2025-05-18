@@ -2,7 +2,7 @@
 ARG base_image_version=noble
 FROM ubuntu:$base_image_version AS ubuntu-builder-base
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get -q --no-allow-insecure-repositories update \
   && apt-get install --assume-yes --no-install-recommends \
        build-essential=* \
