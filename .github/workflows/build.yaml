@@ -119,7 +119,7 @@ jobs:
 
   typst:
     name: Typst (${{ matrix.stack }})
-    if: ${{ !contains(toJSON(needs.prepare.outputs.matrix), '"stack":"static"') }}
+    if: ${{ !contains(needs.prepare.outputs.matrix, '"stack":"static"') }}
     needs: [prepare, core]
     strategy:
       matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
@@ -133,7 +133,7 @@ jobs:
 
   latex:
     name: LaTeX (${{ matrix.stack }})
-    if: ${{ !contains(toJSON(needs.prepare.outputs.matrix), '"stack":"static"') }}
+    if: ${{ !contains(needs.prepare.outputs.matrix, '"stack":"static"') }}
     needs: [prepare, core]
     strategy:
       matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
@@ -147,7 +147,7 @@ jobs:
 
   extra:
     name: Extra (${{ matrix.stack }})
-    if: ${{ !contains(toJSON(needs.prepare.outputs.matrix), '"stack":"static"') }}
+    if: ${{ !contains(needs.prepare.outputs.matrix, '"stack":"static"') }}
     needs: [prepare, latex]
     strategy:
       matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
