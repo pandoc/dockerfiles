@@ -1,0 +1,62 @@
+name: Edge images
+
+on:
+  push:
+    ignore-paths:
+      - README.md
+  workflow_dispatch: {}
+  schedule:
+    # At 6:53 each Sunday.
+    # This is exactly an hour before the pandoc nightly build is started.
+    - cron: '53 6 * * 0'
+
+jobs:
+  core:
+    name: minimal and core (${{ matrix.stack }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        stack:
+          - alpine
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        # The build-cloud isn't used, as the build minutes are needed to
+        # generate releases.
+
+      - name: Docker Meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            pandoc/core
+            ghcr.io/pandoc/core
+          tags: edge-${{ matrix.stack }}
+
+      - name: core
+        timeout-minutes: 35
+        uses: docker/build-push-action@v6
+        with:
+          context: 'edge/${{ matrix.stack }}'
+          file: 'edge/${{ matrix.stack }}/Dockerfile'
+          labels: ${{ steps.meta.outputs.labels }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
