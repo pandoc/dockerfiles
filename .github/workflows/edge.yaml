@@ -12,13 +12,14 @@ on:
 
 jobs:
   core:
-    name: minimal and core (${{ matrix.stack }})
+    name: core:edge-${{ matrix.stack }}
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
         stack:
           - alpine
+          - ubuntu
       fail-fast: false
 
     steps:
