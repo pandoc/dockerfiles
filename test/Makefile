@@ -219,8 +219,10 @@ output/eisvogel_with_environment.pdf: eisvogel.md
 	    --pdf-engine=xelatex \
 	    --filter=pandoc-latex-environment
 
+# Warnings are (temporarily) allowed for this test, as the warning seems to stem
+# from an outdated LaTeX package.
 output/beamertheme-metropolis.pdf: beamertheme-metropolis.md
-	$(EXTRA_CMD) $< \
+	$(DOCKER_CMD) $(IMAGE) $< \
 	    --output=$@ \
 	    --to=beamer \
 	    --variable=theme:metropolis \
