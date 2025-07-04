@@ -78,7 +78,9 @@ end
 --- Returns the Dockerfile contents for the given options.
 local function get_dockerfile(opts)
   local tmpl = get_template(opts)
-  return template.apply(tmpl, opts:to_context()):render()
+  local context = opts:to_context()
+  context.cabal_constraints = (require 'pandock.cabal')(opts)
+  return template.apply(tmpl, context):render()
 end
 
 --- Writes the Dockerfile
