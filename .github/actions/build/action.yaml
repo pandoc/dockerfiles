@@ -63,6 +63,7 @@ runs:
         context: '.'
         file: ${{ inputs.dockerfile }}
         load: true
+        pull: true
         push: false
         target: ${{ inputs.target }}
         tags: ${{ env.TEST_IMAGE }}
@@ -80,6 +81,7 @@ runs:
         context: '.'
         file: ${{ inputs.dockerfile }}
         labels: ${{ steps.meta.outputs.labels }}
+        pull: true
         push: true
         target: ${{ inputs.target }}
         tags: ${{ steps.meta.outputs.tags }}
