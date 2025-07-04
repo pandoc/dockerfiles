@@ -9,6 +9,9 @@ local path     = require 'pandoc.path'
 local system   = require 'pandoc.system'
 local template = require 'pandoc.template'
 
+local Logger   = require 'pandock.logger'
+local Options  = require 'pandock.options'
+
 local usage = table.concat {
   'Usage: %s [OPTIONS] <build_stack> <pandoc_version>\n',
   '',
@@ -18,71 +21,12 @@ local usage = table.concat {
   '\t-v: increase verbosity; can be given multiple times\n',
 }
 
---- Default Dockerfile-generation options.
-local default_options = {
-  stack = 'ubuntu',
-  base_image_version = 'nobel',
-  pandoc_version = 'edge',
-  verbosity = 0,
-}
-
---- Dockerfile options.
-local Options = {}
-Options.defaults = default_options
-Options.new = function ()
-  return setmetatable({}, Options)
-end
-Options.__index = function (t, key)
-  local mt = getmetatable(t)
-  return rawget(mt.defaults, key) or rawget(mt, key)
-end
-Options.__newindex = function (t, key, value)
-  if getmetatable(t).defaults[key] then
-    rawset(t, key, value)
-  else
-    error('Unknown option "' .. tostring(key) .. '"')
-  end
-end
-Options.__pairs = function (t)
-  local next_default = function (defs, index)
-    local key, def = next(defs, index)
-    local actual = rawget(t, key)
-    if actual ~= nil then
-      return key, actual
-    else
-      return key, def
-    end
-  end
-  return next_default, getmetatable(t).defaults, nil
-end
-Options.to_context = function (self)
-  local context = {}
-  for key, value in pairs(self) do
-    context[key] = value
-  end
-  return context
-end
---- Validate the options sanity
-Options.check = function(self)
-  assert(
-    self.pandoc_version == 'main' or
-    pcall(pandoc.types.Version, self.pandoc_version),
-    'Invalid pandoc version "' .. tostring(self.pandoc_version) .. '"'
-  )
-  return self
-end
+local log = Logger()
 
 --- Print usage instructions to stderr, then exit with code 1.
 local function show_usage_and_die ()
   io.stderr:write(usage:format(arg[0]))
   os.exit(1)
-end
-
-local function debug(opts, message, ...)
-  if opts.verbosity >= 1 then
-    io.stderr:write(tostring(message):format(...))
-    io.stderr:write('\n')
-  end
 end
 
 --- Returns the contents of a file.
@@ -110,32 +54,11 @@ end
 
 --- Parse command line arguments
 local function parse_args (args)
-  local opts = Options.new()
-  local positional_args = pandoc.List()
-
-  do
-    local i = 1
-    while i <= #args do
-      if args[i] == '-b' then
-        opts.base_image_version = args[i + 1]
-        i = i + 2
-      elseif args[i] == '-v' then
-        opts.verbosity = opts.verbosity + 1
-        i = i + 1
-      elseif args[i]:match '^%-' then
-        show_usage_and_die()
-      else
-        positional_args:insert(args[i])
-        i = i + 1
-      end
-    end
-  end
-
-  if not #positional_args == 2 then
+  local ok, opts = pcall(Options.from_args, args)
+  if not ok then
+    io.stderr:write(tostring(opts) .. '\n')
     show_usage_and_die()
   end
-  opts.stack = positional_args[1]
-  opts.pandoc_version = positional_args[2]
 
   return opts
 end
@@ -152,24 +75,28 @@ local function get_template(options)
   return read_file(template_path)
 end
 
+--- Returns the Dockerfile contents for the given options.
 local function get_dockerfile(opts)
   local tmpl = get_template(opts)
   return template.apply(tmpl, opts:to_context()):render()
 end
 
+--- Writes the Dockerfile
 local function write_dockerfile(opts)
   local target_dir = path.join{opts.pandoc_version, opts.stack}
   local df = get_dockerfile(opts)
   local df_path = path.join{target_dir, 'Dockerfile'}
-  debug(opts, 'Ensuring that target directory %s exists…', target_dir)
+  log:debug('Ensuring that target directory %s exists…', target_dir)
   system.make_directory(target_dir, true)
-  debug(opts, 'Writing file %s…', df_path)
+  log:debug('Writing file %s…', df_path)
   write_file(df_path, df)
 end
 
 ------------------------------------------------------------------------
 
 local opts = parse_args(arg):check()
+
+log.verbosity = opts.verbosity
 
 if opts.verbosity >= 1 then
   io.stderr:write("Options:\n")
