@@ -201,7 +201,7 @@ constraints: any.Cabal ==3.8.1.0,
              any.pandoc ==3.7.0.2,
              pandoc +embed_data_files,
              pandoc-cli +lua -nightly +server,
-             any.pandoc-crossref ==0.3.19,
+             any.pandoc-crossref ==0.3.20,
              pandoc-crossref -enable_flaky_tests,
              any.pandoc-lua-engine ==0.4.3,
              any.pandoc-lua-marshal ==0.3.0,
@@ -336,4 +336,4 @@ constraints: any.Cabal ==3.8.1.0,
              zip-archive -executable,
              any.zlib ==0.7.1.0,
              zlib -bundled-c-zlib +non-blocking-ffi +pkg-config
-index-state: hackage.haskell.org 2025-05-29T10:59:43Z
+index-state: hackage.haskell.org 2025-07-04T14:10:45Z
