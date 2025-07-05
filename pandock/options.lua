@@ -16,8 +16,12 @@ local default_options = {
 --- Dockerfile options.
 local Options = {}
 Options.defaults = default_options
-Options.new = function ()
-  return setmetatable({}, Options)
+Options.new = function (opts)
+  local obj = setmetatable({}, Options)
+  for key, value in pairs(opts or {}) do
+    obj[key] = value
+  end
+  return obj
 end
 Options.__index = function (t, key)
   local mt = getmetatable(t)
@@ -60,36 +64,6 @@ Options.check = function(self)
     'Invalid pandoc version "' .. tostring(self.pandoc_version) .. '"'
   )
   return self
-end
-
---- Parse command line arguments
-Options.from_args = function (args)
-  local opts = Options.new()
-  local positional_args = pandoc.List()
-
-  local i = 1
-  while i <= #args do
-    if args[i] == '-b' then
-      opts.base_image_version = args[i + 1]
-      i = i + 2
-    elseif args[i] == '-v' then
-      opts.verbosity = opts.verbosity + 1
-      i = i + 1
-    elseif args[i]:match '^%-' then
-      error('Unknown option: ' .. tostring(args[i]))
-    else
-      positional_args:insert(args[i])
-      i = i + 1
-    end
-  end
-
-  if not #positional_args == 2 then
-    error('Expected exactly 2 positional arguments')
-  end
-  opts.stack = positional_args[1]
-  opts.pandoc_version = positional_args[2]
-
-  return opts
 end
 
 return Options
