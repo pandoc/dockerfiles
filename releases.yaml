@@ -1,0 +1,58 @@
+---
+# This is the main configuration file. It contains the build parameters
+# for the currently supported releases.
+
+3.7.0.2:
+  version-tags:
+    - '3.7.0.2'
+    - '3.7.0'
+    - '3.7'
+    - '3'
+    - 'latest'
+  base-images:
+    alpine: '3.21.3'
+    ubuntu: 'noble'
+    static: {}
+  addons:
+    texlive: '2025'
+    typst: '13.1'
+
+3.6.4:
+  version-tags:
+    - '3.6.4.0'
+    - '3.6.4'
+    - '3.6'
+  base-images:
+    alpine: '3.21.3'
+    ubuntu: 'noble'
+    static: {}
+  addons:
+    texlive: '2024'
+    typst: '13.1'
+
+3.5:
+  version-tags:
+    - '3.5.0.0'
+    - '3.5.0'
+    - '3.5'
+  base-images:
+    alpine: '3.20.6'
+    ubuntu: 'noble'
+    static: {}
+  addons:
+    texlive: '2024'
+    typst: '12.1'
+
+3.2.1:
+  version-tags:
+    - '3.2.1.0'
+    - '3.2.1'
+    - '3.2'
+  base-images:
+    alpine: '3.19.7'
+    ubuntu: 'noble'
+    static: {}
+  addons:
+    texlive: '2024'
+    typst: '12.1'
+...

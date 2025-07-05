@@ -35,7 +35,7 @@ end
 -- The list is sorted by release version in descending order.
 local function get_releases (filename)
   local contents = system.read_file(filename)
-  local doc = pandoc.read(contents, 'commonmark')
+  local doc = pandoc.read(contents, 'commonmark_x')
   local releases = pandoc.List()
   for key, value in pairs(doc.meta) do
     releases:insert(Release.new(key, value))
@@ -45,9 +45,11 @@ end
 
 ------------------------------------------------------------------------
 
-local cli_opts = parse_args(arg):check()
+local cli_opts = parse_args(arg)
 
 log.verbosity = cli_opts.verbosity
+
+generator.log = log
 
 if cli_opts.verbosity >= 1 then
   io.stderr:write("Options:\n")
@@ -65,9 +67,14 @@ end
 
 local releases = get_releases('releases.yaml')
 local opts_list = pandoc.List()
-for _, release in ipairs(releases) do
-  if release.pandoc_version == cli_opts.pandoc_version then
-    opts_list = release:to_options_list()
+if cli_opts.pandoc_version then
+  for _, release in ipairs(releases) do
+    if release.pandoc_version == cli_opts.pandoc_version then
+      opts_list = release:to_options_list()
+    end
+  end
+  if not next(opts_list) then
+    error('Release not found: ' .. tostring(cli_opts.pandoc_version))
   end
 end
 opts_list:map(generator.write_dockerfile)
