@@ -1,0 +1,80 @@
+# Builder
+FROM alpine:${base_image_version} AS builder-base
+
+RUN apk --no-cache add \
+        alpine-sdk \
+        bash \
+        ca-certificates \
+        cabal \
+        fakeroot \
+        ghc \
+        git \
+        gmp-dev \
+        libffi-dev \
+        zlib-dev \
+        zlib-static
+
+# Setup and configure cabal
+ENV CABAL_CONFIG=/root/.config/cabal/config
+
+RUN cabal user-config init \
+  && cabal update
+
+# Builder ###############################################################
+FROM builder-base AS builder
+RUN git clone --branch=${pandoc_version} --depth=1 --quiet \
+  https://github.com/jgm/pandoc /usr/src/pandoc
+
+# Install Haskell dependencies
+ARG extra_packages="pandoc-cli"
+WORKDIR /usr/src/pandoc
+RUN cabal build \
+        --jobs \
+        --disable-tests \
+        --disable-bench \
+        --enable-split-sections \
+        --enable-executable-static \
+        --enable-executable-stripping \
+        --upgrade-dependencies \
+        --allow-newer='lib:pandoc' \
+        --ghc-options='-O1 -optc-Os -optl=-pthread -fPIC -j' \
+        --ghc-options='+RTS -M4G -A128m -RTS' \
+$for(cabal_constraints)$
+        --constraint='${it}' \
+$endfor$
+        . pandoc-cli
+
+# Cabal's exec stripping doesn't seem to work reliably, let's do it here.
+RUN find dist-newstyle \
+        -name 'pandoc*' -type f -perm -u+x \
+        -exec strip '{}' ';' \
+        -exec cp '{}' /usr/local/bin/ ';'
+
+# Minimal ###############################################################
+FROM scratch AS minimal
+ARG pandoc_version=edge
+LABEL maintainer='Albert Krewinkel <albert+pandoc@tarleb.com>'
+LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@tarleb.com>'
+LABEL org.pandoc.author="John MacFarlane"
+LABEL org.pandoc.version="${pandoc_version}"
+
+# Create basic folders, including a /tmp folder with the correct
+# permissions and the folders /usr/local/bin and /usr/local/share/pandoc
+ADD static/tmp.tar /
+
+# Copy the pandoc binary
+COPY --from=builder \
+    /usr/local/bin/pandoc \
+    /usr/local/bin/pandoc
+
+# Set user data directory
+ENV XDG_DATA_HOME=/usr/local/share
+
+# Set PATH
+ENV PATH=/usr/local/bin
+
+# Set the executable
+ENTRYPOINT ["/usr/local/bin/pandoc"]
+
+# Set default working directory
+WORKDIR /data
