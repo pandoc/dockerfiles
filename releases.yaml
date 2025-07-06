@@ -6,12 +6,16 @@ main:
   version-tags:
     - 'edge'
   base-images:
-    alpine: '3.21.3'
+    alpine: '3.22'
     ubuntu: 'noble'
     static: {}
   addons:
-    texlive: '2025'
-    typst: '13.1'
+    latex:
+      texlive: '2025'
+    typst:
+      typst: '0.13.1'
+    extra:
+      eisvogel: '3.2.0'
 
 3.7.0.2:
   version-tags:
@@ -25,8 +29,13 @@ main:
     ubuntu: 'noble'
     static: {}
   addons:
-    texlive: '2025'
-    typst: '13.1'
+    latex:
+      texlive: '2025'
+    typst:
+      typst: '0.12.0'
+    extra:
+      eisvogel: '3.2.0'
+
 
 3.6.4:
   version-tags:
@@ -38,8 +47,13 @@ main:
     ubuntu: 'noble'
     static: {}
   addons:
-    texlive: '2024'
-    typst: '13.1'
+    latex:
+      texlive: '2024'
+    typst:
+      typst: '0.12.0'
+    extra:
+      eisvogel: '2.5.0'
+
 
 3.5:
   version-tags:
@@ -51,8 +65,13 @@ main:
     ubuntu: 'noble'
     static: {}
   addons:
-    texlive: '2024'
-    typst: '12.1'
+    latex:
+      texlive: '2024'
+    typst:
+      typst: '0.11.1'
+    extra:
+      eisvogel: '2.5.0'
+
 
 3.2.1:
   version-tags:
@@ -64,6 +83,9 @@ main:
     ubuntu: 'noble'
     static: {}
   addons:
-    texlive: '2024'
-    typst: '12.1'
+    latex:
+      texlive: '2024'
+    extra:
+      eisvogel: '2.4.2'
+
 ...
