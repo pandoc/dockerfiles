@@ -8,8 +8,8 @@ releases:
       - 'edge'
     base-images:
       alpine: '3.22'
+      static: '3.22'
       ubuntu: 'noble'
-      static: {}
     addons:
       latex:
         texlive: '2025'
@@ -27,8 +27,8 @@ releases:
       - 'latest'
     base-images:
       alpine: '3.21.3'
+      static: '3.21.3'
       ubuntu: 'noble'
-      static: {}
     addons:
       latex:
         texlive: '2025'
@@ -45,8 +45,8 @@ releases:
       - '3.6'
     base-images:
       alpine: '3.21.3'
+      static: '3.21.3'
       ubuntu: 'noble'
-      static: {}
     addons:
       latex:
         texlive: '2024'
@@ -63,8 +63,8 @@ releases:
       - '3.5'
     base-images:
       alpine: '3.20.6'
+      static: '3.20.6'
       ubuntu: 'noble'
-      static: {}
     addons:
       latex:
         texlive: '2024'
@@ -81,8 +81,8 @@ releases:
       - '3.2'
     base-images:
       alpine: '3.19.7'
+      static: '3.19.7'
       ubuntu: 'noble'
-      static: {}
     addons:
       latex:
         texlive: '2024'

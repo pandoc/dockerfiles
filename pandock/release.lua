@@ -15,8 +15,8 @@ setmetatable(Release, Release)
 
 --- Remove Inlines and Blocks from a meta tree.
 local function stringify_meta (tree)
-  local ty = type(tree)
-  if ty == 'table' then
+  local ty = pandoc.utils.type(tree)
+  if ty == 'table' or ty == 'Meta' or ty == 'List' then
     local new = setmetatable({}, getmetatable(tree))
     for key, value in pairs(tree) do
       new[key] = stringify_meta(value)
@@ -24,8 +24,10 @@ local function stringify_meta (tree)
     return new
   elseif ty == 'string' or ty == 'boolean' then
     return tree
-  else
+  elseif ty == 'Inlines' or ty == 'Blocks' then
     return utils.stringify(tree)
+  else
+    error('stringify_meta does not know how to handle ' .. ty)
   end
 end
 
@@ -34,27 +36,25 @@ local function addon_context (addon, args, parameters)
   -- Do some special handling for addons
   if addon == 'typst' then
     -- Hashes of the Typst archives
-    context.hashes =
-      parameters['typst-hashes'][args.typst.typst]
+    context.hashes = (parameters['typst-hashes'] or {})[args.typst]
   end
   return context
 end
 
 --- Create a new Release object from a pandoc metadata entry.
 Release.new = function (version, release_args, extra_parameters)
-  -- Convert Inlines and Blocks to strings
+  -- Ensure that we have a full copy with strings instead of Inlines,
+  -- Blocks.
   release_args = stringify_meta(release_args)
   extra_parameters = stringify_meta(extra_parameters or {})
 
-  local release = {}
-  release.pandoc_version = tostring(version)
-  release.version_tags = release_args['version-tags']:map(utils.stringify)
-  release.base_images = {}
-  for key, value in pairs(release_args['base-images']) do
-    release.base_images[key] = utils.stringify(value)
-  end
-  release.addons = release_args.addons
-  for addon, addon_args in pairs(release_args['addons']) do
+  local release = {
+    pandoc_version = pandoc.utils.stringify(version),
+    version_tags   = release_args['version-tags'],
+    base_images    = release_args['base-images'],
+    addons         = release_args['addons']
+  }
+  for addon, addon_args in pairs(release.addons) do
     local context = addon_context(addon, addon_args, extra_parameters)
     for key, value in pairs(context) do
       release.addons[addon][key] = value
