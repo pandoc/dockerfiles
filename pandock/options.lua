@@ -1,6 +1,6 @@
 --- Options for the creation of pandoc Dockerfiles
 --
--- Copyright  : © Albert Krewinkel <albert+pandoc@tarleb.com>
+-- Copyright  : © 2025 Albert Krewinkel <albert+pandoc@tarleb.com>
 -- License    : MIT
 
 local pandoc   = require 'pandoc'
@@ -11,6 +11,7 @@ local default_options = {
   base_image_version = 'noble',
   pandoc_version = 'edge',
   verbosity = 0,
+  addons = {},
 }
 
 --- Dockerfile options.

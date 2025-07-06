@@ -37,8 +37,8 @@ local function get_releases (filename)
   local contents = system.read_file(filename)
   local doc = pandoc.read(contents, 'commonmark_x')
   local releases = pandoc.List()
-  for key, value in pairs(doc.meta) do
-    releases:insert(Release.new(key, value))
+  for key, value in pairs(doc.meta.releases) do
+    releases:insert(Release.new(key, value, doc.meta))
   end
   return releases
 end
@@ -77,4 +77,4 @@ if cli_opts.pandoc_version then
     error('Release not found: ' .. tostring(cli_opts.pandoc_version))
   end
 end
-opts_list:map(generator.write_dockerfile)
+opts_list:map(generator.write_dockerfiles)

@@ -1,6 +1,6 @@
 --- Simple logger
 --
--- Copyright  : © Albert Krewinkel <albert+pandoc@tarleb.com>
+-- Copyright  : © 2025 Albert Krewinkel <albert+pandoc@tarleb.com>
 -- License    : MIT
 
 local io       = require 'io'

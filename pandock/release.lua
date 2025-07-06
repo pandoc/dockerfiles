@@ -1,6 +1,6 @@
 --- pandoc releases and their parameters
 --
--- Copyright  : © Albert Krewinkel <albert+pandoc@tarleb.com>
+-- Copyright  : © 2025 Albert Krewinkel <albert+pandoc@tarleb.com>
 -- License    : MIT
 
 local pandoc   = require 'pandoc'
@@ -13,18 +13,52 @@ local Release = {}
 Release.__index = Release
 setmetatable(Release, Release)
 
+--- Remove Inlines and Blocks from a meta tree.
+local function stringify_meta (tree)
+  local ty = type(tree)
+  if ty == 'table' then
+    local new = setmetatable({}, getmetatable(tree))
+    for key, value in pairs(tree) do
+      new[key] = stringify_meta(value)
+    end
+    return new
+  elseif ty == 'string' or ty == 'boolean' then
+    return tree
+  else
+    return utils.stringify(tree)
+  end
+end
+
+local function addon_context (addon, args, parameters)
+  local context = {}
+  -- Do some special handling for addons
+  if addon == 'typst' then
+    -- Hashes of the Typst archives
+    context.hashes =
+      parameters['typst-hashes'][args.typst.typst]
+  end
+  return context
+end
+
 --- Create a new Release object from a pandoc metadata entry.
-Release.new = function (version, parameters)
+Release.new = function (version, release_args, extra_parameters)
+  -- Convert Inlines and Blocks to strings
+  release_args = stringify_meta(release_args)
+  extra_parameters = stringify_meta(extra_parameters or {})
+
   local release = {}
   release.pandoc_version = tostring(version)
-  release.version_tags = parameters['version-tags']:map(utils.stringify)
+  release.version_tags = release_args['version-tags']:map(utils.stringify)
   release.base_images = {}
-  for key, value in pairs(parameters['base-images']) do
+  for key, value in pairs(release_args['base-images']) do
     release.base_images[key] = utils.stringify(value)
   end
-  release.addons = {}
-  for key, value in pairs(parameters['addons']) do
-    release.addons[key] = utils.stringify(value)
+  release.addons = release_args.addons
+  for addon, addon_args in pairs(release_args['addons']) do
+    local context = addon_context(addon, addon_args, extra_parameters)
+    for key, value in pairs(context) do
+      release.addons[addon][key] = value
+    end
   end
   return setmetatable(release, Release)
 end
@@ -37,6 +71,7 @@ Release.to_options_list = function (self)
         stack = stack,
         base_image_version = base_image_version,
         pandoc_version = self.pandoc_version,
+        addons = self.addons,
       }
     )
   end

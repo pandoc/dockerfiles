@@ -1,6 +1,6 @@
 --- Command line interface for the pandock util.
 --
--- Copyright  : © Albert Krewinkel <albert+pandoc@tarleb.com>
+-- Copyright  : © 2025 Albert Krewinkel <albert+pandoc@tarleb.com>
 -- License    : MIT
 
 local pandoc   = require 'pandoc'
@@ -14,13 +14,14 @@ cli.usage = table.concat {
   '',
   'Options:\n',
   '\t-b: version tag of the base image\n',
+  '\t-q: reduce verbosity, be more quiet; can be given multiple times\n',
   '\t-v: increase verbosity; can be given multiple times\n',
 }
 
 --- Parse command line arguments
 cli.parse_args = function (args)
   local opts = {
-    verbosity = 0
+    verbosity = 1
   }
   local positional_args = pandoc.List()
 
@@ -31,6 +32,9 @@ cli.parse_args = function (args)
       i = i + 2
     elseif args[i] == '-v' then
       opts.verbosity = opts.verbosity + 1
+      i = i + 1
+    elseif args[i] == '-q' then
+      opts.verbosity = opts.verbosity - 1
       i = i + 1
     elseif args[i]:match '^%-' then
       error('Unknown option: ' .. tostring(args[i]))

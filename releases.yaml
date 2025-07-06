@@ -2,90 +2,98 @@
 # This is the main configuration file. It contains the build parameters
 # for the currently supported releases.
 
-main:
-  version-tags:
-    - 'edge'
-  base-images:
-    alpine: '3.22'
-    ubuntu: 'noble'
-    static: {}
-  addons:
-    latex:
-      texlive: '2025'
-    typst:
-      typst: '0.13.1'
-    extra:
-      eisvogel: '3.2.0'
+releases:
+  main:
+    version-tags:
+      - 'edge'
+    base-images:
+      alpine: '3.22'
+      ubuntu: 'noble'
+      static: {}
+    addons:
+      latex:
+        texlive: '2025'
+      typst:
+        typst: '0.13.1'
+      extra:
+        eisvogel: '3.2.0'
 
-3.7.0.2:
-  version-tags:
-    - '3.7.0.2'
-    - '3.7.0'
-    - '3.7'
-    - '3'
-    - 'latest'
-  base-images:
-    alpine: '3.21.3'
-    ubuntu: 'noble'
-    static: {}
-  addons:
-    latex:
-      texlive: '2025'
-    typst:
-      typst: '0.12.0'
-    extra:
-      eisvogel: '3.2.0'
-
-
-3.6.4:
-  version-tags:
-    - '3.6.4.0'
-    - '3.6.4'
-    - '3.6'
-  base-images:
-    alpine: '3.21.3'
-    ubuntu: 'noble'
-    static: {}
-  addons:
-    latex:
-      texlive: '2024'
-    typst:
-      typst: '0.12.0'
-    extra:
-      eisvogel: '2.5.0'
+  3.7.0.2:
+    version-tags:
+      - '3.7.0.2'
+      - '3.7.0'
+      - '3.7'
+      - '3'
+      - 'latest'
+    base-images:
+      alpine: '3.21.3'
+      ubuntu: 'noble'
+      static: {}
+    addons:
+      latex:
+        texlive: '2025'
+      typst:
+        typst: '0.12.0'
+      extra:
+        eisvogel: '3.2.0'
 
 
-3.5:
-  version-tags:
-    - '3.5.0.0'
-    - '3.5.0'
-    - '3.5'
-  base-images:
-    alpine: '3.20.6'
-    ubuntu: 'noble'
-    static: {}
-  addons:
-    latex:
-      texlive: '2024'
-    typst:
-      typst: '0.11.1'
-    extra:
-      eisvogel: '2.5.0'
+  3.6.4:
+    version-tags:
+      - '3.6.4.0'
+      - '3.6.4'
+      - '3.6'
+    base-images:
+      alpine: '3.21.3'
+      ubuntu: 'noble'
+      static: {}
+    addons:
+      latex:
+        texlive: '2024'
+      typst:
+        typst: '0.12.0'
+      extra:
+        eisvogel: '2.5.0'
 
 
-3.2.1:
-  version-tags:
-    - '3.2.1.0'
-    - '3.2.1'
-    - '3.2'
-  base-images:
-    alpine: '3.19.7'
-    ubuntu: 'noble'
-    static: {}
-  addons:
-    latex:
-      texlive: '2024'
-    extra:
-      eisvogel: '2.4.2'
+  3.5:
+    version-tags:
+      - '3.5.0.0'
+      - '3.5.0'
+      - '3.5'
+    base-images:
+      alpine: '3.20.6'
+      ubuntu: 'noble'
+      static: {}
+    addons:
+      latex:
+        texlive: '2024'
+      typst:
+        typst: '0.11.1'
+      extra:
+        eisvogel: '2.5.0'
 
+
+  3.2.1:
+    version-tags:
+      - '3.2.1.0'
+      - '3.2.1'
+      - '3.2'
+    base-images:
+      alpine: '3.19.7'
+      ubuntu: 'noble'
+      static: {}
+    addons:
+      latex:
+        texlive: '2024'
+      extra:
+        eisvogel: '2.4.2'
+
+typst-hashes:
+  0.13.1:
+    arm64: 4f5b7ee6e57fb639019ee0f6bffcf940edad228ede6ff5269a9f05a1544ceed4
+    amd64: 7d214bfeffc2e585dc422d1a09d2b144969421281e8c7f5d784b65fc69b5673f
+  0.12.0:
+    arm64: e81ae98e6b12db5a36c2276e5a9890da48f7a339b92476dd22daf90de3699e11
+    amd64: 605130a770ebd59a4a579673079cb913a13e75985231657a71d6239a57539ec3
 ...
