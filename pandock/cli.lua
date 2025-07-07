@@ -26,38 +26,43 @@ cli.usage = table.concat {
 
 --- Parse command line arguments
 cli.parse_global_args = function (args)
-  local opts = pandoc.List()
+  local global_opts = pandoc.List()
 
   -- it's a list, but we can still use it as a dictionary, too.
-  opts.releases_filepath = 'releases.yaml'
-  opts.verbosity = 1
+  global_opts.releases_filepath = 'releases.yaml'
+  global_opts.verbosity = 1
+  global_opts.command_options = pandoc.List()
+
+  local command
+  local command_opts = pandoc.List()
 
   local i = 1
   while i <= #args do
     if args[i] == '-r' then
-      opts.releases_filepath = args[i + 1]
+      global_opts.releases_filepath = args[i + 1]
       i = i + 2
     elseif args[i] == '-q' then
-      opts.verbosity = opts.verbosity - 1
+      global_opts.verbosity = global_opts.verbosity - 1
       i = i + 1
     elseif args[i] == '-v' then
-      opts.verbosity = opts.verbosity + 1
+      global_opts.verbosity = global_opts.verbosity + 1
       i = i + 1
     elseif args[i]:match '^%-' then
       error('Unknown option: ' .. tostring(args[i]))
     else
-      opts:insert(args[i])
-      i = i + 1
+      command = args[i]
+      for j = i+1, #args do
+        command_opts:insert(args[j])
+      end
+      break
     end
   end
-
-  local command = opts:remove(1)
 
   if not command then
     error('No command given')
   end
 
-  return command, opts
+  return global_opts, command, command_opts
 end
 
 --- Print usage instructions to stderr, then exit with code 1.
@@ -82,10 +87,12 @@ cli.write_dockerfiles_for_version = function (appstate, pandoc_version)
 end
 
 cli.commands = {
+
   generate = function (appstate, command_args)
     local pandoc_version = command_args[1]
     cli.write_dockerfiles_for_version(appstate, pandoc_version)
   end,
+
   tags = function (appstate, command_args)
     local tagmod         = require 'pandock.tag'
     local pandoc_version = assert(command_args[1], 'pandoc version required')
@@ -94,14 +101,20 @@ cli.commands = {
     local release        = appstate.releases:find_if(function (release)
         return release.pandoc_version == pandoc_version
     end)
-    for tag in tagmod.generate_tags_for_image(image, stack, release):iter() do
-      print(tag)
+    local tags = tagmod.generate_tags_for_image(image, stack, release)
+    if command_args:find('-l') then
+      print(table.concat(tags, ','))
+    else
+      for tag in tags:iter() do
+        print(tag)
+      end
     end
   end
 }
 
 cli.run = function (args)
-  local ok, command_name, global_opts = pcall(cli.parse_global_args, args)
+  local ok, global_opts, command_name, command_args =
+    pcall(cli.parse_global_args, args)
 
   -- Set the logger
   generator.log = Logger(global_opts.verbosity)
@@ -115,7 +128,7 @@ cli.run = function (args)
 
   local command_runner = cli.commands[command_name]
   if command_runner then
-    command_runner(appstate, global_opts)
+    command_runner(appstate, command_args)
   else
     io.stderr:write('Unknown command: "' .. command_name .. '"\n')
     io.stderr:write('Supported commands are:\n')
