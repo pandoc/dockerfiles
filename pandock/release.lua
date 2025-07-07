@@ -51,13 +51,13 @@ Release.new = function (version, release_args, extra_parameters)
   local release = {
     pandoc_version = pandoc.utils.stringify(version),
     version_tags   = release_args['version-tags'],
-    base_images    = release_args['base-images'],
-    addons         = release_args['addons']
+    base_images    = release_args['base-image'],
+    addon         = release_args['addon']
   }
-  for addon, addon_args in pairs(release.addons) do
+  for addon, addon_args in pairs(release.addon) do
     local context = addon_context(addon, addon_args, extra_parameters)
     for key, value in pairs(context) do
-      release.addons[addon][key] = value
+      release.addon[addon][key] = value
     end
   end
   return setmetatable(release, Release)
@@ -71,7 +71,7 @@ Release.to_options_list = function (self)
         stack = stack,
         base_image_version = base_image_version,
         pandoc_version = self.pandoc_version,
-        addons = self.addons,
+        addon = self.addon,
       }
     )
   end

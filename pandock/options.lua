@@ -11,7 +11,7 @@ local default_options = {
   base_image_version = 'noble',
   pandoc_version = 'edge',
   verbosity = 0,
-  addons = {},
+  addon = {},
 }
 
 --- Dockerfile options.

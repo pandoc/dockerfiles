@@ -95,7 +95,7 @@ generator.write_dockerfiles = function(opts)
   generator.write_dockerfile(opts)
   if opts.stack ~= 'static' then
     -- Addon Dockerfiles
-    for addon in pairs(opts.addons) do
+    for addon in pairs(opts.addon) do
       generator.write_dockerfile(opts, addon)
     end
   end

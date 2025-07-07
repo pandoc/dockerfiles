@@ -51,7 +51,7 @@ RUN cd /root && \
 # Request musl precompiled binary access
     echo "binary_$${TEXLIVE_ARCH} 1" >> /root/texlive.profile && \
     ( \
-     printf '-t\n%s\n"' "${addons.latex.texlive}"; \
+     printf '-t\n%s\n"' "${addon.latex.texlive}"; \
      [ -z "$$texlive_mirror_url" ] || printf '-m\n%s\n' "$$texlive_mirror_url" \
     ) | xargs /root/install-texlive.sh && \
     sed -e 's/ *#.*$$//' -e '/^ *$$/d' /root/packages.txt | \
