@@ -4,7 +4,7 @@
 -- License    : MIT
 
 local pandoc    = require 'pandoc'
-local system    = require 'pandoc.system'
+local system    = require 'pandock.system'
 local Logger    = require 'pandock.logger'
 local Release   = require 'pandock.release'
 

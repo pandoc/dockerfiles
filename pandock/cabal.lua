@@ -5,7 +5,7 @@
 
 local List   = require 'pandoc.List'
 local path   = require 'pandoc.path'
-local system = require 'pandoc.system'
+local system = require 'pandock.system'
 
 local function get_freeze_file_contents(opts)
   local freeze_file_path = path.join{

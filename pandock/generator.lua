@@ -6,7 +6,7 @@
 local io       = require 'io'
 local pandoc   = require 'pandoc'
 local path     = require 'pandoc.path'
-local system   = require 'pandoc.system'
+local system   = require 'pandock.system'
 local template = require 'pandoc.template'
 local Logger   = require 'pandock.logger'
 
