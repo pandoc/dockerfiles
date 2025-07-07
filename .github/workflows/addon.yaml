@@ -73,4 +73,4 @@ jobs:
           image_type: ${{ inputs.addon }}
           base_system: ${{ inputs.base_system }}
           pandoc_version: ${{ inputs.pandoc_version }}
-          dockerfile: ${{ inputs.base_system }}/${{ inputs.addon }}/Dockerfile
+          dockerfile: ${{ inputs.pandoc_version }}/${{ inputs.base_system }}/${{ inputs.addon }}/Dockerfile

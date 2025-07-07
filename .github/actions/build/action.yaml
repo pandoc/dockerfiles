@@ -67,7 +67,6 @@ runs:
         push: false
         target: ${{ inputs.target }}
         tags: ${{ env.TEST_IMAGE }}
-        build-args: ${{ steps.meta.outputs.build_args }}
 
     - name: Test
       shell: bash
@@ -85,7 +84,6 @@ runs:
         push: true
         target: ${{ inputs.target }}
         tags: ${{ steps.meta.outputs.tags }}
-        build-args: ${{ steps.meta.outputs.build_args }}
         # LaTeX doesn't work for Alpine on arm64.
         platforms: ${{
           ( inputs.base_system == 'alpine' &&

@@ -104,8 +104,8 @@ jobs:
           image_type: minimal
           base_system: ${{ matrix.stack }}
           pandoc_version: ${{ matrix.version }}
-          dockerfile: ${{ matrix.stack }}/Dockerfile
-          target: ${{ matrix.stack }}-minimal
+          dockerfile: ${{ matrix.version }}/${{ matrix.stack }}/Dockerfile
+          target: minimal
 
       - name: core
         uses: ./.github/actions/build
@@ -114,8 +114,8 @@ jobs:
           image_type: core
           base_system: ${{ matrix.stack }}
           pandoc_version: ${{ matrix.version }}
-          dockerfile: ${{ matrix.stack }}/Dockerfile
-          target: ${{ matrix.stack }}-core
+          dockerfile: ${{ matrix.version }}/${{ matrix.stack }}/Dockerfile
+          target: core
 
   typst:
     name: Typst (${{ matrix.stack }})

@@ -53,7 +53,7 @@ releases:
       typst:
         typst: '0.12.0'
       extra:
-        eisvogel: '2.5.0'
+        eisvogel: '3.2.0'
 
 
   3.5:
@@ -71,7 +71,7 @@ releases:
       typst:
         typst: '0.11.1'
       extra:
-        eisvogel: '2.5.0'
+        eisvogel: '3.0.0'
 
 
   3.2.1:
@@ -91,9 +91,12 @@ releases:
 
 typst-hashes:
   0.13.1:
-    arm64: 4f5b7ee6e57fb639019ee0f6bffcf940edad228ede6ff5269a9f05a1544ceed4
     amd64: 7d214bfeffc2e585dc422d1a09d2b144969421281e8c7f5d784b65fc69b5673f
+    arm64: 4f5b7ee6e57fb639019ee0f6bffcf940edad228ede6ff5269a9f05a1544ceed4
   0.12.0:
-    arm64: e81ae98e6b12db5a36c2276e5a9890da48f7a339b92476dd22daf90de3699e11
     amd64: 605130a770ebd59a4a579673079cb913a13e75985231657a71d6239a57539ec3
+    arm64: e81ae98e6b12db5a36c2276e5a9890da48f7a339b92476dd22daf90de3699e11
+  0.11.1:
+    amd64: bb637d1d65634b2ee4b4e101d0b2d541bf3f1e03ac5f51f9619941e48dd28bd0
+    arm64: 7f14f7fb37b26febffd13e683f90cdacddfde420d5fdc7f809228a78545c4b26
 ...
