@@ -14,12 +14,6 @@ local generator = require 'pandock.generator'
 
 local log = Logger()
 
---- Print usage instructions to stderr, then exit with code 1.
-local function show_usage_and_die ()
-  io.stderr:write(cli.usage:format(arg[0]))
-  os.exit(1)
-end
-
 --- Parse command line arguments
 local function parse_args (args)
   local ok, opts = pcall(cli.parse_args, args)
@@ -65,16 +59,3 @@ if cli_opts.verbosity >= 1 then
   io.stderr:write('\n')
 end
 
-local releases = get_releases('releases.yaml')
-local opts_list = pandoc.List()
-if cli_opts.pandoc_version then
-  for _, release in ipairs(releases) do
-    if release.pandoc_version == cli_opts.pandoc_version then
-      opts_list = release:to_options_list()
-    end
-  end
-  if not next(opts_list) then
-    error('Release not found: ' .. tostring(cli_opts.pandoc_version))
-  end
-end
-opts_list:map(generator.write_dockerfiles)

@@ -3,14 +3,21 @@
 -- Copyright  : © 2025 Albert Krewinkel <albert+pandoc@tarleb.com>
 -- License    : MIT
 
-local pandoc   = require 'pandoc'
+local io        = require 'io'
+
+local pandoc    = require 'pandoc'
+local system    = require 'pandoc.system'
+
+local Logger    = require 'pandock.logger'
+local Release   = require 'pandock.release'
+local generator = require 'pandock.generator'
 
 --- Command line interface
 local cli = {}
 
 --- Usage instructions for the CLI.
 cli.usage = table.concat {
-  'Usage: %s [OPTIONS] <pandoc_version> [<build_stack>]\n',
+  'Usage: %s [OPTIONS] <command> <pandoc_version>\n',
   '',
   'Options:\n',
   '\t-b: version tag of the base image\n',
@@ -44,18 +51,64 @@ cli.parse_args = function (args)
     end
   end
 
-  opts.pandoc_version = positional_args[1]
-  opts.stack = positional_args[2]
+  local command = positional_args[1]
+  opts.pandoc_version = positional_args[2]
+  opts.stack = positional_args[3]
 
   if not opts.pandoc_version then
     error('Expected at least 1 positional argument')
   end
 
-  return opts
+  return command, opts
+end
+
+--- Print usage instructions to stderr, then exit with code 1.
+cli.show_usage_and_die = function (progname)
+  io.stderr:write(cli.usage:format(progname))
+  os.exit(1)
+end
+
+
+--- Retrieve a list of releases from the given file.
+-- The list is sorted by release version in descending order.
+local function get_releases (filename)
+  local contents = system.read_file(filename)
+  local doc = pandoc.read(contents, 'commonmark_x')
+  local releases = pandoc.List()
+  for key, value in pairs(doc.meta.releases) do
+    releases:insert(Release.new(key, value, doc.meta))
+  end
+  return releases
+end
+
+cli.write_dockerfiles_for_version = function (pandoc_version, releases)
+  assert(pandoc_version, "pandoc version must be given")
+  local opts_list = pandoc.List()
+  for _, release in ipairs(releases) do
+    if release.pandoc_version == pandoc_version then
+      opts_list = release:to_options_list()
+    end
+  end
+  if not next(opts_list) then
+    error('Release not found: ' .. tostring(pandoc_version))
+  end
+  opts_list:map(generator.write_dockerfiles)
 end
 
 cli.run = function (args)
-  local opts = cli.parse_args(args):check()
+  local ok, command, cli_opts = pcall(cli.parse_args, args)
+
+  -- Set the logger
+  generator.log = Logger(cli_opts.verbosity)
+
+  if not ok then
+    io.stderr:write(tostring(cli_opts) .. '\n')
+    cli.show_usage_and_die(args[0])
+  end
+  local releases = get_releases('releases.yaml')
+  if command == 'generate' then
+    cli.write_dockerfiles_for_version(cli_opts.pandoc_version, releases)
+  end
 end
 
 return cli

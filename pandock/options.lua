@@ -57,6 +57,9 @@ Options.to_context = function (self)
   return context
 end
 
+Options.to_markdown = function (self)
+end
+
 --- Validate the options sanity
 Options.check = function(self)
   assert(
