@@ -5,7 +5,7 @@
 
 local pandoc   = require 'pandoc'
 local utils    = require 'pandoc.utils'
-local Options  = require 'pandock.options'
+local Options  = require 'pandock.dockerfile.options'
 
 --- Release parameters.
 local Release = {}
@@ -52,7 +52,8 @@ Release.new = function (version, release_args, extra_parameters)
     pandoc_version = pandoc.utils.stringify(version),
     version_tags   = release_args['version-tags'],
     base_images    = release_args['base-image'],
-    addon         = release_args['addon']
+    addon          = release_args['addon'],
+    tags           = release_args['tags'],
   }
   for addon, addon_args in pairs(release.addon) do
     local context = addon_context(addon, addon_args, extra_parameters)

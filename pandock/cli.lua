@@ -6,57 +6,55 @@
 local io        = require 'io'
 
 local pandoc    = require 'pandoc'
-local system    = require 'pandoc.system'
 
 local Logger    = require 'pandock.logger'
-local Release   = require 'pandock.release'
 local generator = require 'pandock.generator'
+local state     = require 'pandock.state'
 
 --- Command line interface
 local cli = {}
 
 --- Usage instructions for the CLI.
 cli.usage = table.concat {
-  'Usage: %s [OPTIONS] <command> <pandoc_version>\n',
+  'Usage: %s [OPTIONS] <command> ...\n',
   '',
   'Options:\n',
-  '\t-b: version tag of the base image\n',
+  '\t-r: path to the releases file\n',
   '\t-q: reduce verbosity, be more quiet; can be given multiple times\n',
   '\t-v: increase verbosity; can be given multiple times\n',
 }
 
 --- Parse command line arguments
-cli.parse_args = function (args)
-  local opts = {
-    verbosity = 1
-  }
-  local positional_args = pandoc.List()
+cli.parse_global_args = function (args)
+  local opts = pandoc.List()
+
+  -- it's a list, but we can still use it as a dictionary, too.
+  opts.releases_filepath = 'releases.yaml'
+  opts.verbosity = 1
 
   local i = 1
   while i <= #args do
-    if args[i] == '-b' then
-      opts.base_image_version = args[i + 1]
+    if args[i] == '-r' then
+      opts.releases_filepath = args[i + 1]
       i = i + 2
-    elseif args[i] == '-v' then
-      opts.verbosity = opts.verbosity + 1
-      i = i + 1
     elseif args[i] == '-q' then
       opts.verbosity = opts.verbosity - 1
+      i = i + 1
+    elseif args[i] == '-v' then
+      opts.verbosity = opts.verbosity + 1
       i = i + 1
     elseif args[i]:match '^%-' then
       error('Unknown option: ' .. tostring(args[i]))
     else
-      positional_args:insert(args[i])
+      opts:insert(args[i])
       i = i + 1
     end
   end
 
-  local command = positional_args[1]
-  opts.pandoc_version = positional_args[2]
-  opts.stack = positional_args[3]
+  local command = opts:remove(1)
 
-  if not opts.pandoc_version then
-    error('Expected at least 1 positional argument')
+  if not command then
+    error('No command given')
   end
 
   return command, opts
@@ -69,22 +67,10 @@ cli.show_usage_and_die = function (progname)
 end
 
 
---- Retrieve a list of releases from the given file.
--- The list is sorted by release version in descending order.
-local function get_releases (filename)
-  local contents = system.read_file(filename)
-  local doc = pandoc.read(contents, 'commonmark_x')
-  local releases = pandoc.List()
-  for key, value in pairs(doc.meta.releases) do
-    releases:insert(Release.new(key, value, doc.meta))
-  end
-  return releases
-end
-
-cli.write_dockerfiles_for_version = function (pandoc_version, releases)
+cli.write_dockerfiles_for_version = function (appstate, pandoc_version)
   assert(pandoc_version, "pandoc version must be given")
   local opts_list = pandoc.List()
-  for _, release in ipairs(releases) do
+  for _, release in ipairs(appstate.releases) do
     if release.pandoc_version == pandoc_version then
       opts_list = release:to_options_list()
     end
@@ -95,19 +81,31 @@ cli.write_dockerfiles_for_version = function (pandoc_version, releases)
   opts_list:map(generator.write_dockerfiles)
 end
 
+cli.commands = {
+  generate = function (appstate, command_args)
+    local pandoc_version = command_args[1]
+    cli.write_dockerfiles_for_version(appstate, pandoc_version)
+  end
+}
+
 cli.run = function (args)
-  local ok, command, cli_opts = pcall(cli.parse_args, args)
+  local ok, command_name, global_opts = pcall(cli.parse_global_args, args)
 
   -- Set the logger
-  generator.log = Logger(cli_opts.verbosity)
+  generator.log = Logger(global_opts.verbosity)
 
   if not ok then
-    io.stderr:write(tostring(cli_opts) .. '\n')
+    io.stderr:write(tostring(global_opts) .. '\n')
     cli.show_usage_and_die(args[0])
   end
-  local releases = get_releases('releases.yaml')
-  if command == 'generate' then
-    cli.write_dockerfiles_for_version(cli_opts.pandoc_version, releases)
+
+  local appstate = state.make_state(global_opts)
+
+  local command_runner = cli.commands[command_name]
+  if command_runner then
+    command_runner(appstate, global_opts)
+  else
+    io.stderr:write('Unknown command: "' .. command_name .. '"\n')
   end
 end
 

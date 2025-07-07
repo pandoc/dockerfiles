@@ -6,17 +6,18 @@
 local pandoc   = require 'pandoc'
 
 --- Default Dockerfile-generation options.
-local default_options = {
+local default_dockerfile_options = {
   stack = 'ubuntu',
   base_image_version = 'noble',
   pandoc_version = 'edge',
+  tags = pandoc.List{},
   verbosity = 0,
   addon = {},
 }
 
 --- Dockerfile options.
 local Options = {}
-Options.defaults = default_options
+Options.defaults = default_dockerfile_options
 Options.new = function (opts)
   local obj = setmetatable({}, Options)
   for key, value in pairs(opts or {}) do

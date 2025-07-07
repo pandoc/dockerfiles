@@ -76,8 +76,9 @@ end
 -- specified.
 generator.write_dockerfile = function(opts, addon)
   generator.log:warn(
-    'Generating %s Dockerfile for %s',
-    addon or 'primary',
+    'Generating Dockerfile for pandoc/%s:%s-%s',
+    addon or 'core',
+    opts.pandoc_version,
     opts.stack
   )
   local target_dir = path.join{opts.pandoc_version, opts.stack, addon}
