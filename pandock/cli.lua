@@ -85,6 +85,18 @@ cli.commands = {
   generate = function (appstate, command_args)
     local pandoc_version = command_args[1]
     cli.write_dockerfiles_for_version(appstate, pandoc_version)
+  end,
+  tags = function (appstate, command_args)
+    local tagmod         = require 'pandock.tag'
+    local pandoc_version = assert(command_args[1], 'pandoc version required')
+    local stack          = assert(command_args[2], 'stack required')
+    local image          = assert(command_args[3], 'image type required')
+    local release        = appstate.releases:find_if(function (release)
+        return release.pandoc_version == pandoc_version
+    end)
+    for tag in tagmod.generate_tags_for_image(image, stack, release):iter() do
+      print(tag)
+    end
   end
 }
 
@@ -106,6 +118,13 @@ cli.run = function (args)
     command_runner(appstate, global_opts)
   else
     io.stderr:write('Unknown command: "' .. command_name .. '"\n')
+    io.stderr:write('Supported commands are:\n')
+    local commands_list = pandoc.List(pairs(cli.commands))
+    commands_list:sort()
+    for name in commands_list:iter() do
+      io.stderr:write('\t' .. name .. '\n')
+    end
+    os.exit(1)
   end
 end
 
