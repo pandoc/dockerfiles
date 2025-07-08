@@ -53,7 +53,7 @@ runs:
         push: false
         targets: ${{ inputs.base_system }}-${{ inputs.image_type }}
         set: |
-          *.platform='linux/amd64'
+          *.platform=linux/amd64
           *.tags=${{ env.TEST_IMAGE }}
 
     - name: Test
