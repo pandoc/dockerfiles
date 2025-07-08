@@ -1,0 +1,152 @@
+{
+  "group": {
+    "default": {
+      "targets": [
+        "minimal"
+      ]
+    }
+  },
+  "target": {
+    "alpine-core": {
+      "dockerfile": "3.6.4/alpine/Dockerfile",
+      "tags": [
+        "pandoc/core:3.6.4.0-alpine",
+        "pandoc/core:3.6.4.0",
+        "pandoc/core:3.6.4-alpine",
+        "pandoc/core:3.6.4",
+        "pandoc/core:3.6-alpine",
+        "pandoc/core:3.6"
+      ],
+      "target": "core"
+    },
+    "alpine-extra": {
+      "dockerfile": "3.6.4/alpine/extra/Dockerfile",
+      "tags": [
+        "pandoc/extra:3.6.4.0-alpine",
+        "pandoc/extra:3.6.4.0",
+        "pandoc/extra:3.6.4-alpine",
+        "pandoc/extra:3.6.4",
+        "pandoc/extra:3.6-alpine",
+        "pandoc/extra:3.6"
+      ]
+    },
+    "alpine-latex": {
+      "dockerfile": "3.6.4/alpine/latex/Dockerfile",
+      "tags": [
+        "pandoc/latex:3.6.4.0-alpine",
+        "pandoc/latex:3.6.4.0",
+        "pandoc/latex:3.6.4-alpine",
+        "pandoc/latex:3.6.4",
+        "pandoc/latex:3.6-alpine",
+        "pandoc/latex:3.6"
+      ]
+    },
+    "alpine-minimal": {
+      "dockerfile": "3.6.4/alpine/Dockerfile",
+      "tags": [
+        "pandoc/minimal:3.6.4.0-alpine",
+        "pandoc/minimal:3.6.4-alpine",
+        "pandoc/minimal:3.6-alpine"
+      ],
+      "target": "minimal"
+    },
+    "alpine-typst": {
+      "dockerfile": "3.6.4/alpine/typst/Dockerfile",
+      "tags": [
+        "pandoc/typst:3.6.4.0-alpine",
+        "pandoc/typst:3.6.4.0",
+        "pandoc/typst:3.6.4-alpine",
+        "pandoc/typst:3.6.4",
+        "pandoc/typst:3.6-alpine",
+        "pandoc/typst:3.6"
+      ]
+    },
+    "static-core": {
+      "dockerfile": "3.6.4/static/Dockerfile",
+      "tags": [
+        "pandoc/core:3.6.4.0-static",
+        "pandoc/core:3.6.4-static",
+        "pandoc/core:3.6-static"
+      ],
+      "target": "core"
+    },
+    "static-extra": {
+      "dockerfile": "3.6.4/static/extra/Dockerfile",
+      "tags": [
+        "pandoc/extra:3.6.4.0-static",
+        "pandoc/extra:3.6.4-static",
+        "pandoc/extra:3.6-static"
+      ]
+    },
+    "static-latex": {
+      "dockerfile": "3.6.4/static/latex/Dockerfile",
+      "tags": [
+        "pandoc/latex:3.6.4.0-static",
+        "pandoc/latex:3.6.4-static",
+        "pandoc/latex:3.6-static"
+      ]
+    },
+    "static-minimal": {
+      "dockerfile": "3.6.4/static/Dockerfile",
+      "tags": [
+        "pandoc/minimal:3.6.4.0-static",
+        "pandoc/minimal:3.6.4.0",
+        "pandoc/minimal:3.6.4-static",
+        "pandoc/minimal:3.6.4",
+        "pandoc/minimal:3.6-static",
+        "pandoc/minimal:3.6"
+      ],
+      "target": "minimal"
+    },
+    "static-typst": {
+      "dockerfile": "3.6.4/static/typst/Dockerfile",
+      "tags": [
+        "pandoc/typst:3.6.4.0-static",
+        "pandoc/typst:3.6.4-static",
+        "pandoc/typst:3.6-static"
+      ]
+    },
+    "ubuntu-core": {
+      "dockerfile": "3.6.4/ubuntu/Dockerfile",
+      "tags": [
+        "pandoc/core:3.6.4.0-ubuntu",
+        "pandoc/core:3.6.4-ubuntu",
+        "pandoc/core:3.6-ubuntu"
+      ],
+      "target": "core"
+    },
+    "ubuntu-extra": {
+      "dockerfile": "3.6.4/ubuntu/extra/Dockerfile",
+      "tags": [
+        "pandoc/extra:3.6.4.0-ubuntu",
+        "pandoc/extra:3.6.4-ubuntu",
+        "pandoc/extra:3.6-ubuntu"
+      ]
+    },
+    "ubuntu-latex": {
+      "dockerfile": "3.6.4/ubuntu/latex/Dockerfile",
+      "tags": [
+        "pandoc/latex:3.6.4.0-ubuntu",
+        "pandoc/latex:3.6.4-ubuntu",
+        "pandoc/latex:3.6-ubuntu"
+      ]
+    },
+    "ubuntu-minimal": {
+      "dockerfile": "3.6.4/ubuntu/Dockerfile",
+      "tags": [
+        "pandoc/minimal:3.6.4.0-ubuntu",
+        "pandoc/minimal:3.6.4-ubuntu",
+        "pandoc/minimal:3.6-ubuntu"
+      ],
+      "target": "minimal"
+    },
+    "ubuntu-typst": {
+      "dockerfile": "3.6.4/ubuntu/typst/Dockerfile",
+      "tags": [
+        "pandoc/typst:3.6.4.0-ubuntu",
+        "pandoc/typst:3.6.4-ubuntu",
+        "pandoc/typst:3.6-ubuntu"
+      ]
+    }
+  }
+}

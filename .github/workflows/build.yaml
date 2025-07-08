@@ -104,7 +104,6 @@ jobs:
           image_type: minimal
           base_system: ${{ matrix.stack }}
           pandoc_version: ${{ matrix.version }}
-          dockerfile: ${{ matrix.version }}/${{ matrix.stack }}/Dockerfile
           target: minimal
 
       - name: core
@@ -114,7 +113,6 @@ jobs:
           image_type: core
           base_system: ${{ matrix.stack }}
           pandoc_version: ${{ matrix.version }}
-          dockerfile: ${{ matrix.version }}/${{ matrix.stack }}/Dockerfile
           target: core
 
   typst:

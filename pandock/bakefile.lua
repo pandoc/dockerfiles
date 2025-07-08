@@ -16,20 +16,23 @@ M.generate_bake_file = function(release)
   local bake_config = {
     group = {
       default = {
-        targets = List{'minimal', 'core'}
+        targets = List{'minimal'}
       }
     }
   }
   bake_config.target = {}
   for stack in pairs(release.base_images) do
     for _, imgtype in ipairs{'minimal', 'core'} do
-      bake_config.target[stack .. '-' .. imgtype] = {
+      local target = stack .. '-' .. imgtype
+      bake_config.target[target] = {
         dockerfile = path.join{release.pandoc_version, stack, 'Dockerfile'},
-        tags = tag.generate_tags_for_image(imgtype, stack, release)
+        tags = tag.generate_tags_for_image(imgtype, stack, release),
+        target = imgtype,
       }
     end
     for addon in pairs(release.addon) do
-      bake_config.target[stack .. '-' .. addon] = {
+      local target = stack .. '-' .. addon
+      bake_config.target[target] = {
         dockerfile = path.join{
           release.pandoc_version, stack, addon, 'Dockerfile'
         },

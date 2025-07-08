@@ -14,10 +14,6 @@ inputs:
     description: "Pandoc version to build."
     default: main
     type: string
-  dockerfile:
-    description: "Dockerfile to build"
-    required: true
-    type: string
   target:
     description: "Dockerfile target"
     type: string
@@ -55,7 +51,7 @@ runs:
         load: true
         pull: true
         push: false
-        targets: ${{ inputs.target }}
+        targets: ${{ inputs.base_system }}-${{ inputs.image_type }}
         set: |
           *.platforms='linux/amd64'
           *.tags=${{ env.TEST_IMAGE }}
@@ -73,7 +69,7 @@ runs:
         file: ${{ inputs.pandoc_version }}/docker-bake.json
         pull: true
         push: true
-        target: ${{ inputs.target }}
+        targets: ${{ inputs.base_system }}-${{ inputs.image_type }}
         # LaTeX doesn't work for Alpine on arm64.
         set: |
           *.platforms=${{
