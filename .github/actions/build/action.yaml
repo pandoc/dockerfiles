@@ -53,7 +53,7 @@ runs:
         push: false
         targets: ${{ inputs.base_system }}-${{ inputs.image_type }}
         set: |
-          *.platforms='linux/amd64'
+          *.platform='linux/amd64'
           *.tags=${{ env.TEST_IMAGE }}
 
     - name: Test
@@ -72,7 +72,7 @@ runs:
         targets: ${{ inputs.base_system }}-${{ inputs.image_type }}
         # LaTeX doesn't work for Alpine on arm64.
         set: |
-          *.platforms=${{
+          *.platform=${{
             ( inputs.base_system == 'alpine' &&
               (inputs.image_type == 'latex' || inputs.image_type == 'extra') )
             && 'linux/amd64'
