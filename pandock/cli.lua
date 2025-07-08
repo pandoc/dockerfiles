@@ -7,6 +7,7 @@ local io        = require 'io'
 
 local pandoc    = require 'pandoc'
 
+local bakefile  = require 'pandock.bakefile'
 local Logger    = require 'pandock.logger'
 local generator = require 'pandock.generator'
 local state     = require 'pandock.state'
@@ -87,6 +88,14 @@ cli.write_dockerfiles_for_version = function (appstate, pandoc_version)
 end
 
 cli.commands = {
+
+  bakefile = function (appstate, command_args)
+    local pandoc_version = assert(command_args[1], 'pandoc version required')
+    local release = appstate.releases:find_if(function (release)
+        return release.pandoc_version == pandoc_version
+    end)
+    print(bakefile.generate_bake_file(release))
+  end,
 
   generate = function (appstate, command_args)
     local pandoc_version = command_args[1]
