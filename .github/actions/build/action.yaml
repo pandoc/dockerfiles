@@ -45,48 +45,39 @@ runs:
           ) }}
         printf 'TEST_IMAGE<<EOF\n%s\nEOF\n' "$TEST_IMAGE" >> $GITHUB_ENV
 
-    - name: Meta
-      id: meta
-      uses: ./.github/actions/meta
-      with:
-        images: |
-          pandoc/${{ inputs.image_type }}
-          ghcr.io/pandoc/${{ inputs.image_type }}
-        pandoc_version: ${{ env.PANDOC_COMMIT }}
-        build_stack: ${{ inputs.base_system }}
-
     - name: Build
       if: >-
         ${{ inputs.build_stack != 'static' || inputs.image_type == 'minimal' }}
-      uses: docker/build-push-action@v6
+      uses: docker/bake-action@v6
       with:
-        context: '.'
-        file: ${{ inputs.dockerfile }}
+        source: '.'
+        file: ${{ inputs.pandoc_version }}/docker-bake.json
         load: true
         pull: true
         push: false
-        target: ${{ inputs.target }}
-        tags: ${{ env.TEST_IMAGE }}
+        targets: ${{ inputs.target }}
+        set: |
+          *.platforms='linux/amd64'
+          *.tags=${{ env.TEST_IMAGE }}
 
     - name: Test
       shell: bash
       run: make test-${{ inputs.image_type }} IMAGE=${{ env.TEST_IMAGE }}
 
-    - name: Push
+    - name: Build arm64 and push
       if: >-
         ${{ inputs.build_stack != 'static' || inputs.image_type == 'minimal' }}
-      uses: docker/build-push-action@v6
+      uses: docker/bake-action@v6
       with:
         context: '.'
-        file: ${{ inputs.dockerfile }}
-        labels: ${{ steps.meta.outputs.labels }}
+        file: ${{ inputs.pandoc_version }}/docker-bake.json
         pull: true
         push: true
         target: ${{ inputs.target }}
-        tags: ${{ steps.meta.outputs.tags }}
         # LaTeX doesn't work for Alpine on arm64.
-        platforms: ${{
-          ( inputs.base_system == 'alpine' &&
-            (inputs.image_type == 'latex' || inputs.image_type == 'extra') )
-          && 'linux/amd64'
-          || 'linux/amd64,linux/arm64' }}
+        set: |
+          *.platforms=${{
+            ( inputs.base_system == 'alpine' &&
+              (inputs.image_type == 'latex' || inputs.image_type == 'extra') )
+            && 'linux/amd64'
+            || 'linux/amd64,linux/arm64' }}
