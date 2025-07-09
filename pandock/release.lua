@@ -6,30 +6,13 @@
 local pandoc   = require 'pandoc'
 local utils    = require 'pandoc.utils'
 local Options  = require 'pandock.dockerfile.options'
+local yaml     = require 'pandock.yaml'
 
 --- Release parameters.
 local Release = {}
 
 Release.__index = Release
 setmetatable(Release, Release)
-
---- Remove Inlines and Blocks from a meta tree.
-local function stringify_meta (tree)
-  local ty = pandoc.utils.type(tree)
-  if ty == 'table' or ty == 'Meta' or ty == 'List' then
-    local new = setmetatable({}, getmetatable(tree))
-    for key, value in pairs(tree) do
-      new[key] = stringify_meta(value)
-    end
-    return new
-  elseif ty == 'string' or ty == 'boolean' then
-    return tree
-  elseif ty == 'Inlines' or ty == 'Blocks' then
-    return utils.stringify(tree)
-  else
-    error('stringify_meta does not know how to handle ' .. ty)
-  end
-end
 
 local function addon_context (addon, args, parameters)
   local context = {}
@@ -43,11 +26,6 @@ end
 
 --- Create a new Release object from a pandoc metadata entry.
 Release.new = function (version, release_args, extra_parameters)
-  -- Ensure that we have a full copy with strings instead of Inlines,
-  -- Blocks.
-  release_args = stringify_meta(release_args)
-  extra_parameters = stringify_meta(extra_parameters or {})
-
   local release = {
     pandoc_version = pandoc.utils.stringify(version),
     version_tags   = release_args['version-tags'],

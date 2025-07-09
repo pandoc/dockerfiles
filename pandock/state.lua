@@ -7,6 +7,7 @@ local pandoc    = require 'pandoc'
 local system    = require 'pandock.system'
 local Logger    = require 'pandock.logger'
 local Release   = require 'pandock.release'
+local yaml      = require 'pandock.yaml'
 
 local M = {}
 
@@ -14,10 +15,10 @@ local M = {}
 -- The list is sorted by release version in descending order.
 local function get_releases (filename)
   local contents = system.read_file(filename)
-  local doc = pandoc.read(contents, 'commonmark_x')
+  local releases_yaml = yaml.parse(contents)
   local releases = pandoc.List()
-  for key, value in pairs(doc.meta.releases) do
-    releases:insert(Release.new(key, value, doc.meta))
+  for key, value in pairs(releases_yaml.releases) do
+    releases:insert(Release.new(key, value, releases_yaml))
   end
   return releases
 end
