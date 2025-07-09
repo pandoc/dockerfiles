@@ -24,7 +24,6 @@ RUN apt-get -q --no-allow-insecure-repositories update \
 # Installer scripts and config
 COPY common/latex/texlive.profile    /root/texlive.profile
 COPY common/latex/install-texlive.sh /root/install-texlive.sh
-COPY common/latex/packages.txt       /root/packages.txt
 
 # TeXLive binaries location
 ARG texlive_bin="/opt/texlive/texdir/bin"
@@ -45,8 +44,11 @@ RUN cd /root && \
      printf '-t\n%s\n"' "${addon.latex.texlive}"; \
      [ -z "$$texlive_mirror_url" ] || printf '-m\n%s\n' "$$texlive_mirror_url" \
     ) | xargs /root/install-texlive.sh && \
-    sed -e 's/ *#.*$$//' -e '/^ *$$/d' /root/packages.txt | \
-        xargs tlmgr install && \
+    tlmgr install \
+$for(addon.latex.packages)$
+        ${it} \
+$endfor$
+    && \
     rm -f /root/texlive.profile \
           /root/install-texlive.sh \
           /root/packages.txt && \

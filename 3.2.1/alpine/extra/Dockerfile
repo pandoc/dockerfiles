@@ -11,14 +11,8 @@ COPY common/extra/requirements.txt /root/extra_requirements.txt
 
 # uv is our preferred manager for Python packages
 # but we keep pip for compatibility with downstream images
-#
-# NOTE: the uv package will be available in alpine 3.1
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-ENV UV_TOOL_BIN_DIR=/usr/local/bin/
-ENV UV_TOOL_DIR=/usr/local/share/uv/tools
-
-RUN apk --no-cache add py-pip \
+RUN apk --no-cache add py-pip uv \
     && sed -e 's/ *#.*$//' -e '/^ *$/d' /root/extra_requirements.txt | \
        xargs -n1 uv tool install \
     && rm -f /root/extra_requirements.txt

@@ -24,13 +24,9 @@ RUN apt-get -q --no-allow-insecure-repositories update \
 # Installer scripts and config
 COPY common/latex/texlive.profile    /root/texlive.profile
 COPY common/latex/install-texlive.sh /root/install-texlive.sh
-COPY common/latex/packages.txt       /root/packages.txt
 
 # TeXLive binaries location
 ARG texlive_bin="/opt/texlive/texdir/bin"
-
-# TeXLive version to install (leave empty to use the latest version).
-ARG texlive_version=
 
 # TeXLive mirror URL (leave empty to use the default mirror).
 ARG texlive_mirror_url=
@@ -48,8 +44,91 @@ RUN cd /root && \
      printf '-t\n%s\n"' "2025"; \
      [ -z "$texlive_mirror_url" ] || printf '-m\n%s\n' "$texlive_mirror_url" \
     ) | xargs /root/install-texlive.sh && \
-    sed -e 's/ *#.*$//' -e '/^ *$/d' /root/packages.txt | \
-        xargs tlmgr install && \
+    tlmgr install \
+        amsfonts \
+        amsmath \
+        babel \
+        babel-basque \
+        babel-czech \
+        babel-danish \
+        babel-dutch \
+        babel-english \
+        babel-finnish \
+        babel-french \
+        babel-german \
+        babel-hungarian \
+        babel-italian \
+        babel-norsk \
+        babel-polish \
+        babel-portuges \
+        babel-spanish \
+        babel-swedish \
+        beamer \
+        biber \
+        biblatex \
+        bibtex \
+        bidi \
+        bidi \
+        bookmark \
+        booktabs \
+        caption \
+        cleveref \
+        csquotes \
+        euler \
+        eurosym \
+        fancyvrb \
+        float \
+        fontspec \
+        footnotehyper \
+        framed \
+        geometry \
+        graphics \
+        hyperref \
+        hyphen-basque \
+        hyphen-czech \
+        hyphen-danish \
+        hyphen-dutch \
+        hyphen-english \
+        hyphen-finnish \
+        hyphen-french \
+        hyphen-german \
+        hyphen-hungarian \
+        hyphen-italian \
+        hyphen-norwegian \
+        hyphen-polish \
+        hyphen-portuguese \
+        hyphen-spanish \
+        hyphen-swedish \
+        ifmtarg \
+        iftex \
+        latexmk \
+        listings \
+        lm \
+        lm-math \
+        lua-ul \
+        luacode \
+        luacolor \
+        lualatex-math \
+        luatexbase \
+        mathspec \
+        memoir \
+        microtype \
+        multirow \
+        natbib \
+        parskip \
+        pgf \
+        selnolig \
+        setspace \
+        soul \
+        subfig \
+        tools \
+        ulem \
+        unicode-math \
+        upquote \
+        xcolor \
+        xetex \
+        xurl \
+    && \
     rm -f /root/texlive.profile \
           /root/install-texlive.sh \
           /root/packages.txt && \

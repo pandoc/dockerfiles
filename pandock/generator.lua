@@ -40,7 +40,17 @@ end
 generator.generate_dockerfile = function (opts, addon)
   local tmpl = get_template(opts, addon)
   local context = opts:to_context()
-  context.cabal_constraints = (require 'pandock.cabal')(opts)
+  if not addon then
+    -- this is the base Dockerfile for building. We need cabal parameters.
+    context.cabal_constraints = (require 'pandock.cabal')(opts)
+  end
+  local ok, addon_module = pcall(require, 'pandock.addon.' .. (addon or ''))
+  if ok and addon_module then
+    context.addon[addon] = context.addon[addon] or {}
+    for key, value in pairs(addon_module.addon_context(opts)) do
+      context.addon[addon][key] = value
+    end
+  end
   generator.log:info(
     'Generating template with context:\n' .. context_to_yaml(context)
   )
