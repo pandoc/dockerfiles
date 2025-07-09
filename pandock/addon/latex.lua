@@ -7,6 +7,7 @@ local List   = require 'pandoc.List'
 local system = require 'pandock.system'
 
 local latex_packages_filepath = 'common/latex/packages.txt'
+local texlive_profile_filepath = 'common/latex/texlive.profile'
 
 local function get_packages(filepath)
   local contents = system.read_file(filepath)
@@ -22,7 +23,8 @@ end
 
 local function addon_context (_)
   return {
-    packages = get_packages(latex_packages_filepath)
+    ['packages']        = get_packages(latex_packages_filepath),
+    ['texlive-profile'] = system.read_file(texlive_profile_filepath)
   }
 end
 

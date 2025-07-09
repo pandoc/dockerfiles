@@ -18,8 +18,11 @@ RUN apk --no-cache add \
         wget \
         xz
 
-# Installer scripts and config
-COPY common/latex/texlive.profile    /root/texlive.profile
+# Installer config
+COPY <<EOF /root/texlive.profile
+$addon.latex.texlive-profile$
+EOF
+# Installer script
 COPY common/latex/install-texlive.sh /root/install-texlive.sh
 
 # TeXLive binaries location
