@@ -20,6 +20,9 @@ local function addon_context (addon, args, parameters)
   if addon == 'typst' then
     -- Hashes of the Typst archives
     context.hashes = (parameters['typst-hashes'] or {})[args.typst]
+  elseif addon == 'latex' then
+    local latex = require 'pandock.addon.latex'
+    return latex.addon_context(args)
   end
   return context
 end

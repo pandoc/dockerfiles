@@ -1,5 +1,7 @@
-# NOTE: Setting the binary type is done in the Dockerfile! E.g., in Alpine
-# `binary_x86_64-linuxmusl 1` is appended to this file.
+# NOTE: Setting the binary type is done shortly before the installation,
+# because we need to know the architecture on which this is running.
+# E.g., for amd64 on Alpine, `binary_x86_64-linuxmusl 1` is appended to
+# this file.
 selected_scheme scheme-basic
 TEXDIR         /opt/texlive/texdir
 TEXMFLOCAL     /opt/texlive/texmf-local

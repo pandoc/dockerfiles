@@ -97,6 +97,23 @@ cli.commands = {
     print(bakefile.generate_bake_file(release))
   end,
 
+  dockerfile = function (appstate, command_args)
+    local pandoc_version = assert(command_args[1], 'pandoc version required')
+    local stack          = assert(command_args[2], 'stack required')
+    local image          = assert(command_args[3], 'image type required')
+    local release        = appstate.releases:find_if(function (release)
+        return release.pandoc_version == pandoc_version
+    end)
+    local opts = release:to_options_list():filter(
+      function (opt) return opt.stack == stack end
+                                                 )[1]
+    if opts then
+      print(generator.generate_dockerfile(opts, image))
+    else
+      error('No build instructions for these arguments')
+    end
+  end,
+
   generate = function (appstate, command_args)
     local pandoc_version = command_args[1]
     cli.write_dockerfiles_for_version(appstate, pandoc_version)
