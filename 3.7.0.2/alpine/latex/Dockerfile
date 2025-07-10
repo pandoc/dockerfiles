@@ -123,7 +123,6 @@ tar --strip-components 1 -zvxf install-tl-unx.tar.gz -C "$PWD/install-tl"
 # Run the default installation with the specified profile.
 ./install-tl/install-tl \
     -repository "${installer_url}" \
-    -no-persistent-downloads \
     --profile=/root/texlive.profile
 
 # Cleanup installation artifacts.
@@ -221,7 +220,7 @@ tlmgr install \
     xurl
 # Reset to the default CTAN mirror, unless a specific mirror had been
 # requested.
-if [ -z "${texlive_mirror_url}" ]
+if [ -z "${texlive_mirror_url}" ]; then
     tlmgr option repository ctan
 fi
 
