@@ -25,7 +25,7 @@ RUN apt-get -q --no-allow-insecure-repositories update \
 COPY common/latex/install-texlive.sh /root/install-texlive.sh
 # Installer config
 COPY <<EOF /root/texlive.profile
-$addon.latex.texlive-profile$
+$addon.latex.texlive.profile$
 EOF
 
 # TeXLive binaries location

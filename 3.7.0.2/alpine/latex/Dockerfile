@@ -231,4 +231,3 @@ rm -f /root/texlive.profile
 TERM=dumb luaotfload-tool --update && \
 chmod -R o+w /opt/texlive/texdir/texmf-var
 EOF
-
