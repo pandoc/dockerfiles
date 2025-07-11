@@ -30,6 +30,9 @@ Logger.info  = make_logger_function(2)
 --- Log a warning message.
 Logger.warn  = make_logger_function(1)
 
+--- Log a warning message.
+Logger.error = make_logger_function(0)
+
 --- Write log entry.
 Logger.write = function (self, message, ...)
   self.file:write(tostring(message):format(...))

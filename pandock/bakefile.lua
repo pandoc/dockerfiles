@@ -3,80 +3,38 @@
 -- Copyright  : © 2025 Albert Krewinkel <albert+pandoc@tarleb.com>
 -- License    : MIT
 
-local pandoc   = require 'pandoc'
-local List     = require 'pandoc.List'
-local json     = require 'pandoc.json'
-local path     = require 'pandoc.path'
-local system   = require 'pandock.system'
-local tag      = require 'pandock.tag'
+local pandoc      = require 'pandoc'
+local List        = require 'pandoc.List'
+local json        = require 'pandoc.json'
+local BuildTarget = require 'pandock.type.BuildTarget'
 
---- The "tag" module.
-local M = {}
+--- Bakefile module
+local bakefile = {}
 
-local image_titles = {
-  ['minimal'] = 'pandoc (minimal)',
-  ['core']    = 'pandoc',
-  ['latex']   = 'pandoc with LaTeX',
-  ['extra']   = 'pandoc with LaTeX and extras',
-  ['typst']   = 'pandoc with Typst',
-}
-
-local function image_description (imgtype)
-  --- The image type / repository name
-  local inputfile = 'docs/short-descriptions.md'
-  local contents = system.read_file(inputfile)
-  local doc = pandoc.read(contents)
-  assert(doc.meta[imgtype], "No description found for image type " .. imgtype)
-  return pandoc.utils.stringify(doc.meta[imgtype])
-end
-
-M.image_labels = function (release, image_type)
-  local description = image_description(image_type)
+local function make_bake_target (build_target)
   return {
-    ['org.opencontainers.image.authors'] = 'Albert Krewinkel <albert+pandoc@tarleb.com>',
-    ['org.opencontainers.image.description'] = description,
-    ['org.opencontainers.image.licenses'] = 'GPL-2.0',
-    ['org.opencontainers.image.source'] = 'https://github.com/pandoc/dockerfiles',
-    ['org.opencontainers.image.title'] = image_titles[image_type] or 'pandoc',
-    ['org.opencontainers.image.url'] = 'https://github.com/pandoc/dockerfiles',
-    ['org.opencontainers.image.vendor'] = 'The pandoc Docker team',
-    ['org.opencontainers.image.version'] = release.pandoc_version,
-
+    dockerfile = build_target:dockerfile_filepath(),
+    labels = build_target:labels(),
+    tags = build_target:tags(),
+    target = build_target:target(),
   }
 end
 
-M.generate_bake_file = function(release)
-  local bake_config = {
+bakefile.generate_bake_config = function (build_targets)
+  return {
     group = {
       default = {
-        targets = List{'core'}
+        targets = List{'core'},
       }
-    }
+    },
+    target = build_targets:map(make_bake_target),
   }
-  bake_config.target = {}
-  for stack in pairs(release.base_images) do
-    for _, imgtype in ipairs{'minimal', 'core'} do
-      local target = stack .. '-' .. imgtype
-      bake_config.target[target] = {
-        dockerfile = path.join{release.pandoc_version, stack, 'Dockerfile'},
-        labels = M.image_labels(release, imgtype),
-        tags = tag.generate_tags_for_image(imgtype, stack, release),
-        target = imgtype,
-      }
-    end
-    for addon in pairs(release.addon) do
-      local target = stack .. '-' .. addon
-      bake_config.target[target] = {
-        dockerfile = path.join{
-          release.pandoc_version, stack, addon, 'Dockerfile'
-        },
-        labels = M.image_labels(release, addon),
-        tags = tag.generate_tags_for_image(addon, stack, release)
-      }
-    end
-  end
+end
 
+bakefile.generate_bake_json = function (release, variants)
+  local build_targets = BuildTarget.targets_for_release(release, variants)
+  local bake_config = bakefile.generate_bake_config(build_targets)
   return json.encode(bake_config)
 end
 
-return M
+return bakefile

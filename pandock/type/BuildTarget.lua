@@ -101,8 +101,31 @@ local BuildTarget = configutils.make_config_class{
         ['org.opencontainers.image.version']     = self.pandoc_version,
 
       }
-    end
+    end,
   }
 }
+
+--- Generate all build targets for the given release
+BuildTarget.targets_for_release = function (release, variants)
+  local targets = List()
+  for variant in variants:iter() do
+    local base_images = List(pairs(release.base_image))
+    -- sort to get a fixed, reproducible order
+    base_images:sort()
+    targets:extend(
+      base_images:map(
+        function (stack)
+          return BuildTarget.new {
+            pandoc_version = release.pandoc_version,
+            stack = stack,
+            variant = variant,
+            version_tags = release.version_tags,
+          }
+        end
+      )
+    )
+  end
+  return targets
+end
 
 return BuildTarget
