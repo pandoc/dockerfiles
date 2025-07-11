@@ -3,96 +3,44 @@
 -- Copyright  : © 2025 Albert Krewinkel <albert+pandoc@tarleb.com>
 -- License    : MIT
 
---- Dockerfile generator
---
--- Copyright  : © 2025 Albert Krewinkel <albert+pandoc@tarleb.com>
--- License    : MIT
-
-local io       = require 'io'
-local pandoc   = require 'pandoc'
-local path     = require 'pandoc.path'
-local system   = require 'pandock.system'
 local template = require 'pandoc.template'
-local Logger   = require 'pandock.logger'
+local yaml     = require 'pandock.yaml'
 
---- Dockerfile generator
-local generator = {
-  log = Logger()
-}
+local context        = require 'pandock.context'
+local DockerfileSpec = require 'pandock.type.DockerfileSpec'
 
-generator.log.verbosity = 4
-
---- Returns the correct template for the given options.
-local function get_template(options, addon)
-  local template_path = addon
-    and path.join{options.stack, addon, 'Dockerfile.tmpl'}
-    or  path.join{options.stack, 'Dockerfile.tmpl'}
-  if options.pandoc_version == 'main' then
-    template_path = path.join{'edge', template_path}
-  end
-  return system.read_file(template_path)
-end
-
---- Stringify a template context by turning it into YAML.
-local function context_to_yaml(context)
-  local opts = {
-    template = '$titleblock$'
-  }
-  return pandoc.write(pandoc.Pandoc({}, context), 'commonmark_x', opts)
-end
+--- dockerfile action
+local action = {}
 
 --- Returns the Dockerfile contents for the given options.
-generator.generate_dockerfile = function (opts, addon)
-  local tmpl = get_template(opts, addon)
-  local context = opts:to_context()
-  if not addon then
-    -- this is the base Dockerfile for building. We need cabal parameters.
-    context.cabal_constraints = (require 'pandock.cabal')(opts)
-  end
-  local ok, addon_module = pcall(require, 'pandock.addon.' .. (addon or ''))
-  if ok and addon_module then
-    context.addon[addon] = context.addon[addon] or {}
-    for key, value in pairs(addon_module.addon_context(opts)) do
-      context.addon[addon][key] = value
-    end
-  end
-  generator.log:info(
-    'Generating template with context:\n' .. context_to_yaml(context)
+local generate_dockerfile = function (spec, ctx)
+  local tmpl = spec:get_template()
+  return template.apply(tmpl, ctx):render()
+end
+
+action.run = function (app, args)
+  local pandoc_version = assert(args[1], 'pandoc version required')
+  local stack          = assert(args[2], 'stack required')
+  local addon_name     = args[3] -- addon is optional
+
+  local spec = DockerfileSpec.new {
+    pandoc_version = pandoc_version,
+    stack = stack,
+    addon = addon_name,
+  }
+
+  local config = app.config
+  local release = assert(
+    config.release[spec.pandoc_version],
+    'No release found for ' .. tostring(spec.pandoc_version)
   )
-  return template.apply(tmpl, context):render()
+  local addon   = spec.addon and config.addon[spec.addon]
+  local ctx     = context.create_context(spec, release, addon)
+
+  app.logger:debug('Generating Dockerfile with context:')
+  app.logger:debug(yaml.encode(ctx))
+  local output  = generate_dockerfile(spec, ctx)
+  print(output)
 end
 
---- Writes a Dockerfile for a release.
---
--- The default (minimal&core) Dockerfile is built unless `addon` is
--- specified.
-generator.write_dockerfile = function(opts, addon)
-  generator.log:warn(
-    'Generating Dockerfile for pandoc/%s:%s-%s',
-    addon or 'core',
-    opts.pandoc_version,
-    opts.stack
-  )
-  local target_dir = path.join{opts.pandoc_version, opts.stack, addon}
-  local df = generator.generate_dockerfile(opts, addon)
-  local df_path = path.join{target_dir, 'Dockerfile'}
-  generator.log:debug('Ensuring that target directory %s exists…', target_dir)
-  system.make_directory(target_dir, true)
-  generator.log:info('Writing file %s…', df_path)
-  system.write_file(df_path, df)
-end
-
---- Writes all Dockerfiles for a release
-generator.write_dockerfiles = function(opts)
-  -- the main Dockerfile
-  generator.write_dockerfile(opts)
-  if opts.stack ~= 'static' then
-    -- Addon Dockerfiles
-    for addon in pairs(opts.addon) do
-      generator.write_dockerfile(opts, addon)
-    end
-  end
-end
-
-return generator
-
+return action

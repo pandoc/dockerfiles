@@ -9,6 +9,7 @@
 
 local path        = require 'pandoc.path'
 local configutils = require 'pandock.configutils'
+local system      = require 'pandock.system'
 
 local join = path.join
 
@@ -30,6 +31,9 @@ local DockerfileSpec = configutils.make_config_class{
         return join{self.stack, 'Dockerfile.tmpl'}
       end
     end,
+    get_template = function (self)
+      return system.read_file(self:template_filepath())
+    end
   }
 }
 

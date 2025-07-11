@@ -14,9 +14,11 @@ local M = {
 
 local function get_release_map (rawconfig)
   local releases = {}
-  for version, spec in pairs(rawconfig.release) do
+  for commit, spec in pairs(rawconfig.release) do
+    local version = commit == 'main' and 'edge' or commit
     local release = Release.new(spec)
     release['pandoc-version'] = version
+    release['pandoc-commit'] = commit
     releases[version] = release
   end
   return releases

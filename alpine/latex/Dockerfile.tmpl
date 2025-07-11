@@ -20,14 +20,14 @@ RUN apk --no-cache add \
 
 # Installer config
 COPY <<EOF /root/texlive.profile
-$addon.latex.texlive.profile$
+$latex.texlive.profile$
 EOF
 
 # TeXLive binaries location
 ARG texlive_bin="/opt/texlive/texdir/bin"
 
 # TeXLive mirror URL (leave empty to use the default mirror).
-$if(addon.latex.current-texlive)$
+$if(latex.current-texlive)$
 ARG texlive_mirror_url=
 $else$
 ARG texlive_mirror_url="ftp://tug.org/historic/"
@@ -74,10 +74,10 @@ fi
 # Trim trailing slash(es)
 mirror_url=$$(echo "$$mirror_url" | sed -e 's/\/*$$//')
 
-$if(addon.latex.texlive.is-current)$
+$if(latex.texlive.is-current)$
 installer_url="$${mirror_url}/systems/texlive/tlnet"
 $else$
-installer_url="$${mirror_url}/systems/texlive/${addon.latex.texlive.version}/tlnet-final"
+installer_url="$${mirror_url}/systems/texlive/${latex.texlive.version}/tlnet-final"
 $endif$
 
 # Download the install-tl perl script. The archive integrity and signature is
@@ -114,7 +114,7 @@ rm -rf \
 # Install packages required by pandoc
 tlmgr install \
     --verify-repo=all \
-$for(addon.latex.packages)$
+$for(latex.packages)$
     ${it}$sep$ \
 $endfor$
 

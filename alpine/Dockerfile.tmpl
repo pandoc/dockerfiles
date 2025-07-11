@@ -33,7 +33,7 @@ RUN cabal user-config init \
 
 # Builder ###############################################################
 FROM builder-base AS builder
-RUN git clone --branch=${pandoc_version} --depth=1 --quiet \
+RUN git clone --branch=${pandoc_commit} --depth=1 --quiet \
   https://github.com/jgm/pandoc /app
 
 # Add pandoc-crossref to project
@@ -52,7 +52,7 @@ RUN cabal build \
         --allow-newer='lib:pandoc' \
         --ghc-options='-O1 -optc-Os -optl=-pthread -fPIC -j' \
         --ghc-options='+RTS -M4G -A128m -RTS' \
-$for(cabal_constraints)$
+$for(cabal.constraints)$
         --constraint='${it}' \
 $endfor$
         . pandoc-cli pandoc-crossref

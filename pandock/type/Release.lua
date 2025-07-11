@@ -11,6 +11,7 @@ local Release = configutils.make_config_class{
   name = 'Release',
   valid_keys = {
     'pandoc-version',
+    'pandoc-commit',
     'base-image',
     'version-tags',
     'addon',

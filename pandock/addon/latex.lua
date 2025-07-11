@@ -21,12 +21,9 @@ local function get_packages (filepath)
   end)
 end
 
-local function addon_context (args)
-  -- for key, value in pairs(type(args) == 'table' and args.addon or {}) do
-  --   io.stderr:write(tostring(key) .. '\t' .. tostring(value) .. '\n')
-  -- end
-  local version = "2025"
-  local default_version = "2025"
+local function addon_context (latex, release)
+  local version = release.addon.latex.texlive
+  local default_version = latex.texlive.current
   return {
     ['packages']        = get_packages(latex_packages_filepath),
     ['texlive'] = {
