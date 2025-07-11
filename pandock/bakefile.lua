@@ -37,10 +37,15 @@ bakefile.generate_bake_config = function (build_targets)
   }
 end
 
-bakefile.generate_bake_json = function (release, variants)
-  local build_targets = BuildTarget.targets_for_release(release, variants)
+bakefile.for_build_targets = function (build_targets)
   local bake_config = bakefile.generate_bake_config(build_targets)
   return json.encode(bake_config)
+
+end
+
+bakefile.generate_bake_json = function (release, variants)
+  local build_targets = BuildTarget.targets_for_release(release, variants)
+  return bakefile.for_build_targets(build_targets)
 end
 
 return bakefile

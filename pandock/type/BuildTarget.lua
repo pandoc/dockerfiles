@@ -8,7 +8,6 @@
 local List           = require 'pandoc.List'
 local DockerfileSpec = require 'pandock.type.DockerfileSpec'
 local configutils    = require 'pandock.configutils'
-local tag            = require 'pandock.tag'
 
 local BuildTarget = configutils.make_config_class{
   name = 'BuildTarget',
@@ -19,15 +18,18 @@ local BuildTarget = configutils.make_config_class{
     'version-tags'
   },
   methods = {
-
-    dockerfile_filepath = function (self)
+    to_dockerfile_spec = function (self)
       return DockerfileSpec{
         pandoc_version = self.pandoc_version,
         stack = self.stack,
         addon = self.variant:is_addon()
           and self.variant.name
           or nil
-      }:target_filepath()
+      }
+    end,
+
+    dockerfile_filepath = function (self)
+      return self:to_dockerfile_spec():target_filepath()
     end,
 
     target = function (self)
@@ -81,7 +83,6 @@ local BuildTarget = configutils.make_config_class{
         ['org.opencontainers.image.url']         = url,
         ['org.opencontainers.image.vendor']      = 'The pandoc Docker team',
         ['org.opencontainers.image.version']     = self.pandoc_version,
-
       }
     end,
   }
@@ -94,8 +95,11 @@ BuildTarget.targets_for_release = function (release, variants)
     local base_images = List(pairs(release.base_image))
     -- sort to get a fixed, reproducible order
     base_images:sort()
+    local supports_variant = function (base_image)
+      return base_image ~= 'stack' and not variant:is_addon()
+    end
     targets:extend(
-      base_images:map(
+      base_images:filter(supports_variant):map(
         function (stack)
           return BuildTarget.new {
             pandoc_version = release.pandoc_version,
