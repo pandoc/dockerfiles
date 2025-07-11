@@ -8,13 +8,14 @@ local Logger = require 'pandock.type.Logger'
 local config = require 'pandock.config'
 
 local App = {}
+App.__index = App
 
 App.new = function (verbosity, config_filepath, commands)
   local app = {}
   app.logger = Logger(verbosity)
   app.config = config.get_config(config_filepath)
   app.commands = commands
-  return app
+  return setmetatable(app, App)
 end
 
 App.run_command = function (self, command_name, args)
@@ -33,4 +34,10 @@ App.run_command = function (self, command_name, args)
   end
 end
 
-return App
+local AppMT = {
+  __call = function (self, ...)
+    return self.new(...)
+  end,
+}
+
+return setmetatable(App, AppMT)

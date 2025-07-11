@@ -21,13 +21,19 @@ local function make_bake_target (build_target)
 end
 
 bakefile.generate_bake_config = function (build_targets)
+  local target = {}
+  for bt in build_targets:iter() do
+    local name = bt.stack .. '-' .. bt.variant.name
+    target[name] = make_bake_target(bt)
+  end
+
   return {
     group = {
       default = {
         targets = List{'core'},
       }
     },
-    target = build_targets:map(make_bake_target),
+    target = target
   }
 end
 

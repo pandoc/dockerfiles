@@ -11,7 +11,7 @@ local Variant = configutils.make_config_class{
   valid_keys = {'name', 'title', 'description', 'default-stack'},
   methods = {
     is_addon = function (self)
-      return self.name == 'minimal' or self.name == 'core'
+      return self.name ~= 'minimal' and self.name ~= 'core'
     end
   }
 }

@@ -60,13 +60,6 @@ M.make_config_class = function (properties)
       return confobj
     end,
     __name = name .. ' class',
-    __newindex = function (t, key, value)
-      if valid_keys[key] then
-        rawset(t, key, value)
-      else
-        error('Invalid key: "' .. tostring(key) .. '"')
-      end
-    end,
     __call = function (t, ...)
       return getmetatable(t).new(...)
     end

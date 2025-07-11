@@ -6,7 +6,6 @@
 local io        = require 'io'
 
 local pandoc    = require "pandoc"
-local generator = require "pandock.generator"
 local App       = require "pandock.type.App"
 
 --- Command line interface
@@ -103,7 +102,7 @@ cli.run = function (args)
   -- Setup the app that runs things
   local app = App(global_opts.verbosity, "config.yaml", cli.commands)
 
-  app.run_command(command_name, command_args)
+  app:run_command(command_name, command_args)
 end
 
 return cli

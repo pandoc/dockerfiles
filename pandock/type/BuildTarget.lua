@@ -6,26 +6,9 @@
 -- License    : MIT
 
 local List           = require 'pandoc.List'
-local path           = require 'pandoc.path'
 local DockerfileSpec = require 'pandock.type.DockerfileSpec'
 local configutils    = require 'pandock.configutils'
 local tag            = require 'pandock.tag'
-
-local default_stack_for_image = {
-  minimal = 'static',
-  core    = 'alpine',
-  latex   = 'alpine',
-  extra   = 'alpine',
-  typst   = 'alpine',
-}
-
-local image_title = {
-  ['minimal'] = 'pandoc (minimal)',
-  ['core']    = 'pandoc',
-  ['latex']   = 'pandoc with LaTeX',
-  ['extra']   = 'pandoc with LaTeX and extras',
-  ['typst']   = 'pandoc with Typst',
-}
 
 local BuildTarget = configutils.make_config_class{
   name = 'BuildTarget',
@@ -54,6 +37,7 @@ local BuildTarget = configutils.make_config_class{
     end,
 
     tags = function (self, extra_registries)
+      extra_registries = extra_registries or List{'ghcr.io'}
       local tag_format_full = 'pandoc/%s:%s-%s'
       local tag_format_short = 'pandoc/%s:%s'
 
@@ -74,9 +58,7 @@ local BuildTarget = configutils.make_config_class{
 
       -- Add prefixes:
       for reg in List(extra_registries or {}):iter() do
-        for i = 1, #tags do
-          tags:insert(reg .. '/' .. tag[i])
-        end
+        tags:extend(tags:map(function (tag) return reg .. '/' .. tag end))
       end
 
       return tags
