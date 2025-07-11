@@ -1,0 +1,147 @@
+---
+# This is the main configuration file. It contains the build parameters
+# for the currently supported releases.
+
+release:
+  main:
+    version-tags:
+      - 'edge'
+    base-image:
+      alpine: '3.22'
+      static: '3.22'
+      ubuntu: 'noble'
+    addon:
+      latex:
+        texlive: '2025'
+      typst:
+        typst: '0.13.1'
+      extra:
+        eisvogel: '3.2.0'
+
+  3.7.0.2:
+    version-tags:
+      - '3.7.0.2'
+      - '3.7.0'
+      - '3.7'
+      - '3'
+      - 'latest'
+    base-image:
+      alpine: '3.21.3'
+      static: '3.21.3'
+      ubuntu: 'noble'
+    addon:
+      latex:
+        texlive: '2025'
+      typst:
+        typst: '0.12.0'
+      extra:
+        eisvogel: '3.2.0'
+
+  3.6.4:
+    version-tags:
+      - '3.6.4.0'
+      - '3.6.4'
+      - '3.6'
+    base-image:
+      alpine: '3.21.3'
+      static: '3.21.3'
+      ubuntu: 'noble'
+    addon:
+      latex:
+        texlive: '2024'
+      typst:
+        typst: '0.12.0'
+      extra:
+        eisvogel: '3.2.0'
+
+  3.5:
+    version-tags:
+      - '3.5.0.0'
+      - '3.5.0'
+      - '3.5'
+    base-image:
+      alpine: '3.20.6'
+      static: '3.20.6'
+      ubuntu: 'noble'
+    addon:
+      latex:
+        texlive: '2024'
+      typst:
+        typst: '0.11.1'
+      extra:
+        eisvogel: '3.0.0'
+
+  3.2.1:
+    version-tags:
+      - '3.2.1.0'
+      - '3.2.1'
+      - '3.2'
+    base-image:
+      alpine: '3.19.7'
+      static: '3.19.7'
+      ubuntu: 'noble'
+    addon:
+      latex:
+        texlive: '2024'
+      extra:
+        eisvogel: '2.4.2'
+
+addon:
+  latex:
+    texlive:
+      current: 2025
+
+  typst:
+    hashes:
+      0.13.1:
+        amd64: 7d214bfeffc2e585dc422d1a09d2b144969421281e8c7f5d784b65fc69b5673f
+        arm64: 4f5b7ee6e57fb639019ee0f6bffcf940edad228ede6ff5269a9f05a1544ceed4
+      0.12.0:
+        amd64: 605130a770ebd59a4a579673079cb913a13e75985231657a71d6239a57539ec3
+        arm64: e81ae98e6b12db5a36c2276e5a9890da48f7a339b92476dd22daf90de3699e11
+      0.11.1:
+        amd64: bb637d1d65634b2ee4b4e101d0b2d541bf3f1e03ac5f51f9619941e48dd28bd0
+        arm64: 7f14f7fb37b26febffd13e683f90cdacddfde420d5fdc7f809228a78545c4b26
+
+variants:
+  - name: minimal
+    title: 'pandoc (minimal)'
+    description: >-
+      Minimal image for pandoc, the universal document converter.
+    default-stack: static
+
+  - name: core
+    title: 'pandoc'
+    description: >-
+      Official pandoc image with image conversion tools and pandoc-crossref.
+    default-stack: alpine
+
+  - name: latex
+    title: 'pandoc with LaTeX'
+    description: >-
+      Official pandoc image with pandoc, pandoc-crossref, and a minimal
+      LaTeX installation.
+    default-stack: alpine
+
+  - name: extra
+    title: 'pandoc with LaTeX and extras'
+    description: >-
+      Large pandoc image with many LaTeX extras, including popular fonts
+      and the "Eisvogel" template.
+    default-stack: alpine
+
+  - name: typst
+    title: 'pandoc with Typst'
+    description: >-
+      Document conversion with pandoc, pandoc-crossref, and Typst.
+    default-stack: alpine
+...
+
+This document serves as the main configuration for the Dockerfiles
+build system. It contains all tables and info required to generate
+Dockerfiles and bake files.
+
+The `pandock` Lua library contains the tools necessary to use
+these configs and to build Dockerfiles. Each generated Dockerfile
+is then added to the repository, so that the GitHub Actions build
+system can access them to build the images.

@@ -25,6 +25,16 @@ local function stringify_meta (tree)
   end
 end
 
+local function encode (obj, trailing)
+  for key, value in pairs(obj) do
+    print(key, value)
+  end
+  local doc = pandoc.Pandoc(trailing or {}, obj)
+  -- local template = pandoc.template.default 'commonmark'
+  -- return pandoc.write(doc, 'commonmark_x', {template = template})
+  return doc
+end
+
 --- A kind of YAML parser built on pandoc's Markdown reader.
 --
 -- This is not a true YAML parser, as it will interpret some characters as
@@ -47,6 +57,8 @@ end
 
 return {
   stringify_meta = stringify_meta,
+  decode = parse_yaml,
+  encode = encode,
   parse = parse_yaml,
   parse_file = parse_yaml_file,
 }
