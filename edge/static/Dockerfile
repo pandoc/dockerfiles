@@ -22,7 +22,7 @@ RUN cabal user-config init \
 
 # Builder ###############################################################
 FROM builder-base AS builder
-RUN git clone --branch=edge --depth=1 --quiet \
+RUN git clone --branch=main --depth=1 --quiet \
   https://github.com/jgm/pandoc /usr/src/pandoc
 
 # Install Haskell dependencies
