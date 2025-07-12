@@ -32,7 +32,7 @@ action.run = function (app, args)
     local spec = bt:to_dockerfile_spec()
     local addon = nil
     if spec.addon then
-      addon = spec.addon and config.addon[spec.addon]
+      addon = config.addon[spec.addon] or {}
       addon.name = spec.addon
     end
 

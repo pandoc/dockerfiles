@@ -102,6 +102,7 @@ addon:
       0.11.1:
         amd64: bb637d1d65634b2ee4b4e101d0b2d541bf3f1e03ac5f51f9619941e48dd28bd0
         arm64: 7f14f7fb37b26febffd13e683f90cdacddfde420d5fdc7f809228a78545c4b26
+  extra: {}
 
 variants:
   - name: minimal

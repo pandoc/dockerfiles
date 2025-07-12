@@ -30,12 +30,12 @@ RUN mkdir -p $${PANDOC_TEMPLATES_DIR}
 # eisvogel
 ARG EISVOGEL_REPO=https://github.com/Wandmalfarbe/pandoc-latex-template/releases/download
 ARG EISVOGEL_VERSION=3.2.0
-RUN wget -qO- $${EISVOGEL_REPO}/v${addon.extra.eisvogel}/Eisvogel.tar.gz \
+RUN wget -qO- $${EISVOGEL_REPO}/v${extra.eisvogel}/Eisvogel.tar.gz \
     | tar xz \
         --strip-components=1 \
         --one-top-level=$${PANDOC_TEMPLATES_DIR} \
-        Eisvogel-${addon.extra.eisvogel}/eisvogel.latex \
-        Eisvogel-${addon.extra.eisvogel}/eisvogel.beamer
+        Eisvogel-${extra.eisvogel}/eisvogel.latex \
+        Eisvogel-${extra.eisvogel}/eisvogel.beamer
 
 # Lua Filters
 ARG LUA_FILTERS_REPO=https://github.com/pandoc/lua-filters/releases/download
