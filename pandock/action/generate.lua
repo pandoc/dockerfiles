@@ -24,8 +24,10 @@ action.run = function (app, args)
 
   local buildtargets = BuildTarget.targets_for_release(release, config.variants)
 
-  local bake_config = bakefile.for_build_targets(buildtargets)
   local bakefile_path = path.join{pandoc_version, 'docker-bake.json'}
+  local bake_config = bakefile.for_build_targets(buildtargets)
+  app.logger:debug('Ensure that directory exists: %s', pandoc_version)
+  system.make_directory(pandoc_version, true)
   app.logger:info('Writing bake config to %s.', bakefile_path)
   system.write_file(bakefile_path, bake_config)
 
@@ -37,8 +39,12 @@ action.run = function (app, args)
       addon.name = spec.addon
     end
 
+    local target_filepath = spec:target_filepath()
+    local target_dir = path.directory(target_filepath)
+    app.logger:debug('Ensure that directory exists: %s', target_dir)
+    system.make_directory(target_dir, true)
     system.write_file(
-      spec:target_filepath(),
+      target_filepath,
       dockerfile.generate(release, spec.stack, addon)
     )
   end
