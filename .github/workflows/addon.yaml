@@ -12,6 +12,9 @@ on:
       base_system:
         type: string
         default: alpine
+      no_cache:
+        type: boolean
+        default: false
     secrets:
       DOCKER_HUB_USERNAME:
         required: true
@@ -37,6 +40,9 @@ on:
           - alpine
           - ubuntu
         default: alpine
+      no_cache:
+        type: boolean
+        default: false
 
 jobs:
   build:
@@ -73,3 +79,4 @@ jobs:
           image_type: ${{ inputs.addon }}
           base_system: ${{ inputs.base_system }}
           pandoc_version: ${{ inputs.pandoc_version }}
+          no_cache: ${{ inputs.no_cache }}

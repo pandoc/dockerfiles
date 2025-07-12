@@ -14,6 +14,10 @@ inputs:
     description: "Pandoc version to build."
     default: main
     type: string
+  no_cache:
+    description: "Don't use the cache when building"
+    default: false
+    type: boolean
   target:
     description: "Dockerfile target"
     type: string
@@ -46,16 +50,17 @@ runs:
         ${{ inputs.build_stack != 'static' || inputs.image_type == 'minimal' }}
       uses: docker/bake-action@v6
       with:
-        source: '.'
         files: docker-bake.json
-        workdir: ${{ inputs.pandoc_version }}
         load: true
+        no-cache: ${{ inputs.no_cache }}
         pull: true
         push: false
-        targets: ${{ inputs.base_system }}-${{ inputs.image_type }}
         set: |
           *.platform=linux/amd64
           *.tags=${{ env.TEST_IMAGE }}
+        source: '.'
+        targets: ${{ inputs.base_system }}-${{ inputs.image_type }}
+        workdir: ${{ inputs.pandoc_version }}
 
     - name: Test
       shell: bash
@@ -66,12 +71,10 @@ runs:
         ${{ inputs.build_stack != 'static' || inputs.image_type == 'minimal' }}
       uses: docker/bake-action@v6
       with:
-        source: '.'
         files: docker-bake.json
-        workdir: ${{ inputs.pandoc_version }}
+        no-cache: ${{ inputs.no_cache }}
         pull: true
         push: true
-        targets: ${{ inputs.base_system }}-${{ inputs.image_type }}
         # LaTeX doesn't work for Alpine on arm64.
         set: |
           *.platform=${{
@@ -79,3 +82,6 @@ runs:
               (inputs.image_type == 'latex' || inputs.image_type == 'extra') )
             && 'linux/amd64'
             || 'linux/amd64,linux/arm64' }}
+        source: '.'
+        targets: ${{ inputs.base_system }}-${{ inputs.image_type }}
+        workdir: ${{ inputs.pandoc_version }}
