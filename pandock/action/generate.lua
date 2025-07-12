@@ -3,14 +3,11 @@
 -- Copyright  : © 2025 Albert Krewinkel <albert+pandoc@tarleb.com>
 -- License    : MIT
 
-local pandoc      = require 'pandoc'
 local List        = require 'pandoc.List'
 local path        = require 'pandoc.path'
 local bakefile    = require 'pandock.bakefile'
 local dockerfile  = require 'pandock.dockerfile'
-local context     = require 'pandock.context'
 local system      = require 'pandock.system'
-local yaml        = require 'pandock.yaml'
 local BuildTarget = require 'pandock.type.BuildTarget'
 
 --- generate action
@@ -47,6 +44,15 @@ action.run = function (app, args)
       target_filepath,
       dockerfile.generate(release, spec.stack, addon)
     )
+
+    -- copy extra files
+    local source_dir = spec:source_directory()
+    -- exclude everything with a `.tmpl` extension
+    for file in List(system.list_directory(source_dir)):iter() do
+      if not path.split_extension(file) == '.tmpl' then
+        system.copy(file, target_dir)
+      end
+    end
   end
 end
 

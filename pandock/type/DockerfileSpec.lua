@@ -17,6 +17,13 @@ local DockerfileSpec = configutils.make_config_class{
   name = 'DockerfileSpec',
   valid_keys = {'pandoc_version', 'stack', 'addon'},
   methods = {
+    source_directory = function (self)
+      if self.addon then
+        return join{self.stack, self.addon}
+      else
+        return self.stack
+      end
+    end,
     target_filepath = function (self)
       if self.addon then
         return join{self.pandoc_version, self.stack, self.addon, 'Dockerfile'}
@@ -25,11 +32,7 @@ local DockerfileSpec = configutils.make_config_class{
       end
     end,
     template_filepath = function (self)
-      if self.addon then
-        return join{self.stack, self.addon, 'Dockerfile.tmpl'}
-      else
-        return join{self.stack, 'Dockerfile.tmpl'}
-      end
+      return join{self:source_directory(), 'Dockerfile.tmpl'}
     end,
     get_template = function (self)
       return system.read_file(self:template_filepath())
