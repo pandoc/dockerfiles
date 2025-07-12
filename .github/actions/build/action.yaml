@@ -46,8 +46,9 @@ runs:
         ${{ inputs.build_stack != 'static' || inputs.image_type == 'minimal' }}
       uses: docker/bake-action@v6
       with:
-        source: ${{ inputs.pandoc_version }}
-        files: ${{ inputs.pandoc_version }}/docker-bake.json
+        source: '.'
+        files: docker-bake.json
+        workdir: ${{ inputs.pandoc_version }}
         load: true
         pull: true
         push: false
@@ -65,8 +66,9 @@ runs:
         ${{ inputs.build_stack != 'static' || inputs.image_type == 'minimal' }}
       uses: docker/bake-action@v6
       with:
-        source: ${{ inputs.pandoc_version }}
-        files: ${{ inputs.pandoc_version }}/docker-bake.json
+        source: '.'
+        files: docker-bake.json
+        workdir: ${{ inputs.pandoc_version }}
         pull: true
         push: true
         targets: ${{ inputs.base_system }}-${{ inputs.image_type }}
