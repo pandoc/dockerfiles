@@ -49,8 +49,12 @@ action.run = function (app, args)
     local source_dir = spec:source_directory()
     -- exclude everything with a `.tmpl` extension
     for file in List(system.list_directory(source_dir)):iter() do
-      if not path.split_extension(file) == '.tmpl' then
-        system.copy(file, target_dir)
+      local _, extension = path.split_extension(file)
+      if extension ~= '' and extension ~= '.tmpl' then
+        local src = path.join{source_dir, file}
+        local tgt = path.join{target_dir, file}
+        app.logger:info('Copying %s to %s', src, tgt)
+        system.copy(src, tgt)
       end
     end
   end
