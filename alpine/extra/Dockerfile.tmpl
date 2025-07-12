@@ -6,16 +6,19 @@
 #
 FROM pandoc/latex:${pandoc_version}-alpine
 
-COPY common/extra/packages.txt /root/extra_packages.txt
-COPY common/extra/requirements.txt /root/extra_requirements.txt
-
 # uv is our preferred manager for Python packages
 # but we keep pip for compatibility with downstream images
 
-RUN apk --no-cache add py-pip uv \
-    && sed -e 's/ *#.*$$//' -e '/^ *$$/d' /root/extra_requirements.txt | \
-       xargs -n1 uv tool install \
-    && rm -f /root/extra_requirements.txt
+RUN apk --no-cache add py-pip uv && \
+    $for(extra.python)$
+    uv tool install '${it}'$sep$ && \
+    $endfor$
+
+
+RUN tlmgr install \
+$for(extra.packages)$
+        ${it}$sep$ \
+$endfor$
 
 RUN sed -e 's/ *#.*$$//' -e '/^ *$$/d' /root/extra_packages.txt | \
     xargs tlmgr install \

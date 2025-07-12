@@ -6,9 +6,6 @@
 #
 FROM pandoc/latex:3.7.0.2-ubuntu
 
-COPY common/extra/packages.txt /root/extra_packages.txt
-COPY common/extra/requirements.txt /root/extra_requirements.txt
-
 # uv is our preferred manager for Python packages
 # but we keep pip for compatibility with downstream images
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
@@ -16,15 +13,68 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 ENV UV_TOOL_BIN_DIR=/usr/local/bin/
 ENV UV_TOOL_DIR=/usr/local/share/uv/tools
 
-RUN apt-get -q --no-allow-insecure-repositories update \
-    && apt-get install --assume-yes --no-install-recommends python3-pip \
-    && sed -e 's/ *#.*$//' -e '/^ *$/d' /root/extra_requirements.txt | \
-       xargs -n1 uv tool install \
-    && rm -f /root/extra_requirements.txt
+RUN apt-get -q --no-allow-insecure-repositories update && \
+    apt-get install --assume-yes --no-install-recommends python3-pip && \
+    uv tool install 'pandoc-codeblock-include==1.1.*' && \
+    uv tool install 'pandoc-latex-environment==1.2.*' && \
+    uv tool install 'pandoc-include==1.4.*'
 
-RUN sed -e 's/ *#.*$//' -e '/^ *$/d' /root/extra_packages.txt | \
-    xargs tlmgr install \
-  && rm -f /root/extra_packages.txt
+RUN tlmgr install \
+        abstract \
+        adjustbox \
+        awesomebox \
+        babel-german \
+        background \
+        beamertheme-metropolis \
+        bidi \
+        catchfile \
+        cm-super \
+        collectbox \
+        csquotes \
+        draftwatermark \
+        enumitem \
+        environ \
+        environ \
+        etoolbox \
+        everypage \
+        filehook \
+        fontawesome5 \
+        footmisc \
+        footnotebackref \
+        framed \
+        fvextra \
+        hardwrap \
+        incgraph \
+        koma-script \
+        letltxmacro \
+        lineno \
+        listingsutf8 \
+        ly1 \
+        mdframed \
+        mweights \
+        needspace \
+        pagecolor \
+        pgf \
+        pgfopts \
+        sectsty \
+        sourcecodepro \
+        sourcesanspro \
+        sourceserifpro \
+        tcolorbox \
+        tcolorbox \
+        tikzfill \
+        titlesec \
+        titling \
+        transparent \
+        trimspaces \
+        ucharcat \
+        ulem \
+        unicode-math \
+        upquote \
+        xecjk \
+        xltxtra \
+        xurl \
+        zref
 
 # Templates
 #

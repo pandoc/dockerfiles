@@ -17,6 +17,10 @@ release:
         typst: '0.13.1'
       extra:
         eisvogel: '3.2.0'
+        python:
+          - 'pandoc-codeblock-include==1.1.*'
+          - 'pandoc-latex-environment==1.2.*'
+          - 'pandoc-include==1.4.*'
 
   3.7.0.2:
     version-tags:
@@ -36,6 +40,10 @@ release:
         typst: '0.12.0'
       extra:
         eisvogel: '3.2.0'
+        python:
+          - 'pandoc-codeblock-include==1.1.*'
+          - 'pandoc-latex-environment==1.2.*'
+          - 'pandoc-include==1.4.*'
 
   3.6.4:
     version-tags:
@@ -53,6 +61,10 @@ release:
         typst: '0.12.0'
       extra:
         eisvogel: '3.2.0'
+        python:
+          - 'pandoc-codeblock-include==1.1.*'
+          - 'pandoc-latex-environment==1.2.*'
+          - 'pandoc-include==1.4.*'
 
   3.5:
     version-tags:
@@ -70,6 +82,10 @@ release:
         typst: '0.11.1'
       extra:
         eisvogel: '3.0.0'
+        python:
+          - 'pandoc-codeblock-include==1.1.*'
+          - 'pandoc-latex-environment==1.2.*'
+          - 'pandoc-include==1.4.*'
 
   3.2.1:
     version-tags:
@@ -85,6 +101,10 @@ release:
         texlive: '2024'
       extra:
         eisvogel: '2.4.2'
+        python:
+          - 'pandoc-codeblock-include==1.1.*'
+          - 'pandoc-latex-environment==1.2.*'
+          - 'pandoc-include==1.4.*'
 
 addon:
   latex:
