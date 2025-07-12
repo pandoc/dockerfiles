@@ -47,7 +47,7 @@ runs:
       uses: docker/bake-action@v6
       with:
         source: ${{ inputs.pandoc_version }}
-        files: docker-bake.json
+        files: ${{ inputs.pandoc_version }}/docker-bake.json
         load: true
         pull: true
         push: false
@@ -66,7 +66,7 @@ runs:
       uses: docker/bake-action@v6
       with:
         source: ${{ inputs.pandoc_version }}
-        files: docker-bake.json
+        files: ${{ inputs.pandoc_version }}/docker-bake.json
         pull: true
         push: true
         targets: ${{ inputs.base_system }}-${{ inputs.image_type }}
