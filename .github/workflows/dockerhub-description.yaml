@@ -33,9 +33,7 @@ jobs:
       - name: Short description
         id: config
         run: |
-          printf 'short_description=%s\n' \
-            "$(pandoc lua docs/scripts/short-description.lua \
-                      ${{ matrix.image }})" \
+          pandoc lua pandock.lua short-description "${{ matrix.image }})" \
             >> $GITHUB_OUTPUT
 
 
