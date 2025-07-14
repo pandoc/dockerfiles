@@ -30,9 +30,6 @@ subfig        # Figures broken into subfigures
 tools         # the LaTeX standard tools bundle; e.g., calc, longtable
 xcolor        # colors
 
-# Deprecated! Only used by older pandoc versions before 3.0.
-ulem
-
 #########################################################################
 ### Semi-optional packages
 #
