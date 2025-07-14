@@ -25,9 +25,10 @@ local function addon_context (latex, release)
   local version = release.addon.latex.texlive
   local default_version = latex.texlive.current
   return {
-    ['packages']        = get_packages(latex_packages_filepath),
+    ['packages'] = get_packages(latex_packages_filepath),
     ['texlive'] = {
-      ['is-current'] = version == default_version, -- FIXME!
+      ['current'] = latex.texlive.current,
+      ['is-current'] = version == default_version,
       ['profile'] = system.read_file(texlive_profile_filepath),
       ['version'] = version,
     }

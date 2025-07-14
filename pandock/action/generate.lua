@@ -44,7 +44,7 @@ action.run = function (app, args)
     system.make_directory(target_dir, true)
     system.write_file(
       target_filepath,
-      dockerfile.generate(release, spec.stack, addon)
+      dockerfile.generate(app, release, spec.stack, addon)
     )
 
     -- copy extra files

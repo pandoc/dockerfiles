@@ -1,0 +1,110 @@
+# Base ##################################################################
+FROM ubuntu:${base_image_version} AS builder-base
+
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get -q --no-allow-insecure-repositories update && \
+    apt-get install --assume-yes --no-install-recommends \
+        build-essential \
+        ca-certificates \
+        cabal-install \
+        curl \
+        fakeroot \
+        git \
+        ghc \
+        libgmp-dev \
+        liblua5.4-dev \
+        pkg-config \
+        zlib1g-dev \
+    && \
+    rm -rf /var/lib/apt/lists/*
+
+# Setup and configure cabal
+ENV CABAL_CONFIG=/root/.config/cabal/config
+RUN cabal user-config init && \
+    cabal update
+
+# Builder ###############################################################
+FROM builder-base AS builder
+WORKDIR /app
+# Make sure that the build directory is empty before cloning.
+RUN git clone --branch=${pandoc_commit} --depth=1 --quiet \
+        https://github.com/jgm/pandoc /app
+
+# Install Haskell dependencies
+# Add pandoc-crossref to project
+RUN printf "extra-packages: pandoc-crossref\n" > cabal.project.local;
+
+# Build pandoc and pandoc-crossref. The `allow-newer` is required for
+# when pandoc-crossref has not been updated yet, but we want to build
+# anyway.
+RUN cabal build \
+        --jobs \
+        --disable-tests \
+        --disable-bench \
+        --enable-split-sections \
+        --enable-executable-stripping \
+        --upgrade-dependencies \
+        --allow-newer='lib:pandoc' \
+        --ghc-options='-O1 -optc-Os -optl=-pthread -fPIC -j' \
+        --ghc-options='+RTS -M4G -A128m -n2m -RTS' \
+$for(cabal.constraints)$
+        --constraint='${it}' \
+$endfor$
+        . pandoc-cli pandoc-crossref
+
+# Cabal's exec stripping doesn't seem to work reliably, let's do it here.
+RUN find dist-newstyle \
+        -name 'pandoc*' -type f -perm -u+x \
+        -exec strip '{}' ';' \
+        -exec cp '{}' /usr/local/bin/ ';'
+
+# Minimal ###############################################################
+FROM ubuntu:${base_image_version} AS minimal
+ARG pandoc_version=edge
+LABEL maintainer='Albert Krewinkel <albert+pandoc@tarleb.com>'
+LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@tarleb.com>'
+LABEL org.pandoc.author="John MacFarlane"
+LABEL org.pandoc.version="${pandoc_version}"
+
+# Set user data directory
+ENV XDG_DATA_HOME=/usr/local/share
+
+# Set default working directory
+WORKDIR /data
+ENTRYPOINT ["/usr/local/bin/pandoc"]
+
+COPY --from=builder \
+  /usr/local/bin/pandoc \
+  /usr/local/bin/
+
+# Add pandoc symlinks
+RUN ln -s /usr/local/bin/pandoc /usr/local/bin/pandoc-lua \
+  && ln -s /usr/local/bin/pandoc /usr/local/bin/pandoc-server \
+# Install runtime dependencies
+  && apt-get -q --no-allow-insecure-repositories update \
+  && DEBIAN_FRONTEND=noninteractive \
+     apt-get install --assume-yes --no-install-recommends \
+       ca-certificates=\* \
+       liblua5.4-0=\* \
+       libatomic1=\* \
+       libgmp10=\* \
+       libpcre3=\* \
+       libyaml-0-2=\* \
+       zlib1g=\* \
+  && rm -rf /var/lib/apt/lists/* \
+# Create user data directory
+  && mkdir -p "$$XDG_DATA_HOME"/pandoc
+
+# Core ##################################################################
+FROM minimal AS core
+COPY --from=builder \
+  /usr/local/bin/pandoc-crossref \
+  /usr/local/bin/
+
+# Additional packages frequently used during conversions
+# NOTE: `libsrvg`, pandoc uses `rsvg-convert` for working with svg images.
+RUN apt-get -q --no-allow-insecure-repositories update \
+  && DEBIAN_FRONTEND=noninteractive \
+     apt-get install --assume-yes --no-install-recommends \
+       librsvg2-bin=2.* \
+  && rm -rf /var/lib/apt/lists/*

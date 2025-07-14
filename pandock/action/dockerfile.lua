@@ -7,16 +7,11 @@ local template = require 'pandoc.template'
 local yaml     = require 'pandock.yaml'
 
 local context        = require 'pandock.context'
+local dockerfile     = require 'pandock.dockerfile'
 local DockerfileSpec = require 'pandock.type.DockerfileSpec'
 
 --- dockerfile action
 local action = {}
-
---- Returns the Dockerfile contents for the given options.
-local generate_dockerfile = function (spec, ctx)
-  local tmpl = spec:get_template()
-  return template.apply(tmpl, ctx):render()
-end
 
 action.run = function (app, args)
   local pandoc_version = assert(args[1], 'pandoc version required')
@@ -35,11 +30,11 @@ action.run = function (app, args)
     'No release found for ' .. tostring(spec.pandoc_version)
   )
   local addon   = spec.addon and config.addon[spec.addon]
-  local ctx     = context.create_context(spec, release, addon)
+  if addon then
+    addon.name = spec.addon
+  end
 
-  app.logger:debug('Generating Dockerfile with context:')
-  app.logger:debug(yaml.encode(ctx))
-  local output  = generate_dockerfile(spec, ctx)
+  local output  = dockerfile.generate(app, release, spec.stack, addon)
   print(output)
 end
 
