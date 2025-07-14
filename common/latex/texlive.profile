@@ -1,9 +1,7 @@
-# texlive.profile written on Tue Feb  5 09:43:07 2019 UTC
-# It will NOT be updated and reflects only the
-# installation profile at installation time.
-#
-# NOTE: see also alpine/latex.Dockerfile which appends
-# `binary_x86_64-linuxmusl 1` to this file, use for non-glibc distributions.
+# NOTE: Setting the binary type is done shortly before the installation,
+# because we need to know the architecture on which this is running.
+# E.g., for amd64 on Alpine, `binary_x86_64-linuxmusl 1` is appended to
+# this file.
 selected_scheme scheme-basic
 TEXDIR         /opt/texlive/texdir
 TEXMFLOCAL     /opt/texlive/texmf-local
