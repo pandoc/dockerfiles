@@ -14,10 +14,10 @@ inputs:
     description: "Pandoc version to build."
     default: main
     type: string
-  dockerfile:
-    description: "Dockerfile to build"
-    required: true
-    type: string
+  no_cache:
+    description: "Don't use the cache when building"
+    default: false
+    type: boolean
   target:
     description: "Dockerfile target"
     type: string
@@ -32,63 +32,50 @@ runs:
     - name: Env variables
       shell: bash
       run: |
-        if [ "${{ inputs.pandoc_version }}" = 'edge' ]; then
-            printf 'PANDOC_COMMIT=main\n' >> $GITHUB_ENV
-        else
-            printf 'PANDOC_COMMIT=${{inputs.pandoc_version}}\n' >> $GITHUB_ENV
-        fi
-        TEST_IMAGE=${{
+        printf 'TEST_IMAGE=%s\n' ${{
           format('pandoc/test:{0}-{1}-{2}',
             inputs.image_type,
             inputs.base_system,
             inputs.pandoc_version
-          ) }}
-        printf 'TEST_IMAGE<<EOF\n%s\nEOF\n' "$TEST_IMAGE" >> $GITHUB_ENV
-
-    - name: Meta
-      id: meta
-      uses: ./.github/actions/meta
-      with:
-        images: |
-          pandoc/${{ inputs.image_type }}
-          ghcr.io/pandoc/${{ inputs.image_type }}
-        pandoc_version: ${{ env.PANDOC_COMMIT }}
-        build_stack: ${{ inputs.base_system }}
+          ) }} >> $GITHUB_ENV
 
     - name: Build
       if: >-
         ${{ inputs.build_stack != 'static' || inputs.image_type == 'minimal' }}
-      uses: docker/build-push-action@v6
+      uses: docker/bake-action@v6
       with:
-        context: '.'
-        file: ${{ inputs.dockerfile }}
+        files: docker-bake.json
         load: true
+        no-cache: ${{ inputs.no_cache }}
         pull: true
         push: false
-        target: ${{ inputs.target }}
-        tags: ${{ env.TEST_IMAGE }}
-        build-args: ${{ steps.meta.outputs.build_args }}
+        set: |
+          *.platform=linux/amd64
+          *.tags=${{ env.TEST_IMAGE }}
+        source: '.'
+        targets: ${{ inputs.base_system }}-${{ inputs.image_type }}
+        workdir: ${{ inputs.pandoc_version }}
 
     - name: Test
       shell: bash
       run: make test-${{ inputs.image_type }} IMAGE=${{ env.TEST_IMAGE }}
 
-    - name: Push
+    - name: Build arm64 and push
       if: >-
         ${{ inputs.build_stack != 'static' || inputs.image_type == 'minimal' }}
-      uses: docker/build-push-action@v6
+      uses: docker/bake-action@v6
       with:
-        context: '.'
-        file: ${{ inputs.dockerfile }}
-        labels: ${{ steps.meta.outputs.labels }}
+        files: docker-bake.json
+        no-cache: ${{ inputs.no_cache }}
         pull: true
         push: true
-        target: ${{ inputs.target }}
-        tags: ${{ steps.meta.outputs.tags }}
-        build-args: ${{ steps.meta.outputs.build_args }}
         # LaTeX doesn't work for Alpine on arm64.
-        platforms: ${{
-          ( inputs.base_system == 'alpine' &&
-            (inputs.image_type == 'latex' || inputs.image_type == 'extra') )
-          && 'linux/amd64'
-          || 'linux/amd64,linux/arm64' }}
+        set: |
+          *.platform=${{
+            ( inputs.base_system == 'alpine' &&
+              (inputs.image_type == 'latex' || inputs.image_type == 'extra') )
+            && 'linux/amd64'
+            || 'linux/amd64,linux/arm64' }}
+        source: '.'
+        targets: ${{ inputs.base_system }}-${{ inputs.image_type }}
+        workdir: ${{ inputs.pandoc_version }}
