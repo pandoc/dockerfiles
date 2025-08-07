@@ -156,7 +156,7 @@ jobs:
       pandoc_version: ${{ matrix.version }}
 
   extra:
-    name: Extra (${{ matrix.stack }})
+    name: Extra (ubuntu)
     if: ${{ !contains(needs.prepare.outputs.matrix, '"stack":"static"') }}
     needs: [prepare, latex]
     strategy:
@@ -166,5 +166,6 @@ jobs:
     secrets: inherit
     with:
       addon: extra
-      base_system: ${{ matrix.stack }}
+      # Force Ubuntu base system for cross-platform ARM64 support (Alpine+extra is AMD64-only)
+      base_system: ubuntu
       pandoc_version: ${{ matrix.version }}
