@@ -110,17 +110,16 @@ export TEXLIVE_MIRROR_URL
 freeze-file: $(STACK)/$(stack_freeze_file)
 %/$(stack_freeze_file): STACK = $*
 %/$(stack_freeze_file):
-	./build.sh build -v \
-		-r "$(STACK)-builder-base" \
-		-s "$(STACK)" \
-		-c "$(PANDOC_COMMIT)" \
-		-d "$(makefile_dir)" \
-		-t "$(STACK)-builder-base" \
-		$(docker_cpu_options)
+	docker build \
+	    --tag "pandoc/$(STACK)-builder-base:edge" \
+	    --file "edge/$(STACK)/Dockerfile" \
+	    --target "builder-base" \
+	    $(docker_cpu_options) \
+      edge
 	docker run --rm \
 		-v "$(makefile_dir):/app" \
 		--env WITHOUT_CROSSREF=$(WITHOUT_CROSSREF) \
-		pandoc/$(STACK)-builder-base:$(PANDOC_COMMIT)-$(STACK) \
+		pandoc/$(STACK)-builder-base:edge \
 		sh /app/common/pandoc-freeze.sh \
 		    -c $(PANDOC_COMMIT) \
 		    -u "$(shell id -u):$(shell id -g)" \
