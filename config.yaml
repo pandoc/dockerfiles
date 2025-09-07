@@ -22,13 +22,34 @@ release:
           - 'pandoc-latex-environment==1.2.*'
           - 'pandoc-include==1.4.*'
 
+  3.8:
+    version-tags:
+      - '3.8.0.0'
+      - '3.8.0'
+      - '3.8'
+      - '3'
+      - 'latest'
+    base-image:
+      alpine: '3.22.1'
+      static: '3.22.1'
+      ubuntu: 'noble'
+    addon:
+      latex:
+        texlive: '2025'
+      typst:
+        typst: '0.13.1'
+      extra:
+        eisvogel: '3.2.0'
+        python:
+          - 'pandoc-codeblock-include==1.1.*'
+          - 'pandoc-latex-environment==1.2.*'
+          - 'pandoc-include==1.4.*'
+
   3.7.0.2:
     version-tags:
       - '3.7.0.2'
       - '3.7.0'
       - '3.7'
-      - '3'
-      - 'latest'
     base-image:
       alpine: '3.21.4'
       static: '3.21.4'
