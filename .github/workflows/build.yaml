@@ -23,6 +23,10 @@ on:
           - alpine
           - ubuntu
           - static
+      no_cache:
+        type: boolean
+        default: false
+
 
 jobs:
   prepare:
@@ -117,6 +121,7 @@ jobs:
           base_system: ${{ matrix.stack }}
           pandoc_version: ${{ matrix.version }}
           target: minimal
+          no_cache: ${{ inputs.no_cache }}
 
       - name: core
         uses: ./.github/actions/build
@@ -126,6 +131,7 @@ jobs:
           base_system: ${{ matrix.stack }}
           pandoc_version: ${{ matrix.version }}
           target: core
+          no_cache: ${{ inputs.no_cache }}
 
   typst:
     name: Typst (${{ matrix.stack }})
@@ -140,6 +146,7 @@ jobs:
       addon: typst
       base_system: ${{ matrix.stack }}
       pandoc_version: ${{ matrix.version }}
+      no_cache: ${{ inputs.no_cache }}
 
   latex:
     name: LaTeX (${{ matrix.stack }})
@@ -154,6 +161,7 @@ jobs:
       addon: latex
       base_system: ${{ matrix.stack }}
       pandoc_version: ${{ matrix.version }}
+      no_cache: ${{ inputs.no_cache }}
 
   extra:
     name: Extra (${{ matrix.stack }})
@@ -168,3 +176,4 @@ jobs:
       addon: extra
       base_system: ${{ matrix.stack }}
       pandoc_version: ${{ matrix.version }}
+      no_cache: ${{ inputs.no_cache }}
