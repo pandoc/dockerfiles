@@ -131,7 +131,8 @@ jobs:
           base_system: ${{ matrix.stack }}
           pandoc_version: ${{ matrix.version }}
           target: core
-          no_cache: ${{ inputs.no_cache }}
+          # We always want to make use of caching for this step
+          no_cache: false
 
   typst:
     name: Typst (${{ matrix.stack }})
