@@ -60,13 +60,33 @@ runs:
       shell: bash
       run: make test-${{ inputs.image_type }} IMAGE=${{ env.TEST_IMAGE }}
 
-    - name: Build arm64 and push
+    - name: Build arm64
       if: >-
         ${{ inputs.build_stack != 'static' || inputs.image_type == 'minimal' }}
       uses: docker/bake-action@v6
       with:
         files: docker-bake.json
+        load: true
         no-cache: ${{ inputs.no_cache }}
+        pull: true
+        push: false
+        # LaTeX doesn't work for Alpine on arm64.
+        set: |
+          *.platform=${{
+            ( inputs.base_system == 'alpine' &&
+              (inputs.image_type == 'latex' || inputs.image_type == 'extra') )
+            && 'linux/amd64'
+            || 'linux/amd64,linux/arm64' }}
+        source: '.'
+        targets: ${{ inputs.base_system }}-${{ inputs.image_type }}
+        workdir: ${{ inputs.pandoc_version }}
+
+    - name: Push
+      if: >-
+        ${{ inputs.build_stack != 'static' || inputs.image_type == 'minimal' }}
+      uses: docker/bake-action@v6
+      with:
+        files: docker-bake.json
         pull: true
         push: true
         # LaTeX doesn't work for Alpine on arm64.
