@@ -49,9 +49,9 @@ show-args:
 # Calculate docker build options limiting the amount of CPU time that's
 # being used.
 ifdef CORES
-docker_cpu_options=--cpu-period="100000" --cpu-quota="$$(( $(CORES) * 100000 ))"
+docker_options=--cpu-period="100000" --cpu-quota="$$(( $(CORES) * 100000 ))"
 else
-docker_cpu_options=
+docker_options=
 endif
 
 # Generates the targets for a given image stack.
@@ -114,7 +114,7 @@ freeze-file: $(STACK)/$(stack_freeze_file)
 	    --tag "pandoc/$(STACK)-builder-base:edge" \
 	    --file "edge/$(STACK)/Dockerfile" \
 	    --target "builder-base" \
-	    $(docker_cpu_options) \
+	    $(docker_options) \
       edge
 	docker run --rm \
 		-v "$(makefile_dir):/app" \
@@ -128,53 +128,28 @@ freeze-file: $(STACK)/$(stack_freeze_file)
 # Minimal ###############################################################
 .PHONY: minimal
 minimal: $(STACK)/$(stack_freeze_file)
-	./build.sh build -v \
-		-r minimal \
-		-s "$(STACK)" \
-		-c "$(PANDOC_COMMIT)" \
-		-d "$(makefile_dir)" \
-		-t "$(STACK)-minimal" \
-		$(docker_cpu_options)
+	( cd $(PANDOC_VERSION) && \
+	  docker buildx bake $(STACK)-minimal $(docker_options) )
 # Core ##################################################################
 .PHONY: core
 core: $(STACK)/$(stack_freeze_file)
-	./build.sh build -v \
-		-r core \
-		-s "$(STACK)" \
-		-c "$(PANDOC_COMMIT)" \
-		-d "$(makefile_dir)" \
-		-t "$(STACK)-core" \
-		$(docker_cpu_options)
+	( cd $(PANDOC_VERSION) && \
+	  docker buildx bake $(STACK)-core $(docker_options) )
 # LaTeX #################################################################
 .PHONY: latex
 latex: $(STACK)/$(stack_freeze_file)
-	./build.sh build -v \
-		-r latex \
-		-s "$(STACK)" \
-		-c "$(PANDOC_COMMIT)" \
-		-d "$(makefile_dir)" \
-		-t "$(STACK)-latex" \
-		$(docker_cpu_options)
+	( cd $(PANDOC_VERSION) && \
+	  docker buildx bake $(STACK)-latex $(docker_options) )
 # Typst #################################################################
 .PHONY: typst
 typst: $(STACK)/$(stack_freeze_file)
-	./build.sh build -v \
-		-r typst \
-		-s "$(STACK)" \
-		-c "$(PANDOC_COMMIT)" \
-		-d "$(makefile_dir)" \
-		-t "$(STACK)-typst" \
-		$(docker_cpu_options)
+	( cd $(PANDOC_VERSION) && \
+	  docker buildx bake $(STACK)-typst $(docker_options) )
 # Extra #################################################################
 .PHONY: extra
 extra: $(STACK)/$(stack_freeze_file)
-	./build.sh build -v \
-		-r extra \
-		-s "$(STACK)" \
-		-c "$(PANDOC_COMMIT)" \
-		-d "$(makefile_dir)" \
-		-t "$(STACK)-extra" \
-		$(docker_cpu_options)
+	( cd $(PANDOC_VERSION) && \
+	  docker buildx bake $(STACK)-extra $(docker_options) )
 # Test ##################################################################
 .PHONY: test-core test-extra test-latex test-minimal test-typst
 test-minimal: IMAGE ?= pandoc/minimal:$(PANDOC_VERSION)-$(STACK)
