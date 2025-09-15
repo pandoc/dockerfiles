@@ -62,7 +62,10 @@ runs:
 
     - name: Build arm64
       if: >-
-        ${{ inputs.build_stack != 'static' || inputs.image_type == 'minimal' }}
+        ${{ (inputs.build_stack != 'static' || inputs.image_type == 'minimal')
+          && (inputs.base_system != 'alpine' ||
+              !(inputs.image_type == 'latex' || inputs.image_type == 'extra'))
+          }}
       uses: docker/bake-action@v6
       with:
         files: docker-bake.json
@@ -72,11 +75,7 @@ runs:
         push: false
         # LaTeX doesn't work for Alpine on arm64.
         set: |
-          *.platform=${{
-            ( inputs.base_system == 'alpine' &&
-              (inputs.image_type == 'latex' || inputs.image_type == 'extra') )
-            && 'linux/amd64'
-            || 'linux/amd64,linux/arm64' }}
+          *.platform=linux/arm64
         source: '.'
         targets: ${{ inputs.base_system }}-${{ inputs.image_type }}
         workdir: ${{ inputs.pandoc_version }}
@@ -87,6 +86,7 @@ runs:
       uses: docker/bake-action@v6
       with:
         files: docker-bake.json
+        no-cache: false
         pull: true
         push: true
         # LaTeX doesn't work for Alpine on arm64.
