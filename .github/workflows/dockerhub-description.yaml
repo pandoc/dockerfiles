@@ -4,7 +4,7 @@ on:
     branches:
       - main
     paths:
-      - versions.md
+      - config.yaml
       - README.md
       - docs/**/*
 
@@ -35,7 +35,6 @@ jobs:
         run: |
           pandoc lua pandock.lua short-description "${{ matrix.image }})" \
             >> $GITHUB_OUTPUT
-
 
       - name: Generate README files
         run: |
