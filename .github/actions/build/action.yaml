@@ -87,7 +87,6 @@ runs:
       with:
         files: docker-bake.json
         no-cache: false
-        pull: true
         push: true
         # LaTeX doesn't work for Alpine on arm64.
         set: |
