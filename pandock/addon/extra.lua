@@ -1,4 +1,4 @@
---- Handle options and parameters for Typst images
+--- Handle options and parameters for "extra" images
 --
 -- Copyright  : © 2025 Albert Krewinkel <albert+pandoc@tarleb.com>
 -- License    : MIT
@@ -7,7 +7,6 @@ local List   = require 'pandoc.List'
 local system = require 'pandock.system'
 
 local extra_packages_filepath = 'common/extra/packages.txt'
-local extra_python_requirements = 'common/extra/requirements.txt'
 
 local function get_packages (filepath)
   local contents = system.read_file(filepath)
