@@ -3,9 +3,6 @@
 -- Copyright  : © 2025 Albert Krewinkel <albert+pandoc@tarleb.com>
 -- License    : MIT
 
-local List   = require 'pandoc.List'
-local system = require 'pandock.system'
-
 local function addon_context (typst, release)
   local version = release.addon.typst.typst
   return {
