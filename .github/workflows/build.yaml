@@ -1,13 +1,6 @@
 name: Image Builder
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - alpine/freeze/**
-      - static/freeze/**
-      - ubuntu/freeze/**
   workflow_dispatch:
     inputs:
       pandoc_version:
