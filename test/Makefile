@@ -67,7 +67,7 @@ test-crossref-filter: $(test_files_path)/crossref-test.md \
 	@printf "\n### testing document conversion with pandoc-crossref filter...\n"
 
 	@if $(DOCKER_CMD) $(IMAGE) \
-	      --metadata=minversion=2.16 \
+	      --metadata=minversion=3.8 \
 	      --lua-filter=minversion.lua; then \
 	    $(DOCKER_CMD) $(IMAGE) \
 	        --filter=pandoc-crossref \

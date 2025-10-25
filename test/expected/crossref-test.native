@@ -6,79 +6,71 @@
     2
     ( "section-with-table" , [] , [] )
     [ Str "Section" , Space , Str "with" , Space , Str "table" ]
-, Div
+, Table
     ( "tbl:label" , [] , [] )
-    [ Table
-        ( "" , [] , [] )
-        (Caption
-           Nothing
-           [ Plain
-               [ Str "Table"
-               , Space
-               , Str "1:"
-               , Space
-               , Str "Caption"
-               ]
-           ])
-        [ ( AlignLeft , ColWidthDefault )
-        , ( AlignLeft , ColWidthDefault )
-        ]
-        (TableHead
+    (Caption
+       Nothing
+       [ Plain
+           [ Str "Table" , Space , Str "1:" , Space , Str "Caption" ]
+       ])
+    [ ( AlignLeft , ColWidthDefault )
+    , ( AlignLeft , ColWidthDefault )
+    ]
+    (TableHead
+       ( "" , [] , [] )
+       [ Row
            ( "" , [] , [] )
-           [ Row
+           [ Cell
                ( "" , [] , [] )
-               [ Cell
-                   ( "" , [] , [] )
-                   AlignDefault
-                   (RowSpan 1)
-                   (ColSpan 1)
-                   [ Plain [ Str "a" ] ]
-               , Cell
-                   ( "" , [] , [] )
-                   AlignDefault
-                   (RowSpan 1)
-                   (ColSpan 1)
-                   [ Plain [ Str "b" ] ]
-               ]
-           ])
-        [ TableBody
+               AlignDefault
+               (RowSpan 1)
+               (ColSpan 1)
+               [ Plain [ Str "a" ] ]
+           , Cell
+               ( "" , [] , [] )
+               AlignDefault
+               (RowSpan 1)
+               (ColSpan 1)
+               [ Plain [ Str "b" ] ]
+           ]
+       ])
+    [ TableBody
+        ( "" , [] , [] )
+        (RowHeadColumns 0)
+        []
+        [ Row
             ( "" , [] , [] )
-            (RowHeadColumns 0)
-            []
-            [ Row
+            [ Cell
                 ( "" , [] , [] )
-                [ Cell
-                    ( "" , [] , [] )
-                    AlignDefault
-                    (RowSpan 1)
-                    (ColSpan 1)
-                    [ Plain [ Str "1" ] ]
-                , Cell
-                    ( "" , [] , [] )
-                    AlignDefault
-                    (RowSpan 1)
-                    (ColSpan 1)
-                    [ Plain [ Str "2" ] ]
-                ]
-            , Row
+                AlignDefault
+                (RowSpan 1)
+                (ColSpan 1)
+                [ Plain [ Str "1" ] ]
+            , Cell
                 ( "" , [] , [] )
-                [ Cell
-                    ( "" , [] , [] )
-                    AlignDefault
-                    (RowSpan 1)
-                    (ColSpan 1)
-                    [ Plain [ Str "3" ] ]
-                , Cell
-                    ( "" , [] , [] )
-                    AlignDefault
-                    (RowSpan 1)
-                    (ColSpan 1)
-                    [ Plain [ Str "4" ] ]
-                ]
+                AlignDefault
+                (RowSpan 1)
+                (ColSpan 1)
+                [ Plain [ Str "2" ] ]
+            ]
+        , Row
+            ( "" , [] , [] )
+            [ Cell
+                ( "" , [] , [] )
+                AlignDefault
+                (RowSpan 1)
+                (ColSpan 1)
+                [ Plain [ Str "3" ] ]
+            , Cell
+                ( "" , [] , [] )
+                AlignDefault
+                (RowSpan 1)
+                (ColSpan 1)
+                [ Plain [ Str "4" ] ]
             ]
         ]
-        (TableFoot ( "" , [] , [] ) [])
     ]
+    (TableFoot ( "" , [] , [] ) [])
 , Header
     2
     ( "section-with-text" , [] , [] )
