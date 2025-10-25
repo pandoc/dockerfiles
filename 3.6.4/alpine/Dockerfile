@@ -1,5 +1,5 @@
 # Base ##################################################################
-ARG base_image_version=3.21.4
+ARG base_image_version=3.21.5
 FROM alpine:$base_image_version AS builder-base
 WORKDIR /app
 
@@ -398,7 +398,7 @@ RUN find dist-newstyle \
          -exec cp '{}' /usr/local/bin/ ';'
 
 # Minimal ###############################################################
-FROM alpine:3.21.4 AS minimal
+FROM alpine:3.21.5 AS minimal
 ARG pandoc_version=edge
 LABEL maintainer='Albert Krewinkel <albert+pandoc@tarleb.com>'
 LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@tarleb.com>'
