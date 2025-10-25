@@ -10,6 +10,7 @@ release:
       alpine: '3.22'
       static: '3.22'
       ubuntu: 'noble'
+      debian: 'bookworm'
     addon:
       latex:
         texlive: '2025'
@@ -33,6 +34,7 @@ release:
       alpine: '3.22.2'
       static: '3.22.2'
       ubuntu: 'noble'
+      debian: 'bookworm'
     addon:
       latex:
         texlive: '2025'

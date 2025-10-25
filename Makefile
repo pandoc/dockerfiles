@@ -25,6 +25,7 @@ stack_freeze_file = freeze/pandoc-$(PANDOC_COMMIT).project.freeze
 
 # List of Linux distributions which are supported as image bases.
 image_stacks = alpine \
+               debian \
                ubuntu \
                static
 
@@ -70,7 +71,7 @@ $(1): $(1)-minimal
 $(1)-minimal: minimal
 $(1)-freeze-file: $(1)/$(stack_freeze_file)
 # Only alpine and ubuntu support core, latex, typst, and extra images
-ifeq ($(1),$(filter $(1),alpine ubuntu))
+ifeq ($(1),$(filter $(1),alpine ubuntu debian))
 .PHONY: \
 		$(1)-core \
 		$(1)-latex \
@@ -93,7 +94,7 @@ endif
 test-$(1) test-$(1)-minimal test-$(1)-core test-$(1)-latex test-$(1)-extra: STACK = $(1)
 test-$(1): test-minimal
 test-$(1)-minimal: test-minimal
-ifeq ($(1),$(filter $(1),alpine ubuntu))
+ifeq ($(1),$(filter $(1),alpine ubuntu debian))
 test-$(1)-core: test-core
 test-$(1)-latex: test-latex
 test-$(1)-extra: test-extra
@@ -110,7 +111,7 @@ export TEXLIVE_MIRROR_URL
 freeze-file: $(STACK)/$(stack_freeze_file)
 %/$(stack_freeze_file): STACK = $*
 %/$(stack_freeze_file):
-	docker build \
+	docker build --force-rm \
 	    --tag "pandoc/$(STACK)-builder-base:edge" \
 	    --file "edge/$(STACK)/Dockerfile" \
 	    --target "builder-base" \
