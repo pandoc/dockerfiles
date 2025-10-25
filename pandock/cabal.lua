@@ -16,7 +16,11 @@ local function get_freeze_file_contents(pandoc_version, stack)
     'freeze',
     string.format('pandoc-%s.project.freeze', pandoc_version)
   }
-  return system.read_file(freeze_file_path)
+  if path.exists(freeze_file_path) then
+    return system.read_file(freeze_file_path)
+  else
+    return ''
+  end
 end
 
 local function get_constraints(opts)

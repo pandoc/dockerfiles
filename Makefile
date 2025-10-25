@@ -128,27 +128,27 @@ freeze-file: $(STACK)/$(stack_freeze_file)
 		    -o /app/$@
 # Minimal ###############################################################
 .PHONY: minimal
-minimal: $(STACK)/$(stack_freeze_file)
+minimal:
 	( cd $(PANDOC_VERSION) && \
 	  docker buildx bake $(STACK)-minimal $(docker_options) )
 # Core ##################################################################
 .PHONY: core
-core: $(STACK)/$(stack_freeze_file)
+core:
 	( cd $(PANDOC_VERSION) && \
 	  docker buildx bake $(STACK)-core $(docker_options) )
 # LaTeX #################################################################
 .PHONY: latex
-latex: $(STACK)/$(stack_freeze_file)
+latex:
 	( cd $(PANDOC_VERSION) && \
 	  docker buildx bake $(STACK)-latex $(docker_options) )
 # Typst #################################################################
 .PHONY: typst
-typst: $(STACK)/$(stack_freeze_file)
+typst:
 	( cd $(PANDOC_VERSION) && \
 	  docker buildx bake $(STACK)-typst $(docker_options) )
 # Extra #################################################################
 .PHONY: extra
-extra: $(STACK)/$(stack_freeze_file)
+extra:
 	( cd $(PANDOC_VERSION) && \
 	  docker buildx bake $(STACK)-extra $(docker_options) )
 # Test ##################################################################
