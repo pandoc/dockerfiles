@@ -1,23 +1,47 @@
-local function tag_strings (row)
-  return row[2][1].content:walk{
-    Space = function (_) return {pandoc.Str',', pandoc.Space()} end,
-    Str = function (str) return pandoc.Code(str.text) end,
-  }
+local io     = require 'io'
+local pandoc = require 'pandoc'
+local utils  = require 'pandoc.utils'
+local stringify = utils.stringify
+
+local function tag_strings (tags)
+  local result = pandoc.List{}
+
+  for i = 1, #tags do
+    result:insert(pandoc.Code(stringify(tags[i])))
+    if i < #tags then
+      result:extend{pandoc.Str ',', pandoc.Space()}
+    end
+  end
+  return result
 end
 function CodeBlock (cb)
   if not cb.classes:includes 'supported-tags' then
     return nil
   end
 
-  -- get simple table from file
-  local fh = io.open 'versions.md'
-  local versions = pandoc.utils.to_simple_table(
-    pandoc.read(fh:read 'a').blocks[1]
-  )
+  -- get YAML as metadata from file
+  local fh = io.open 'config.yaml'
+  local config = pandoc.read(fh:read 'a').meta
+
+  local release_numbers = pandoc.List{}
+  for version in pairs(config.release) do
+    release_numbers:insert(version)
+  end
+  release_numbers:sort(function (a, b)
+      if a == 'main' then
+        return true
+      elseif b == 'main' then
+        return false
+      end
+      local _, av = pcall(pandoc.types.Version, a)
+      local _, bv = pcall(pandoc.types.Version, b)
+      return av > bv
+  end)
 
   local result = pandoc.List()
-  for i, row in ipairs(versions.rows) do
-    local tags = tag_strings(row)
+  for release_number in release_numbers:iter() do
+    local release = config.release[release_number]
+    local tags = tag_strings(release['version-tags'])
     result:insert{pandoc.Plain(tags)}
   end
   return pandoc.BulletList(result)
