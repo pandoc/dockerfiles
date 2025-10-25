@@ -96,7 +96,8 @@ BuildTarget.targets_for_release = function (release, variants)
     -- sort to get a fixed, reproducible order
     base_images:sort()
     local supports_variant = function (base_image)
-      return release.addon[variant] and base_image ~= 'static'
+      return (release.addon[variant.name]
+              and base_image ~= 'static')
         or not variant:is_addon()
     end
     targets:extend(
