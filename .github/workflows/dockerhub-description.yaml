@@ -33,7 +33,7 @@ jobs:
       - name: Short description
         id: config
         run: |
-          pandoc lua pandock.lua short-description "${{ matrix.image }})" \
+          pandoc lua pandock.lua short-description "${{ matrix.image }}" \
             >> $GITHUB_OUTPUT
 
       - name: Generate README files
