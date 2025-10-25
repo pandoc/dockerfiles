@@ -1,6 +1,5 @@
 # Minimal ###############################################################
 FROM ubuntu:noble AS minimal
-ARG pandoc_version=edge
 LABEL maintainer='Albert Krewinkel <albert+pandoc@tarleb.com>'
 LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@tarleb.com>'
 LABEL org.pandoc.author="John MacFarlane"

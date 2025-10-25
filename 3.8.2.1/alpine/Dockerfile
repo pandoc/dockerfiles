@@ -403,7 +403,6 @@ RUN find dist-newstyle \
 
 # Minimal ###############################################################
 FROM alpine:3.22.2 AS minimal
-ARG pandoc_version=edge
 LABEL maintainer='Albert Krewinkel <albert+pandoc@tarleb.com>'
 LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@tarleb.com>'
 LABEL org.pandoc.author="John MacFarlane"

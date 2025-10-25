@@ -61,7 +61,6 @@ RUN find dist-newstyle \
 $endif$
 # Minimal ###############################################################
 FROM ubuntu:${base_image_version} AS minimal
-ARG pandoc_version=edge
 LABEL maintainer='Albert Krewinkel <albert+pandoc@tarleb.com>'
 LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@tarleb.com>'
 LABEL org.pandoc.author="John MacFarlane"
