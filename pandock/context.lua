@@ -32,6 +32,11 @@ M.create_context = function (spec, release, addon)
     -- The package `gmp-static` is new in Alpine 3.22
     context['needs-gmp-static'] = spec.stack == 'static'
       and Version(context.base_image_version) >= Version('3.22')
+    -- Whether to compile on Ubuntu, or just use the binaries from Debian
+    -- Starting with pandoc 3.8.*, pandoc-crossref became difficult to
+    -- compile on Ubuntu, so the binaries are copied from Debian instead.
+    local ok, pdv = pcall(Version, release.pandoc_commit)
+    context.ubuntu = { compile = ok and pdv < '3.8' }
   else
     context[spec.addon] = addon
     local addon_module_name = 'pandock.addon.' .. tostring(spec.addon)

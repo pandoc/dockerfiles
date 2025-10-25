@@ -1,3 +1,4 @@
+$if(ubuntu.compile)$
 # Base ##################################################################
 FROM ubuntu:${base_image_version} AS builder-base
 
@@ -57,7 +58,7 @@ RUN find dist-newstyle \
         -name 'pandoc*' -type f -perm -u+x \
         -exec strip '{}' ';' \
         -exec cp '{}' /usr/local/bin/ ';'
-
+$endif$
 # Minimal ###############################################################
 FROM ubuntu:${base_image_version} AS minimal
 ARG pandoc_version=edge
@@ -73,7 +74,11 @@ ENV XDG_DATA_HOME=/usr/local/share
 WORKDIR /data
 ENTRYPOINT ["/usr/local/bin/pandoc"]
 
+$if(ubuntu.compile)$
 COPY --from=builder \
+$else$
+COPY --from=docker.io/pandoc/core:${pandoc_version}-debian \
+$endif$
   /usr/local/bin/pandoc \
   /usr/local/bin/
 
@@ -97,7 +102,11 @@ RUN ln -s /usr/local/bin/pandoc /usr/local/bin/pandoc-lua \
 
 # Core ##################################################################
 FROM minimal AS core
+$if(ubuntu.compile)$
 COPY --from=builder \
+$else$
+COPY --from=docker.io/pandoc/core:${pandoc_version}-debian \
+$endif$
   /usr/local/bin/pandoc-crossref \
   /usr/local/bin/
 
