@@ -14,8 +14,9 @@ on:
         type: choice
         options:
           - alpine
-          - ubuntu
+          - debian
           - static
+          - ubuntu
       no_cache:
         type: boolean
         default: false

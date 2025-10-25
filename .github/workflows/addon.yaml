@@ -38,6 +38,7 @@ on:
         type: choice
         options:
           - alpine
+          - debian
           - ubuntu
         default: alpine
       no_cache:
