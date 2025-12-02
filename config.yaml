@@ -15,7 +15,7 @@ release:
       latex:
         texlive: '2025'
       typst:
-        typst: '0.13.1'
+        typst: '0.14'
       extra:
         eisvogel: '3.2.0'
         python:
