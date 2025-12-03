@@ -15,7 +15,7 @@ release:
       latex:
         texlive: '2025'
       typst:
-        typst: '0.14'
+        typst: '0.14.0'
       extra:
         eisvogel: '3.2.0'
         python:
@@ -30,22 +30,21 @@ release:
       - '3'
       - 'latest'
     base-image:
-      alpine: '3.22'
-      static: '3.22'
+      alpine: '3.22.2'
+      static: '3.22.2'
       ubuntu: 'noble'
       debian: 'bookworm'
     addon:
       latex:
         texlive: '2025'
       typst:
-        typst: '0.14'
+        typst: '0.14.0'
       extra:
         eisvogel: '3.2.0'
         python:
           - 'pandoc-codeblock-include==1.1.*'
           - 'pandoc-latex-environment==1.2.*'
           - 'pandoc-include==1.4.*'
-
 
   3.8.2.1:
     version-tags:
@@ -157,6 +156,9 @@ addon:
 
   typst:
     hashes:
+      0.14.0:
+        amd64: 99816d2982de08d2b091bac56b59b2faa523a10e1378ad3cdd68e35b8eb74b3d
+        arm64: 3ad461772773256021ff38a0db3acf85f3ecdb00b93606a32f8c5ae043f6c62b
       0.13.1:
         amd64: 7d214bfeffc2e585dc422d1a09d2b144969421281e8c7f5d784b65fc69b5673f
         arm64: 4f5b7ee6e57fb639019ee0f6bffcf940edad228ede6ff5269a9f05a1544ceed4
