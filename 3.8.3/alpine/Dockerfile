@@ -1,5 +1,5 @@
 # Base ##################################################################
-ARG base_image_version=3.22
+ARG base_image_version=3.23.0
 FROM alpine:$base_image_version AS builder-base
 WORKDIR /app
 
@@ -403,7 +403,7 @@ RUN find dist-newstyle \
          -exec cp '{}' /usr/local/bin/ ';'
 
 # Minimal ###############################################################
-FROM alpine:3.22 AS minimal
+FROM alpine:3.23.0 AS minimal
 LABEL maintainer='Albert Krewinkel <albert+pandoc@tarleb.com>'
 LABEL org.pandoc.maintainer='Albert Krewinkel <albert+pandoc@tarleb.com>'
 LABEL org.pandoc.author="John MacFarlane"

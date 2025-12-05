@@ -1,5 +1,5 @@
 # Builder
-FROM alpine:3.22 AS builder-base
+FROM alpine:3.23.0 AS builder-base
 
 RUN apk --no-cache add \
         alpine-sdk \

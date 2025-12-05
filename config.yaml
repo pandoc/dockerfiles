@@ -7,8 +7,8 @@ release:
     version-tags:
       - 'edge'
     base-image:
-      alpine: '3.22'
-      static: '3.22'
+      alpine: '3.23'
+      static: '3.23'
       ubuntu: 'noble'
       debian: 'bookworm'
     addon:
@@ -30,8 +30,8 @@ release:
       - '3'
       - 'latest'
     base-image:
-      alpine: '3.22.2'
-      static: '3.22.2'
+      alpine: '3.23.0'
+      static: '3.23.0'
       ubuntu: 'noble'
       debian: 'bookworm'
     addon:
