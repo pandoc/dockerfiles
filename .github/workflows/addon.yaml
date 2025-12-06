@@ -5,7 +5,7 @@ on:
     inputs:
       addon:
         type: string
-        default: typst
+        default: core
       pandoc_version:
         type: string
         default: edge
@@ -23,9 +23,10 @@ on:
   workflow_dispatch:
     inputs:
       addon:
-        default: typst
+        default: core
         type: choice
         options:
+          - core
           - typst
           - latex
           - extra
