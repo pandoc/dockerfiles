@@ -56,12 +56,11 @@ end
 
 --- Writes a Dockerfile for a release.
 --
--- The default (minimal&core) Dockerfile is built unless `addon` is
--- specified.
+-- The default (minimal) Dockerfile is built unless `addon` is specified.
 generator.write_dockerfile = function(opts, addon)
   generator.log:warn(
     'Generating Dockerfile for pandoc/%s:%s-%s',
-    addon or 'core',
+    addon or 'minimal',
     opts.pandoc_version,
     opts.stack
   )

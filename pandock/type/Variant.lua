@@ -3,7 +3,6 @@
 -- Copyright  : © 2025 Albert Krewinkel <albert+pandoc@tarleb.com>
 -- License    : MIT
 
-local path = require 'pandoc.path'
 local configutils = require 'pandock.configutils'
 
 local Variant = configutils.make_config_class{
@@ -11,7 +10,7 @@ local Variant = configutils.make_config_class{
   valid_keys = {'name', 'title', 'description', 'default-stack'},
   methods = {
     is_addon = function (self)
-      return self.name ~= 'minimal' and self.name ~= 'core'
+      return self.name ~= 'minimal'
     end
   }
 }

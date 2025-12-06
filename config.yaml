@@ -12,6 +12,8 @@ release:
       ubuntu: 'noble'
       debian: 'bookworm'
     addon:
+      core:
+        pandoc-crossref: 'v0.3.22b'
       latex:
         texlive: '2025'
       typst:
@@ -35,6 +37,8 @@ release:
       ubuntu: 'noble'
       debian: 'bookworm'
     addon:
+      core:
+        pandoc-crossref: 'v0.3.22b'
       latex:
         texlive: '2025'
       typst:
@@ -150,6 +154,12 @@ release:
           - 'pandoc-include==1.4.*'
 
 addon:
+  core:
+    hashes:
+      pandoc-crossref:
+        v0.3.22b:
+          amd64: a521900745f7c1621b4104119f92dd4a9b4cc527f50157ef544ae1cb8435f9c1
+          arm64: aaaeae858b73a4150cc91581b07e08fb6e383f476a04fd024bb03ef323b32c3e
   latex:
     texlive:
       current: 2025

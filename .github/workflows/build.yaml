@@ -64,8 +64,8 @@ jobs:
             echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
           fi
 
-  core:
-    name: minimal and core (${{ matrix.stack }})
+  minimal:
+    name: minimal (${{ matrix.stack }})
     needs: prepare
     runs-on: ubuntu-latest
     strategy:
@@ -97,7 +97,7 @@ jobs:
           endpoint: "pandoc/multiarch"
 
       - name: minimal
-        timeout-minutes: 25
+        timeout-minutes: 35
         uses: ./.github/actions/build
         with:
           image_type: minimal
@@ -106,16 +106,20 @@ jobs:
           target: minimal
           no_cache: ${{ inputs.no_cache }}
 
-      - name: core
-        uses: ./.github/actions/build
-        if: ${{ matrix.stack != 'static' }}
-        with:
-          image_type: core
-          base_system: ${{ matrix.stack }}
-          pandoc_version: ${{ matrix.version }}
-          target: core
-          # We always want to make use of caching for this step
-          no_cache: false
+  core:
+    name: Core (${{ matrix.stack }})
+    if: ${{ !contains(needs.prepare.outputs.matrix, '"stack":"static"') }}
+    needs: [prepare, minimal]
+    strategy:
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+      fail-fast: false
+    uses: ./.github/workflows/addon.yaml
+    secrets: inherit
+    with:
+      addon: core
+      base_system: ${{ matrix.stack }}
+      pandoc_version: ${{ matrix.version }}
+      no_cache: ${{ inputs.no_cache }}
 
   typst:
     name: Typst (${{ matrix.stack }})
