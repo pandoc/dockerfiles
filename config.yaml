@@ -19,7 +19,7 @@ release:
       typst:
         typst: '0.14.0'
       extra:
-        eisvogel: '3.2.0'
+        eisvogel: '3.3.0'
         python:
           - 'pandoc-codeblock-include==1.1.*'
           - 'pandoc-latex-environment==1.2.*'
