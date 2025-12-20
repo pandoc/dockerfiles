@@ -1,3 +1,4 @@
+
 # Minimal ###############################################################
 FROM ubuntu:noble AS minimal
 LABEL maintainer='Albert Krewinkel <albert+pandoc@tarleb.com>'
@@ -33,17 +34,3 @@ RUN ln -s /usr/local/bin/pandoc /usr/local/bin/pandoc-lua \
   && rm -rf /var/lib/apt/lists/* \
 # Create user data directory
   && mkdir -p "$XDG_DATA_HOME"/pandoc
-
-# Core ##################################################################
-FROM minimal AS core
-COPY --from=docker.io/pandoc/core:3.8.3-debian \
-  /usr/local/bin/pandoc-crossref \
-  /usr/local/bin/
-
-# Additional packages frequently used during conversions
-# NOTE: `libsrvg`, pandoc uses `rsvg-convert` for working with svg images.
-RUN apt-get -q --no-allow-insecure-repositories update \
-  && DEBIAN_FRONTEND=noninteractive \
-     apt-get install --assume-yes --no-install-recommends \
-       librsvg2-bin=2.* \
-  && rm -rf /var/lib/apt/lists/*
