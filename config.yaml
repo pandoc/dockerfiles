@@ -25,12 +25,36 @@ release:
           - 'pandoc-latex-environment==1.2.*'
           - 'pandoc-include==1.4.*'
 
+  3.9:
+    version-tags:
+      - '3.9.0.0'
+      - '3.9.0'
+      - '3.9'
+      - '3'
+      - 'latest'
+    base-image:
+      alpine: '3.23.3'
+      static: '3.23.3'
+      ubuntu: 'noble'
+      debian: 'bookworm'
+    addon:
+      core:
+        pandoc-crossref: 'v0.3.22b'
+      latex:
+        texlive: '2025'
+      typst:
+        typst: '0.14.0'
+      extra:
+        eisvogel: '3.3.0'
+        python:
+          - 'pandoc-codeblock-include==1.1.*'
+          - 'pandoc-latex-environment==1.2.*'
+          - 'pandoc-include==1.4.*'
+
   3.8.3:
     version-tags:
       - '3.8.3'
       - '3.8'
-      - '3'
-      - 'latest'
     base-image:
       alpine: '3.23.0'
       static: '3.23.0'
