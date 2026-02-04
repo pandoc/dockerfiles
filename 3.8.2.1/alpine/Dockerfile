@@ -36,12 +36,7 @@ FROM builder-base AS builder
 RUN git clone --branch=3.8.2.1 --depth=1 --quiet \
   https://github.com/jgm/pandoc /app
 
-# Add pandoc-crossref to project
-RUN printf "extra-packages: pandoc-crossref\n" > cabal.project.local;
-
-# Build pandoc and pandoc-crossref. The `allow-newer` is required for
-# when pandoc-crossref has not been updated yet, but we want to build
-# anyway.
+# Build the pandoc CLI binary.
 RUN cabal build \
         --jobs \
         --disable-tests \
@@ -49,7 +44,6 @@ RUN cabal build \
         --enable-split-sections \
         --enable-executable-stripping \
         --upgrade-dependencies \
-        --allow-newer='pandoc-crossref:pandoc' \
         --ghc-options='-O1 -optc-Os -optl=-pthread -fPIC -j' \
         --ghc-options='+RTS -M4G -A128m -n2m -RTS' \
         --constraint='any.Cabal ==3.10.3.0' \
@@ -393,11 +387,11 @@ RUN cabal build \
         --constraint='zip-archive -executable' \
         --constraint='any.zlib ==0.7.1.1' \
         --constraint='zlib -bundled-c-zlib +non-blocking-ffi +pkg-config' \
-        . pandoc-cli pandoc-crossref
+        . pandoc-cli
 
 # Cabal's exec stripping doesn't seem to work reliably, let's do it here.
 RUN find dist-newstyle \
-         -name 'pandoc*' -type f -perm -u+x \
+         -name 'pandoc' -type f -perm -u+x \
          -exec strip '{}' ';' \
          -exec cp '{}' /usr/local/bin/ ';'
 
@@ -431,16 +425,3 @@ RUN ln -s /usr/local/bin/pandoc /usr/local/bin/pandoc-lua && \
         lua5.4 && \
 # Create user data directory
     mkdir -p "$XDG_DATA_HOME"/pandoc
-
-# Core ##################################################################
-FROM minimal AS core
-COPY --from=builder \
-  /usr/local/bin/pandoc-crossref \
-  /usr/local/bin/
-
-# Additional packages frequently used during conversions
-# NOTE: `libsrvg`, pandoc uses `rsvg-convert` for working with svg images.
-# FIXME: Alpine 3.17 and later ships the binary in the rsvg-convert package.
-# hadolint ignore=DL3018
-RUN apk --no-cache add librsvg; \
-    apk --no-cache add rsvg-convert || true

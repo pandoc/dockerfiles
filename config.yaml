@@ -43,7 +43,7 @@ release:
       latex:
         texlive: '2025'
       typst:
-        typst: '0.14.0'
+        typst: '0.14.2'
       extra:
         eisvogel: '3.3.0'
         python:
@@ -56,8 +56,8 @@ release:
       - '3.8.3'
       - '3.8'
     base-image:
-      alpine: '3.23.0'
-      static: '3.23.0'
+      alpine: '3.23.3'
+      static: '3.23.3'
       ubuntu: 'noble'
       debian: 'bookworm'
     addon:
@@ -66,7 +66,7 @@ release:
       latex:
         texlive: '2025'
       typst:
-        typst: '0.14.0'
+        typst: '0.14.2'
       extra:
         eisvogel: '3.3.0'
         python:
@@ -190,6 +190,9 @@ addon:
 
   typst:
     hashes:
+      0.14.2:
+        amd64: a6044cbad2a954deb921167e257e120ac0a16b20339ec01121194ff9d394996d
+        arm64: 491b101aa40a3a7ea82a3f8a6232cabb4e6a7e233810082e5ac812d43fdcd47a
       0.14.0:
         amd64: 99816d2982de08d2b091bac56b59b2faa523a10e1378ad3cdd68e35b8eb74b3d
         arm64: 3ad461772773256021ff38a0db3acf85f3ecdb00b93606a32f8c5ae043f6c62b
