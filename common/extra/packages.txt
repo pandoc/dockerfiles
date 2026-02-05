@@ -57,6 +57,10 @@ xurl
 zref
 
 #########################################################################
+# Required for color boxes that break across pages (see #272)
+pdfcol
+
+#########################################################################
 # Completes Source family
 sourceserifpro
 
