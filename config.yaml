@@ -80,8 +80,8 @@ release:
       - '3.7.0'
       - '3.7'
     base-image:
-      alpine: '3.21.5'
-      static: '3.21.5'
+      alpine: '3.21.6'
+      static: '3.21.6'
       ubuntu: 'noble'
     addon:
       latex:
