@@ -54,6 +54,7 @@ RUN tlmgr install \
         mweights \
         needspace \
         pagecolor \
+        pdfcol \
         pgf \
         pgfopts \
         sectsty \

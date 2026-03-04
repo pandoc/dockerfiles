@@ -59,7 +59,7 @@ EOF
 ARG texlive_bin="/opt/texlive/texdir/bin"
 
 # TeXLive mirror URL (leave empty to use the default mirror).
-ARG texlive_mirror_url=
+ARG texlive_mirror_url="ftp://tug.org/historic/"
 
 # Modify PATH environment variable, prepending TexLive bin directory
 ENV PATH="${texlive_bin}/default:${PATH}"
@@ -91,7 +91,7 @@ fi
 # Trim trailing slash(es)
 mirror_url=$(echo "$mirror_url" | sed -e 's/\/*$//')
 
-installer_url="${mirror_url}/systems/texlive/tlnet"
+installer_url="${mirror_url}/systems/texlive/2025/tlnet-final"
 
 # Download the install-tl perl script. The archive integrity and signature is
 # verified later, so it's ok if we use an insecure connection.
