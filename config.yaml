@@ -15,7 +15,7 @@ release:
       core:
         pandoc-crossref: 'v0.3.22b'
       latex:
-        texlive: '2025'
+        texlive: '2026'
       typst:
         typst: '0.14.0'
       extra:
@@ -186,7 +186,7 @@ addon:
           arm64: aaaeae858b73a4150cc91581b07e08fb6e383f476a04fd024bb03ef323b32c3e
   latex:
     texlive:
-      current: 2025
+      current: 2026
 
   typst:
     hashes:
