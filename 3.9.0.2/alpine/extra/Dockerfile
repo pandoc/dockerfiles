@@ -54,8 +54,8 @@ RUN tlmgr install \
         pgfopts \
         sectsty \
         sourcecodepro \
-        sourcesanspro \
-        sourceserifpro \
+        sourcesans \
+        sourceserif \
         tcolorbox \
         tcolorbox \
         tikzfill \

@@ -43,7 +43,7 @@ needspace
 pagecolor
 sectsty
 sourcecodepro
-sourcesanspro
+sourcesans
 titlesec
 titling
 transparent
@@ -62,7 +62,7 @@ pdfcol
 
 #########################################################################
 # Completes Source family
-sourceserifpro
+sourceserif
 
 #########################################################################
 # Required by Beamer/Metropolis
