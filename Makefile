@@ -6,6 +6,9 @@ else
 PANDOC_COMMIT          ?= $(PANDOC_VERSION)
 endif
 
+# Path to the docker (or podman) binary
+DOCKER = docker
+
 # Use Alpine Linux as base stack by default.
 STACK ?= alpine
 
@@ -111,13 +114,13 @@ export TEXLIVE_MIRROR_URL
 freeze-file: $(STACK)/$(stack_freeze_file)
 %/$(stack_freeze_file): STACK = $*
 %/$(stack_freeze_file):
-	docker build --force-rm \
+	$(DOCKER) build --force-rm \
 	    --tag "pandoc/$(STACK)-builder-base:edge" \
 	    --file "edge/$(STACK)/Dockerfile" \
 	    --target "builder-base" \
 	    $(docker_options) \
       edge
-	docker run --rm \
+	$(DOCKER) run --rm \
 		-v "$(makefile_dir):/app" \
 		--env WITHOUT_CROSSREF=$(WITHOUT_CROSSREF) \
 		pandoc/$(STACK)-builder-base:edge \
@@ -130,27 +133,27 @@ freeze-file: $(STACK)/$(stack_freeze_file)
 .PHONY: minimal
 minimal:
 	( cd $(PANDOC_VERSION) && \
-	  docker buildx bake $(STACK)-minimal $(docker_options) )
+	  $(DOCKER) buildx bake $(STACK)-minimal $(docker_options) )
 # Core ##################################################################
 .PHONY: core
 core:
 	( cd $(PANDOC_VERSION) && \
-	  docker buildx bake $(STACK)-core $(docker_options) )
+	  $(DOCKER) buildx bake $(STACK)-core $(docker_options) )
 # LaTeX #################################################################
 .PHONY: latex
 latex:
 	( cd $(PANDOC_VERSION) && \
-	  docker buildx bake $(STACK)-latex $(docker_options) )
+	  $(DOCKER) buildx bake $(STACK)-latex $(docker_options) )
 # Typst #################################################################
 .PHONY: typst
 typst:
 	( cd $(PANDOC_VERSION) && \
-	  docker buildx bake $(STACK)-typst $(docker_options) )
+	  $(DOCKER) buildx bake $(STACK)-typst $(docker_options) )
 # Extra #################################################################
 .PHONY: extra
 extra:
 	( cd $(PANDOC_VERSION) && \
-	  docker buildx bake $(STACK)-extra $(docker_options) )
+	  $(DOCKER) buildx bake $(STACK)-extra $(docker_options) )
 # Test ##################################################################
 .PHONY: test-core test-extra test-latex test-minimal test-typst
 test-minimal: IMAGE ?= pandoc/minimal:$(PANDOC_VERSION)-$(STACK)
