@@ -7,17 +7,43 @@ release:
     version-tags:
       - 'edge'
     base-image:
-      alpine: '3.23'
-      static: '3.23'
+      alpine: '3.24'
+      static: '3.24'
       ubuntu: 'noble'
       debian: 'bookworm'
     addon:
       core:
-        pandoc-crossref: 'v0.3.22b'
+        pandoc-crossref: 'v0.3.24a'
       latex:
         texlive: '2026'
       typst:
         typst: '0.14.0'
+      extra:
+        eisvogel: '3.3.0'
+        python:
+          - 'pandoc-codeblock-include==1.1.*'
+          - 'pandoc-latex-environment==1.2.*'
+          - 'pandoc-include==1.4.*'
+
+  3.10:
+    version-tags:
+      - '3.10.0.0'
+      - '3.10.0'
+      - '3.10'
+      - '3'
+      - 'latest'
+    base-image:
+      alpine: '3.24.0'
+      static: '3.24.0'
+      ubuntu: 'noble'
+      debian: 'bookworm'
+    addon:
+      core:
+        pandoc-crossref: 'v0.3.24a'
+      latex:
+        texlive: '2026'
+      typst:
+        typst: '0.14.2'
       extra:
         eisvogel: '3.3.0'
         python:
@@ -30,8 +56,6 @@ release:
       - '3.9.0.2'
       - '3.9.0'
       - '3.9'
-      - '3'
-      - 'latest'
     base-image:
       alpine: '3.23.3'
       static: '3.23.3'
