@@ -3,6 +3,9 @@
 - [ ] Add a new entry for the release to `config.yaml`. Make sure
   that no tag in the `tags` field is listed twice; adjust other
   release entries accordingly.
+  
+- [ ] Check if any checksums have to be added, e.g. for new releases of
+      pandoc-crossref or typst.
 
 - [ ] Set the PANDOC_VERSION environment variable. This will save
   a good bit of typing and prevent mistakes further down.
