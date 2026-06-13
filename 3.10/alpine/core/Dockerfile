@@ -18,11 +18,11 @@ url_base='https://github.com/lierdakil/pandoc-crossref/releases/download';
 case "$(uname -m)" in
     ('x86_64')
         arch="X64"
-        crossref_hash=
+        crossref_hash=afaa8867ab8d908b7e5ad1b96f62eedea6a5d3e89ee14e152cd72e67f535a728
         ;;
     ('aarch64')
         arch="ARM64"
-        crossref_hash=
+        crossref_hash=b3e2c10321c142f561bb20f98824a8e2e41385118a22fd2168b55e7699be69b6
         ;;
     (*)
         echo >&2 "error: unsupported architecture '$(uname -m)'"
