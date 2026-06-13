@@ -1,9 +1,8 @@
 # Case: new pandoc release
 
-- [ ] Add a new row for the release to `versions.md`. Make sure
-  that no tag in the `tags` column is listed twice; adjust other
-  rows if necessary. Use the "Alpine" and "Ubuntu" releases that
-  are used for the dev (main) version.
+- [ ] Add a new entry for the release to `config.yaml`. Make sure
+  that no tag in the `tags` field is listed twice; adjust other
+  release entries accordingly.
 
 - [ ] Set the PANDOC_VERSION environment variable. This will save
   a good bit of typing and prevent mistakes further down.
@@ -18,18 +17,21 @@
   $ make {static,alpine,ubuntu}-freeze-file
   ```
 
-  It may make sense to also specify `WITHOUT_CROSSREF=true`, but
-  the build should succeed either way.
-
 - [ ] Commit the results.
 
-  ``` console
-  $ git add {static,alpine,ubuntu}/freeze/pandoc-$PANDOC_VERSION.project.freeze
-  $ git commit -m "Create release=$PANDOC_VERSION"
-  $ gh pr create --fill --draft
-  ```
+- [ ] Create the Docker files for this release:
 
-  or push it directly.
+  ``` sh
+  ./pandocer.lua generate $PANDOC_VERSION
+  ```
+  
+- [ ] Optional: do a test-build, e.g.
+
+  ``` sh
+  make minimal STACK=debian
+  ```
+  
+- [ ] Commit and push to `main`.
 
 - [ ] Once the change is in the `main` branch, trigger the [Image
   Builder] action on GitHub for *all* supported stacks. This has
