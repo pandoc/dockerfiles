@@ -1,5 +1,5 @@
 # Base ##################################################################
-FROM haskell:9.12-slim-bookworm AS builder-base
+FROM docker.io/haskell:9.12-slim-bookworm AS builder-base
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get -q --no-allow-insecure-repositories update && \
