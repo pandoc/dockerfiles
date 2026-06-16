@@ -26,18 +26,18 @@ url_base='https://github.com/lierdakil/pandoc-crossref/releases/download';
 case "$(uname -m)" in
     ('x86_64')
         arch="X64"
-        crossref_hash=a521900745f7c1621b4104119f92dd4a9b4cc527f50157ef544ae1cb8435f9c1
+        crossref_hash=fa77e4e271547a97f0e29fd305b6674958a540d79f2a14a3b0ce9d6a6dc9de84
         ;;
     ('aarch64')
         arch="ARM64"
-        crossref_hash=aaaeae858b73a4150cc91581b07e08fb6e383f476a04fd024bb03ef323b32c3e
+        crossref_hash=f0898fd525327a65d42dcd027cff046626dd0c7e8fa529c8e961b3bec99a0c10
         ;;
     (*)
         echo >&2 "error: unsupported architecture '$(uname -m)'"
         exit 1
         ;;
 esac
-version="v0.3.22b"
+version="v0.3.23a"
 filename="pandoc-crossref-Linux-${arch}.tar.xz"
 curl --proto '=https' --tlsv1.3 -sSfL -o /tmp/pandoc-crossref.tar.xz \
     "${url_base}/${version}/pandoc-crossref-linux-${arch}.tar.xz"
