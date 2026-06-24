@@ -27,11 +27,13 @@ Available stacks are
 - *static*: statically compiled binary, wrapped in a `scratch`
   image.
 - *alpine*: [Alpine] Linux.
+- *debian*: [Debian] Linux.
 - *ubuntu*: [Ubuntu] Linux.
 
 The default for `pandoc/minimal` is `static`.
 
 [Alpine]: https://alpinelinux.org/
+[Debian]: https://debian.org/
 [Ubuntu]: https://ubuntu.org/
 
 ``` include

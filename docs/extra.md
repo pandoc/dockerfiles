@@ -37,11 +37,13 @@ All tags can be suffixed with a stack-identifier, e.g.,
 Available stacks are
 
 - *alpine*: [Alpine] Linux.
+- *debian*: [Debian] Linux.
 - *ubuntu*: [Ubuntu] Linux.
 
 The default for `pandoc/extra` is `alpine`.
 
 [Alpine]: https://alpinelinux.org/
+[Debian]: https://debian.org/
 [Ubuntu]: https://ubuntu.org/
 
 
