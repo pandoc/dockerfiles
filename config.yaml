@@ -13,7 +13,7 @@ release:
       debian: 'bookworm'
     addon:
       core:
-        pandoc-crossref: 'v0.3.24a'
+        pandoc-crossref: 'v0.3.25a'
       latex:
         texlive: '2026'
       typst:
@@ -25,13 +25,37 @@ release:
           - 'pandoc-latex-environment==1.2.*'
           - 'pandoc-include==1.4.*'
 
+  3.11:
+    version-tags:
+      - '3.11.0.0'
+      - '3.11.0'
+      - '3.11'
+      - '3'
+      - 'latest'
+    base-image:
+      alpine: '3.24.1'
+      static: '3.24.1'
+      ubuntu: 'noble'
+      debian: 'bookworm'
+    addon:
+      core:
+        pandoc-crossref: 'v0.3.25a'
+      latex:
+        texlive: '2026'
+      typst:
+        typst: '0.14.2'
+      extra:
+        eisvogel: '3.5.1'
+        python:
+          - 'pandoc-codeblock-include==1.1.*'
+          - 'pandoc-latex-environment==1.2.*'
+          - 'pandoc-include==1.4.*'
+
   3.10:
     version-tags:
       - '3.10.0.0'
       - '3.10.0'
       - '3.10'
-      - '3'
-      - 'latest'
     base-image:
       alpine: '3.24.0'
       static: '3.24.0'
@@ -145,6 +169,9 @@ addon:
   core:
     hashes:
       pandoc-crossref:
+        v0.3.25a:
+          amd64: 7f8b7c5c91233db2dcb1145fa580a9ee8343695589bdb0ece8661490bc12a644
+          arm64: a5e06fe32cce7f8bccc182ff9d88cfe0c0fc5ff2ac784422388157714ccaaff7
         v0.3.24a:
           amd64: afaa8867ab8d908b7e5ad1b96f62eedea6a5d3e89ee14e152cd72e67f535a728
           arm64: b3e2c10321c142f561bb20f98824a8e2e41385118a22fd2168b55e7699be69b6
