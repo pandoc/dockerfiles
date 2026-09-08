@@ -24,6 +24,7 @@ release:
           - 'pandoc-codeblock-include==1.1.*'
           - 'pandoc-latex-environment==1.2.*'
           - 'pandoc-include==1.4.*'
+        tectonic: '0.15.0'
 
   3.11:
     version-tags:
@@ -50,6 +51,7 @@ release:
           - 'pandoc-codeblock-include==1.1.*'
           - 'pandoc-latex-environment==1.2.*'
           - 'pandoc-include==1.4.*'
+        tectonic: '0.15.0'
 
   3.10:
     version-tags:
@@ -74,6 +76,7 @@ release:
           - 'pandoc-codeblock-include==1.1.*'
           - 'pandoc-latex-environment==1.2.*'
           - 'pandoc-include==1.4.*'
+        tectonic: '0.15.0'
 
   3.9.0.2:
     version-tags:
@@ -98,6 +101,7 @@ release:
           - 'pandoc-codeblock-include==1.1.*'
           - 'pandoc-latex-environment==1.2.*'
           - 'pandoc-include==1.4.*'
+        tectonic: '0.15.0'
 
   3.9:
     version-tags:
@@ -120,6 +124,7 @@ release:
           - 'pandoc-codeblock-include==1.1.*'
           - 'pandoc-latex-environment==1.2.*'
           - 'pandoc-include==1.4.*'
+        tectonic: '0.15.0'
 
   3.8.3:
     version-tags:
@@ -143,6 +148,7 @@ release:
           - 'pandoc-codeblock-include==1.1.*'
           - 'pandoc-latex-environment==1.2.*'
           - 'pandoc-include==1.4.*'
+        tectonic: '0.15.0'
 
   3.7.0.2:
     version-tags:
@@ -164,6 +170,7 @@ release:
           - 'pandoc-codeblock-include==1.1.*'
           - 'pandoc-latex-environment==1.2.*'
           - 'pandoc-include==1.4.*'
+        tectonic: '0.15.0'
 
 addon:
   core:

@@ -24,7 +24,8 @@ local function addon_context (extra, release)
   return {
     ['packages'] = get_packages(extra_packages_filepath),
     ['eisvogel'] = release.addon.extra.eisvogel,
-    ['python']   = release.addon.extra.python
+    ['python']   = release.addon.extra.python,
+    ['tectonic'] = release.addon.extra.tectonic,
   }
 end
 
