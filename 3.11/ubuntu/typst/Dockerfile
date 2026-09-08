@@ -15,14 +15,14 @@ RUN set -eux; \
     ARCH="$(dpkg-architecture --query DEB_BUILD_GNU_CPU)"; \
     TYPST_GITHUB="https://github.com/typst/typst/releases/download/"; \
     TYPST_BUILD="typst-${ARCH}-unknown-linux-musl"; \
-    TYPST_VERSION="v0.14.2"; \
+    TYPST_VERSION="v0.15.1"; \
     TYPST_URL="$TYPST_GITHUB/$TYPST_VERSION/$TYPST_BUILD.tar.xz"; \
     case "$ARCH" in \
         ('aarch64') \
-            TYPST_SHA256='491b101aa40a3a7ea82a3f8a6232cabb4e6a7e233810082e5ac812d43fdcd47a'; \
+            TYPST_SHA256='5aa8d74a3d906e60ea12a66ac2f37f8eef1b14cbad7182a745e393a10c23dcee'; \
             ;; \
         ('x86_64') \
-            TYPST_SHA256='a6044cbad2a954deb921167e257e120ac0a16b20339ec01121194ff9d394996d'; \
+            TYPST_SHA256='a6d077d0a95eed5a2eba715b2dae06be954f624ccbf85758a03f389ded33118c'; \
             ;; \
         (*) echo >&2 "error: unsupported architecture '$ARCH'"; \
             exit 1 \

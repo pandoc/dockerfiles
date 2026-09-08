@@ -1,2 +1,2 @@
 FROM pandoc/core:3.11-alpine
-RUN apk --no-cache add typst=0.14.2-r0
+RUN apk --no-cache add typst=0.15.1-r0
