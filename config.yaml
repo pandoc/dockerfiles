@@ -17,9 +17,9 @@ release:
       latex:
         texlive: '2026'
       typst:
-        typst: '0.14.0'
+        typst: '0.15.1'
       extra:
-        eisvogel: '3.3.0'
+        eisvogel: '3.5.1'
         python:
           - 'pandoc-codeblock-include==1.1.*'
           - 'pandoc-latex-environment==1.2.*'
@@ -43,7 +43,7 @@ release:
       latex:
         texlive: '2026'
       typst:
-        typst: '0.14.2'
+        typst: '0.15.1'
       extra:
         eisvogel: '3.5.1'
         python:
@@ -184,6 +184,9 @@ addon:
 
   typst:
     hashes:
+      0.15.1:
+        amd64: a6d077d0a95eed5a2eba715b2dae06be954f624ccbf85758a03f389ded33118c
+        arm64: 5aa8d74a3d906e60ea12a66ac2f37f8eef1b14cbad7182a745e393a10c23dcee
       0.14.2:
         amd64: a6044cbad2a954deb921167e257e120ac0a16b20339ec01121194ff9d394996d
         arm64: 491b101aa40a3a7ea82a3f8a6232cabb4e6a7e233810082e5ac812d43fdcd47a
