@@ -42,7 +42,7 @@ runs:
     - name: Build
       if: >-
         ${{ inputs.build_stack != 'static' || inputs.image_type == 'minimal' }}
-      uses: docker/bake-action@v6
+      uses: docker/bake-action@v7
       with:
         files: docker-bake.json
         load: true
@@ -66,7 +66,7 @@ runs:
           && (inputs.base_system != 'alpine' ||
               !(inputs.image_type == 'latex' || inputs.image_type == 'extra'))
           }}
-      uses: docker/bake-action@v6
+      uses: docker/bake-action@v7
       with:
         files: docker-bake.json
         load: true
@@ -83,7 +83,7 @@ runs:
     - name: Push
       if: >-
         ${{ inputs.build_stack != 'static' || inputs.image_type == 'minimal' }}
-      uses: docker/bake-action@v6
+      uses: docker/bake-action@v7
       with:
         files: docker-bake.json
         no-cache: false
