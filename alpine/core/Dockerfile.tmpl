@@ -41,3 +41,17 @@ rm /tmp/pandoc-crossref.tar.xz
 apk del curl
 EOF
 
+# Install verstat
+RUN <<EOF
+set -eux
+apk --no-cache add curl
+curl --proto '=https' --tlsv1.3 -sSfL -o /tmp/verstat.tar.xz \
+    "https://codeberg.org/pandoc/verstat/archive/main.tar.gz"
+tar -xf /tmp/verstat.tar.xz -C /tmp
+mv /tmp/verstat/verstat.lua /usr/local/bin/verstat
+verstat update /tmp/verstat/packages.json
+# Remove dir and archive
+rm -rf /tmp/verstat.tar.xz /tmp/verstat
+# Curl is no longer needed
+apk del curl
+EOF

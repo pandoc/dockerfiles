@@ -46,6 +46,17 @@ echo "$$crossref_hash /tmp/pandoc-crossref.tar.xz" | sha256sum -c
 tar -xf /tmp/pandoc-crossref.tar.xz -C /usr/local/bin pandoc-crossref
 # Remove archive
 rm /tmp/pandoc-crossref.tar.xz
+
+### verstat ###
+curl --proto '=https' --tlsv1.3 -sSfL -o /tmp/verstat.tar.xz \
+    "https://codeberg.org/pandoc/verstat/archive/main.tar.gz"
+tar -xf /tmp/verstat.tar.xz -C /tmp
+mv /tmp/verstat/verstat.lua /usr/local/bin/verstat
+# Install the package database in the right location
+verstat update /tmp/verstat/packages.json
+# Remove dir and archive
+rm -rf /tmp/verstat.tar.xz /tmp/verstat
+
 # Curl is no longer needed
 apt-get autoremove --purge --assume-yes; \
 rm -rf /var/lib/apt/lists/*;
