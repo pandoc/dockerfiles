@@ -24,7 +24,7 @@ DOCKER_CMD = docker run --rm \
 	--volume $(test_files_path):/data
 
 .PHONY: test
-test: test-minimal test-latex test-extra
+test: test-minimal test-typst test-latex test-extra
 
 #   ____
 #  / ___|___  _ __ ___
