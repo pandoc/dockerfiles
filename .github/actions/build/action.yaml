@@ -52,9 +52,8 @@ runs:
         set: |
           *.platform=linux/amd64
           *.tags=${{ env.TEST_IMAGE }}
-        source: '.'
+        source: ${{ inputs.pandoc_version }}
         targets: ${{ inputs.base_system }}-${{ inputs.image_type }}
-        workdir: ${{ inputs.pandoc_version }}
 
     - name: Test
       shell: bash
@@ -95,6 +94,5 @@ runs:
               (inputs.image_type == 'latex' || inputs.image_type == 'extra') )
             && 'linux/amd64'
             || 'linux/amd64,linux/arm64' }}
-        source: '.'
+        source: ${{ inputs.pandoc_version }}
         targets: ${{ inputs.base_system }}-${{ inputs.image_type }}
-        workdir: ${{ inputs.pandoc_version }}
