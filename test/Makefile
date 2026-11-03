@@ -40,7 +40,7 @@ test-minimal: test-lua \
 
 testsuite-to-%: testsuite.native
 	@# Pure HTML cannot represent fractions, use supported math rendering method.
-	$(DOCKER_CMD) $(IMAGE) $< --output=/dev/null --to=$* --mathml
+	$(DOCKER_CMD) $(IMAGE) $< --output=/dev/null --to=$* --math-method=mathml
 
 test-lua: testsuite.native lpeg-test.lua
 	$(DOCKER_CMD) $(IMAGE) \
