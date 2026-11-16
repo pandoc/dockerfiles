@@ -373,7 +373,7 @@ RUN cabal build \
         --constraint='any.zip-archive ==0.5' \
         --constraint='zip-archive -executable' \
         --constraint='any.zlib ==0.7.1.1' \
-        --constraint='zlib -bundled-c-zlib +non-blocking-ffi +pkg-config' \
+        --constraint='zlib +bundled-c-zlib +non-blocking-ffi +pkg-config' \
         . pandoc-cli
 
 # Cabal's exec stripping doesn't seem to work reliably, let's do it here.
