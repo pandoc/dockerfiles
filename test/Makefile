@@ -203,8 +203,10 @@ EXTRA_CMD = docker run --rm \
 
 .PHONY: test-extra
 test-extra: output/eisvogel.pdf output/eisvogel_with_environment.pdf \
-			output/beamertheme-metropolis.pdf output/lua.html \
-			output/eisvogel-tectonic.pdf
+			output/beamertheme-metropolis.pdf output/lua.html
+
+# Disabled due to compatibility issues (sourcesans package and libc)
+#			output/eisvogel-tectonic.pdf
 
 output/eisvogel.pdf: eisvogel.md
 	$(EXTRA_CMD) $< \
