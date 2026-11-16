@@ -24,7 +24,7 @@ release:
           - 'pandoc-codeblock-include==1.1.*'
           - 'pandoc-latex-environment==1.2.*'
           - 'pandoc-include==1.4.*'
-        tectonic: '0.15.0'
+        tectonic: '0.17.0'
 
   3.14:
     version-tags:
@@ -51,7 +51,7 @@ release:
           - 'pandoc-codeblock-include==1.1.*'
           - 'pandoc-latex-environment==1.2.*'
           - 'pandoc-include==1.4.*'
-        tectonic: '0.15.0'
+        tectonic: '0.17.0'
 
   3.11:
     version-tags:

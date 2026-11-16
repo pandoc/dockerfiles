@@ -103,7 +103,7 @@ RUN wget -qO- ${LUA_FILTERS_REPO}/v${LUA_FILTERS_VERSION}/lua-filters.tar.gz \
 # tectonic
 ARG TARGETARCH
 ARG TECTONIC_REPO=https://github.com/tectonic-typesetting/tectonic/releases/download
-ARG TECTONIC_VERSION=0.15.0
+ARG TECTONIC_VERSION=0.17.0
 RUN <<EOF
 set -ex;
 case "$TARGETARCH" in
