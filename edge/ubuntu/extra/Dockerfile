@@ -85,20 +85,20 @@ RUN mkdir -p ${PANDOC_TEMPLATES_DIR}
 
 # eisvogel
 ARG EISVOGEL_REPO=https://github.com/Wandmalfarbe/pandoc-latex-template/releases/download
-RUN wget -qO- ${EISVOGEL_REPO}/v3.5.1/Eisvogel.tar.gz \
+RUN cd ${PANDOC_TEMPLATES_DIR} && \
+    wget -qO- ${EISVOGEL_REPO}/v3.5.1/Eisvogel.tar.gz \
     | tar xz \
         --strip-components=1 \
-        --one-top-level=${PANDOC_TEMPLATES_DIR} \
         Eisvogel-3.5.1/eisvogel.latex \
         Eisvogel-3.5.1/eisvogel.beamer
 
 # Lua Filters
 ARG LUA_FILTERS_REPO=https://github.com/pandoc/lua-filters/releases/download
 ARG LUA_FILTERS_VERSION=2021-11-05
-RUN wget -qO- ${LUA_FILTERS_REPO}/v${LUA_FILTERS_VERSION}/lua-filters.tar.gz \
+RUN cd ${PANDOC_DATA_HOME} && \
+    wget -qO- ${LUA_FILTERS_REPO}/v${LUA_FILTERS_VERSION}/lua-filters.tar.gz \
     | tar xz \
-        --strip-components=1 \
-        --one-top-level=${PANDOC_DATA_HOME}
+        --strip-components=1
 
 # tectonic
 ARG TARGETARCH
